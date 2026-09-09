@@ -1,0 +1,335 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Henry Jake Balbiran — GHL Automation Portfolio</title>
+<style>
+  :root{
+    --bg:#0a0e16; --card:#121826; --card-2:#0d1420; --ink:#e7edf5; --muted:#93a1b8;
+    --line:rgba(148,178,255,.14); --accent:#22d3ee; --accent-2:#a78bfa; --accent-soft:rgba(34,211,238,.12);
+    --mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(rgba(34,211,238,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34,211,238,.05) 1px, transparent 1px),
+      radial-gradient(900px 520px at 8% -8%, rgba(34,211,238,.14), transparent 60%),
+      radial-gradient(700px 520px at 105% 8%, rgba(167,139,250,.13), transparent 60%);
+    background-size: 42px 42px, 42px 42px, auto, auto;
+    background-attachment: fixed, fixed, fixed, fixed;
+    background-position: 0 0, 0 0, 0 0, 0 0;
+    animation: gridDrift 14s linear infinite;
+  }
+  @keyframes gridDrift{
+    to{ background-position: 42px 42px, 42px 42px, 0 0, 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    body{ animation: none }
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:48px 24px 80px}
+  header.hero{margin-bottom:40px; display:flex; gap:28px; align-items:flex-start}
+  .headshot{width:112px; height:112px; border-radius:50%; object-fit:cover; flex-shrink:0; border:2px solid var(--accent); box-shadow:0 0 0 4px var(--accent-soft), 0 8px 24px rgba(0,0,0,.4); background:var(--card)}
+  .headshot[hidden]{display:none}
+  .hero-text{flex:1; min-width:0}
+  .name{font-size:2rem; font-weight:700; margin:0 0 4px; color:#fff}
+  .headline{color:var(--accent); font-size:1.05rem; font-weight:600; margin:0 0 14px; font-family:var(--mono)}
+  .cursor{display:inline-block; margin-left:2px; animation:blink 1s steps(2) infinite}
+  @keyframes blink{ 50%{opacity:0} }
+  .contact{color:var(--muted); font-size:0.92rem; margin:0 0 18px}
+  .contact a{color:var(--muted)}
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .tag{background:var(--accent-soft); color:var(--accent); border:1px solid rgba(34,211,238,.28); border-radius:6px; padding:4px 12px; font-size:0.78rem; font-weight:600; font-family:var(--mono)}
+
+  section{margin-bottom:48px}
+  h2{font-size:1rem; letter-spacing:.03em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:20px; font-family:var(--mono)}
+  h2::before{content:"// "; color:var(--accent); opacity:.75}
+
+  p.about{max-width:70ch; color:var(--ink)}
+
+  .history{list-style:none; padding:0; margin:0}
+  .history li{display:flex; gap:16px; padding:10px 0; border-bottom:1px dashed var(--line)}
+  .history li:last-child{border-bottom:none}
+  .history .role{font-weight:600; color:#fff}
+  .history .period{color:var(--accent); font-size:0.82rem; white-space:nowrap; font-family:var(--mono)}
+  .history .detail{color:var(--muted); font-size:0.88rem}
+
+  .skills{display:flex; flex-wrap:wrap; gap:8px}
+  .skills span{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 12px; font-size:0.85rem; color:var(--ink)}
+
+  .card{background:linear-gradient(180deg, var(--card), var(--card-2)); border:1px solid var(--line); border-radius:14px; padding:24px; margin-bottom:24px; box-shadow:0 12px 32px rgba(0,0,0,.35); transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease}
+  .card:hover{transform:translateY(-3px); border-color:rgba(34,211,238,.35); box-shadow:0 16px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(34,211,238,.08)}
+  .card h3{margin:0 0 6px; font-size:1.15rem; color:#fff}
+  .card .meta{color:var(--accent); font-size:0.78rem; margin-bottom:14px; font-family:var(--mono); letter-spacing:.02em}
+  .card p{margin:0 0 12px; color:var(--ink)}
+  .card h4{font-size:0.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:16px 0 6px; font-family:var(--mono)}
+  .card ul{margin:0; padding-left:20px; color:var(--ink)}
+  .card ul li{margin-bottom:4px}
+
+  /* screenshots presented inside a browser-window / PC-screen frame you can hover to auto-scroll through */
+  .gallery{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-top:14px}
+  .gallery figure{
+    --screen-h: 210px;
+    position:relative; margin:0; padding-top:24px; border-radius:10px; overflow:hidden;
+    background:#0d1420; border:1px solid var(--line);
+    box-shadow:0 10px 26px rgba(0,0,0,.45), 0 0 0 1px rgba(34,211,238,.05);
+    transition:box-shadow .25s ease, border-color .25s ease;
+  }
+  .gallery figure:hover{border-color:rgba(34,211,238,.4); box-shadow:0 14px 34px rgba(0,0,0,.55), 0 0 0 1px rgba(34,211,238,.15)}
+  .gallery figure::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:24px; z-index:2;
+    background-color:#161d2e; border-bottom:1px solid rgba(255,255,255,.06);
+    background-image:
+      radial-gradient(circle 3.5px at 15px 12px, #ff5f56 99%, transparent 100%),
+      radial-gradient(circle 3.5px at 29px 12px, #ffbd2e 99%, transparent 100%),
+      radial-gradient(circle 3.5px at 43px 12px, #27c93f 99%, transparent 100%);
+  }
+  .screen{height:var(--screen-h); overflow:hidden; cursor:zoom-in; background:#080c14}
+  .gallery img{
+    width:100%; display:block; transform:translateY(0);
+    transition:transform 1s ease;
+  }
+  .gallery figure:hover img{
+    transition:transform 7s linear;
+    transform:translateY(min(0px, calc(-100% + var(--screen-h))));
+  }
+  .gallery figcaption{font-size:0.72rem; color:var(--muted); padding:8px 10px; font-family:var(--mono); border-top:1px solid var(--line); position:relative; z-index:2; background:#0d1420}
+
+  .pdf-link{display:inline-block; margin-top:10px; padding:8px 14px; background:var(--accent-soft); color:var(--accent); border:1px solid rgba(34,211,238,.28); border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:600; font-family:var(--mono)}
+
+  footer{color:var(--muted); font-size:0.8rem; text-align:center; margin-top:60px; font-family:var(--mono)}
+
+  /* lightbox */
+  #lightbox{display:none; position:fixed; inset:0; background:rgba(3,6,12,.92); z-index:99; align-items:center; justify-content:center; padding:24px}
+  #lightbox img{max-width:100%; max-height:100%; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  #lightbox.open{display:flex}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <img class="headshot" src="images/jake-headshot.png" alt="Headshot" onerror="this.hidden=true">
+    <div class="hero-text">
+      <p class="name">Henry Jake Balbiran</p>
+      <p class="headline">GoHighLevel (GHL) Automation &amp; Funnel Specialist — Workflows, CRM, Marketing Automation<span class="cursor">▌</span></p>
+      <p class="contact">hbalbiran@gmail.com &nbsp;·&nbsp; <a href="https://wa.me/639185379969">WhatsApp +63 918 537 9969</a> &nbsp;·&nbsp; Davao City, Philippines &nbsp;·&nbsp; <a href="https://www.onlinejobs.ph/jobseekers/info/2530882">OnlineJobs.ph profile</a></p>
+      <div class="tags">
+        <span class="tag">GoHighLevel</span>
+        <span class="tag">Zapier</span>
+        <span class="tag">ClickFunnels</span>
+        <span class="tag">Twilio</span>
+        <span class="tag">Workflow Automation</span>
+        <span class="tag">Funnel Design</span>
+        <span class="tag">CRM &amp; Pipelines</span>
+        <span class="tag">API Integrations</span>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>About</h2>
+    <p class="about">5+ years building GoHighLevel automations, funnels, and CRM systems for agencies, coaches, real estate, and service-based businesses. Also trained as a Digital Marketing Assistant, which shapes how I approach a build: knowing the difference between a lead-magnet funnel, a webinar funnel, an application funnel, and a sales funnel, and building the GHL logic to match the actual marketing strategy behind it, not just the tech spec. Recent work spans workflow automation, API integrations, contact migrations, and large CRM database cleanup. Comfortable using AI tools to speed up delivery, including building AI-driven conversation flows in GHL and AI voice agents. Builds for long-term scalability using consistent custom values and fields, clear naming conventions, organized logic, and documented processes for team handoff.</p>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <div class="skills">
+      <span>GHL funnels, pipelines &amp; automations</span>
+      <span>CRM setup &amp; snapshots</span>
+      <span>Custom values / fields</span>
+      <span>Email + SMS workflows</span>
+      <span>Twilio &amp; Mailgun</span>
+      <span>Zapier / webhooks / API integrations</span>
+      <span>Contact database migration &amp; cleanup</span>
+      <span>Landing, thank-you &amp; replay page design</span>
+      <span>AI Agents (lead qualification, support)</span>
+      <span>Documentation / SOPs</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Work History</h2>
+    <ul class="history">
+      <li>
+        <div style="flex:1">
+          <div class="role">GoHighLevel Specialist / Workflow Automation VA — Azulio.ai</div>
+          <div class="detail">Real estate/mortgage CRM: lead qualification, loan &amp; appointment funnels, lead routing, pipelines, automated follow-ups, Zapier, QA.</div>
+        </div>
+        <div class="period">Jan – Mar 2026</div>
+      </li>
+      <li>
+        <div style="flex:1">
+          <div class="role">Virtual Assistant — DojoMax</div>
+          <div class="detail">GHL systems, Zapier.</div>
+        </div>
+        <div class="period">Nov 2023 – Feb 2025</div>
+      </li>
+      <li>
+        <div style="flex:1">
+          <div class="role">Virtual Assistant — White Label Ads Factory</div>
+          <div class="detail">GHL client workflows, Zapier.</div>
+        </div>
+        <div class="period">Mar – Jul 2023</div>
+      </li>
+      <li>
+        <div style="flex:1">
+          <div class="role">Virtual Assistant — RC Digital Consultancy</div>
+          <div class="detail">ClickFunnels + GHL funnels, Facebook Ads, Zapier.</div>
+        </div>
+        <div class="period">Feb 2020 – Feb 2023</div>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Featured Project</h2>
+
+    <div class="card">
+      <h3>Scale to Wealth Webinar Funnel</h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel · Funnel + Workflow/Automation</div>
+      <p>A full registration-to-reminder funnel for a coaching client's weekly "Scale to Wealth: Six Figures &amp; Beyond" webinar — a free live training for credentialed tax professionals (PTIN/EFIN holders). Dark/gold-branded registration and confirmation pages feed into an escalating multi-channel (email + SMS) reminder cadence counting down to and through the live event, then loops itself for the next week.</p>
+
+      <h4>Problem</h4>
+      <p>The client runs the same webinar every Thursday and needed a hands-off reminder cadence that confirms registration immediately, builds urgency as the event approaches, keeps the internal team aware of new leads and the imminent live start, and resets itself automatically for the next week without manual rebuilding.</p>
+
+      <h4>What I Built</h4>
+      <ul>
+        <li>Recurring weekly event trigger driving every "time before event" wait step</li>
+        <li>Registration confirmation email + internal team lead-alert notification</li>
+        <li>Escalating reminder cadence at 12h, ~6h, 2h, and 15min before start — email + SMS pairs, drip-throttled (100/min → 50/min)</li>
+        <li>Live-start and 10-minutes-late-join push messages</li>
+        <li>Go-to loop that re-arms the whole sequence for next week's occurrence</li>
+        <li>Dark/gold-branded registration landing page + "You're In, CEO." confirmation page</li>
+      </ul>
+
+      <h4>Tools &amp; Skills</h4>
+      <p>GHL workflow builder (multi-branch, sequential logic) · form-submission trigger with filter conditions · recurring event/date logic · tags for segmentation · drip-mode batch throttling · multi-channel email+SMS messaging · internal team notifications · go-to loop for recurring workflows · landing/confirmation page design.</p>
+
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-landing-page.png" alt="Registration landing page"></div><figcaption>Registration landing page</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-confirmation-page.png" alt="Confirmation page"></div><figcaption>Confirmation page — "You're In, CEO."</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-1-top.png" alt="Workflow canvas top"></div><figcaption>Workflow canvas — top</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-2-mid.png" alt="Workflow canvas middle"></div><figcaption>Workflow canvas — middle</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-3-bottom.png" alt="Workflow canvas bottom"></div><figcaption>Workflow canvas — bottom</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Other Projects</h2>
+
+    <div class="card">
+      <h3>Neurodivergent Career Webinar Funnel</h3>
+      <div class="meta">Career Coaching Client · GoHighLevel · Funnel + Workflow/Automation</div>
+      <p>A full registration-to-replay webinar funnel for a career coach's "Taking Action with Finding a Job for Neurodivergent People" — a free career-coaching webinar for neurodivergent job seekers. Covers the landing page, thank-you page, booking/calendar integration, multi-channel reminders, a post-event replay page with next-step CTAs, and show/no-show branching logic.</p>
+      <h4>What I Built</h4>
+      <ul>
+        <li>Landing page with event details, learning outcomes, embedded video, registration CTA</li>
+        <li>Tag-triggered drip email invite sequence (5-day, 3-day, 1-day, 16-hr, final reminder)</li>
+        <li>Form-submission → tag → opportunity → calendar booking workflow</li>
+        <li>Confirmation + 1-day/1-hour reminder workflow across email and SMS</li>
+        <li>Post-event replay landing page with three next-step CTAs</li>
+        <li>Show/no-show branching: distinct follow-up sequences by attendance, plus link-click tagging for segmentation</li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--muted)">Older work (event dated Oct 2025); submitted as one combined screenshot PDF.</p>
+      <a class="pdf-link" href="documents/career-webinar-funnel-screenshots.pdf">View screenshot PDF →</a>
+      <!-- NOTE: source filename above still carries the client's name — harmless since it's a local link, but rename the source file/folder if this ever leaves the vault. -->
+    </div>
+
+    <div class="card">
+      <h3>Relationship Reset Funnel</h3>
+      <div class="meta">Relationship Coaching Client · GoHighLevel · Funnel (lead magnet)</div>
+      <p>Lead-magnet funnel for a couples-relationship workbook offer ("How to Restart Your Relationship").</p>
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/healing-1.png" alt="Healing funnel screenshot 1"></div><figcaption>Healing — 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/healing-2.png" alt="Healing funnel screenshot 2"></div><figcaption>Healing — 2</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/healing-workflow.png" alt="Healing workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>ERO Help Desk Workflow</h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
+      <p>Help desk workflow for the tax-professional (ERO) audience.</p>
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-1.png" alt="ERO Help Desk screenshot 1"></div><figcaption>ERO Help Desk — 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-2.png" alt="ERO Help Desk screenshot 2"></div><figcaption>ERO Help Desk — 2</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-3.png" alt="ERO Help Desk screenshot 3"></div><figcaption>ERO Help Desk — 3</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-workflow.png" alt="ERO Help Desk workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>DW Tax Solution Workflow</h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
+      <p>Workflow build for a tax &amp; financial coaching client.</p>
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/dw-tax-solution.png" alt="DW Tax Solution overview"></div><figcaption>Overview</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/dw-workflow.png" alt="DW workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>PTIN Referral Workflow</h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
+      <p>Referral workflow for the same tax-professional (PTIN/EFIN) audience as the Scale to Wealth funnel above, logged as a distinct build.</p>
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-1.png" alt="PTIN referral screenshot 1"></div><figcaption>PTIN — 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-2.png" alt="PTIN referral screenshot 2"></div><figcaption>PTIN — 2</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-referral-workflow-canvas.png" alt="PTIN referral workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Bad Credit Repair Funnel</h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
+      <p>Credit-repair offer funnel with $33/1-month and $67/3-month pricing tiers visible in the screenshots.</p>
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-repair.png" alt="Bad Credit Repair overview"></div><figcaption>Overview</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-33-1-month.png" alt="Bad Credit $33 for 1 Month"></div><figcaption>$33 / 1 month</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-67-3-months.png" alt="Bad Credit $67 for 3 Months"></div><figcaption>$67 / 3 months</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Credit Repair Funnel</h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
+      <p>Credit-repair offer funnel with $49/3-month and $99/6-month pricing tiers visible in the screenshots — a related build alongside Bad Credit Repair above.</p>
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-1.png" alt="Credit Repair screenshot 1"></div><figcaption>Credit Repair — 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-2.png" alt="Credit Repair screenshot 2"></div><figcaption>Credit Repair — 2</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-3.png" alt="Credit Repair screenshot 3"></div><figcaption>Credit Repair — 3</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-4.png" alt="Credit Repair screenshot 4"></div><figcaption>Credit Repair — 4</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-49-3-months.png" alt="Credit Repair $49 3 Months"></div><figcaption>$49 / 3 months</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-99-6-months.png" alt="Credit Repair $99 6 Months"></div><figcaption>$99 / 6 months</figcaption></figure>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    Henry Jake Balbiran · updated 2026-09-09
+  </footer>
+
+</div>
+
+<div id="lightbox"><img id="lightbox-img" src=""></div>
+<script>
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lb.classList.add('open');
+    });
+  });
+  lb.addEventListener('click', () => lb.classList.remove('open'));
+</script>
+</body>
+</html>
