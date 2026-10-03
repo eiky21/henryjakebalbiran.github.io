@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead-to-Revenue Workflow Concept</title>
+<style>
+  :root {
+    --bg: #fbf7ee;
+    --grid-dot: #e7dfcb;
+    --line: #d9d1bd;
+    --dot-orange: #ef7f34;
+    --port: #c9c0a9;
+    --node-bg: #ffffff;
+    --node-border: #e8e1cd;
+    --node-bg-orange: #fdefe0;
+    --node-border-green: #6fb98f;
+    --node-bg-green: #ecf6ef;
+    --node-border-rust: #d99a67;
+    --node-bg-rust: #f9efe4;
+    --node-border-tbc: #b9ae8f;
+    --icon-navy: #38425a;
+    --icon-orange: #d9691c;
+    --icon-green: #2f9760;
+    --icon-rust: #b5642f;
+    --title: #2c2e26;
+    --eyebrow: #c46a22;
+    --label: #262822;
+    --sub: #8a826e;
+    --sub-tbc: #a4966f;
+    --sub-green: #3f8f66;
+    --sub-rust: #a86438;
+    --canvas-border: #ece4d0;
+    --card-bg: #ffffff;
+    --page-bg: #f3ede0;
+    --legend: #8f8671;
+    --label-bg: #fbf7ee;
+    --brand-n8n: #ea4b71;
+    --brand-xero: #13b5ea;
+    --brand-sheets: #34a853;
+    --brand-linkedin: #0a66c2;
+    --brand-notion: #2c2e26;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #241f18;
+      --grid-dot: #362f24;
+      --line: #4a4234;
+      --dot-orange: #f0904a;
+      --port: #5a513e;
+      --node-bg: #2c2620;
+      --node-border: #40382a;
+      --node-bg-orange: #3a2c1e;
+      --node-border-green: #4d9c72;
+      --node-bg-green: #1f2c24;
+      --node-border-rust: #c9814f;
+      --node-bg-rust: #33261a;
+      --node-border-tbc: #7c7256;
+      --icon-navy: #cfd3de;
+      --icon-orange: #f0a05c;
+      --icon-green: #6cc797;
+      --icon-rust: #d99a6b;
+      --title: #efe9d9;
+      --eyebrow: #eba86b;
+      --label: #ece5d3;
+      --sub: #a89d85;
+      --sub-tbc: #b6a97e;
+      --sub-green: #7fd0a3;
+      --sub-rust: #d3a072;
+      --canvas-border: #3a3324;
+      --card-bg: #1c1812;
+      --page-bg: #17130e;
+      --legend: #8c8267;
+      --label-bg: #241f18;
+      --brand-notion: #efe9d9;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #241f18;
+    --grid-dot: #362f24;
+    --line: #4a4234;
+    --dot-orange: #f0904a;
+    --port: #5a513e;
+    --node-bg: #2c2620;
+    --node-border: #40382a;
+    --node-bg-orange: #3a2c1e;
+    --node-border-green: #4d9c72;
+    --node-bg-green: #1f2c24;
+    --node-border-rust: #c9814f;
+    --node-bg-rust: #33261a;
+    --node-border-tbc: #7c7256;
+    --icon-navy: #cfd3de;
+    --icon-orange: #f0a05c;
+    --icon-green: #6cc797;
+    --icon-rust: #d99a6b;
+    --title: #efe9d9;
+    --eyebrow: #eba86b;
+    --label: #ece5d3;
+    --sub: #a89d85;
+    --sub-tbc: #b6a97e;
+    --sub-green: #7fd0a3;
+    --sub-rust: #d3a072;
+    --canvas-border: #3a3324;
+    --card-bg: #1c1812;
+    --page-bg: #17130e;
+    --legend: #8c8267;
+    --label-bg: #241f18;
+    --brand-notion: #efe9d9;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding-block: 24px;
+    padding-inline: 16px;
+  }
+  .frame {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--canvas-border);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .canvas-wrap { width: 100%; overflow-x: auto; border-radius: 10px; }
+  svg { display: block; width: 100%; height: auto; min-width: 2000px; }
+
+  .node-label { font-size: 15px; font-weight: 600; fill: var(--label); font-family: inherit; }
+  .node-label-sm { font-size: 14px; font-weight: 600; fill: var(--label); font-family: inherit; }
+  .node-sub   { font-size: 11.5px; fill: var(--sub); font-family: inherit; }
+  .node-sub-tbc { font-size: 10.5px; font-style: italic; fill: var(--sub-tbc); font-family: inherit; }
+
+  .doc-title  { font-size: 24px; font-weight: 700; fill: var(--title); font-family: inherit; }
+  .doc-sub    { font-size: 13px; fill: var(--sub); font-family: inherit; }
+  .lane-label { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; fill: var(--eyebrow); font-family: inherit; }
+  .edge-label { font-size: 10.5px; font-weight: 600; fill: var(--sub-tbc); font-family: inherit; font-style: italic; }
+  .panel-title { font-size: 14px; font-weight: 700; fill: var(--label); font-family: inherit; }
+  .legend-txt { font-size: 12px; fill: var(--legend); font-family: inherit; }
+  .footer-txt { font-size: 13px; font-weight: 600; font-style: italic; fill: var(--eyebrow); font-family: inherit; }
+
+  .node-box { transition: stroke .2s ease; }
+  .node:hover .node-box { stroke: var(--dot-orange); }
+
+  .pulse { filter: drop-shadow(0 0 4px var(--dot-orange)); }
+  .pulse-dim { opacity: .7; filter: drop-shadow(0 0 3px var(--dot-orange)); }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse, .pulse-dim { display: none; }
+  }
+</style>
+
+<div class="frame">
+  <div class="canvas-wrap">
+    <svg viewBox="0 0 2720 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Proposed consulting lead-to-proposal workflow for a consulting business">
+      <defs>
+        <pattern id="dotgrid" width="26" height="26" patternUnits="userSpaceOnUse">
+          <circle cx="1.2" cy="1.2" r="1.2" fill="var(--grid-dot)"></circle>
+        </pattern>
+
+        <!-- line icons (stroke = currentColor) -->
+        <symbol id="ic-form" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="-12" y="-10" width="24" height="20" rx="2"></rect><line x1="-12" y1="-5" x2="12" y2="-5"></line><line x1="-7" y1="0" x2="7" y2="0"></line><line x1="-7" y1="4.5" x2="3" y2="4.5"></line></g></symbol>
+        <symbol id="ic-fork" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M 0,-11 L 0,-3"></path><path d="M 0,-3 C 0,-3 9,-3 9,6 L 9,11"></path><path d="M 0,-3 C 0,-3 -9,-3 -9,6 L -9,11"></path></g></symbol>
+        <symbol id="ic-mail" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="-12" y="-8.5" width="24" height="17" rx="2"></rect><polyline points="-12,-8.5 0,2 12,-8.5"></polyline></g></symbol>
+        <symbol id="ic-video" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="-13" y="-8" width="18" height="16" rx="2"></rect><path d="M 5,-3 L 13,-8 L 13,8 L 5,3 Z"></path></g></symbol>
+        <symbol id="ic-doc" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M -9,-12 L 4,-12 L 9,-7 L 9,12 L -9,12 Z"></path><polyline points="4,-12 4,-7 9,-7"></polyline><line x1="-5" y1="0" x2="5" y2="0"></line><line x1="-5" y1="5" x2="5" y2="5"></line></g></symbol>
+        <symbol id="ic-trophy" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M -8,-11 L 8,-11 L 8,-3 C 8,3 4,6 0,6 C -4,6 -8,3 -8,-3 Z"></path><path d="M -8,-9 C -13,-9 -13,-1 -8,-1"></path><path d="M 8,-9 C 13,-9 13,-1 8,-1"></path><line x1="0" y1="6" x2="0" y2="11"></line><line x1="-5" y1="11" x2="5" y2="11"></line></g></symbol>
+        <symbol id="ic-hourglass" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M -8,-12 L 8,-12 C 8,-4 1,-2 1,0 C 1,2 8,4 8,12 L -8,12 C -8,4 -1,2 -1,0 C -1,-2 -8,-4 -8,-12 Z"></path></g></symbol>
+        <symbol id="ic-xcircle" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="0" cy="0" r="12"></circle><line x1="-5" y1="-5" x2="5" y2="5"></line><line x1="5" y1="-5" x2="-5" y2="5"></line></g></symbol>
+        <symbol id="ic-search" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="-2" cy="-2" r="8"></circle><line x1="4" y1="4" x2="11" y2="11"></line></g></symbol>
+        <symbol id="ic-book" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M -11,-9 L -11,9 C -11,9 -4,6 0,9 C 4,6 11,9 11,9 L 11,-9 C 11,-9 4,-12 0,-9 C -4,-12 -11,-9 -11,-9 Z"></path><line x1="0" y1="-9" x2="0" y2="9"></line></g></symbol>
+        <symbol id="ic-bell" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M -9,3 C -9,-7 -6,-12 0,-12 C 6,-12 9,-7 9,3 L 12,7 L -12,7 Z"></path><path d="M -3,10 C -3,12.5 3,12.5 3,10"></path></g></symbol>
+        <symbol id="ic-task" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="-11" y="-11" width="22" height="22" rx="3"></rect><polyline points="-5,0 -1,4 6,-4"></polyline></g></symbol>
+        <symbol id="ic-calendar" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="-12" y="-9" width="24" height="21" rx="2"></rect><line x1="-12" y1="-3" x2="12" y2="-3"></line><line x1="-6" y1="-13" x2="-6" y2="-6"></line><line x1="6" y1="-13" x2="6" y2="-6"></line><circle cx="0" cy="5" r="2"></circle></g></symbol>
+        <symbol id="ic-check" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="-8,0 -2,6 9,-6"></polyline></g></symbol>
+        <symbol id="ic-refresh" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M -9,-2 A 9,9 0 1 1 -9,3"></path><polyline points="-13,-6 -9,-2 -5,-6"></polyline></g></symbol>
+        <symbol id="ic-x" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="-7" y1="-7" x2="7" y2="7"></line><line x1="7" y1="-7" x2="-7" y2="7"></line></g></symbol>
+        <symbol id="ic-userx" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="-3" cy="-5" r="5"></circle><path d="M -12,11 C -12,3 6,3 6,11"></path><line x1="8" y1="-4" x2="13" y2="1"></line><line x1="13" y1="-4" x2="8" y2="1"></line></g></symbol>
+        <symbol id="ic-sync" viewBox="-14 -14 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M -9,-2 A 9,9 0 1 1 -9,3"></path><polyline points="-13,-5 -9,-2 -6,-7"></polyline></g></symbol>
+
+        <!-- brand marks (Simple Icons, fill = currentColor) -->
+        <symbol id="logo-linkedin" viewBox="0 0 24 24"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.850 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></symbol>
+        <symbol id="logo-n8n" viewBox="0 0 24 24"><path fill="currentColor" d="M21.4737 5.6842c-1.1772 0-2.1663.8051-2.4468 1.8947h-2.8955c-1.235 0-2.289.893-2.492 2.111l-.1038.623a1.263 1.263 0 0 1-1.246 1.0555H11.289c-.2805-1.0896-1.2696-1.8947-2.4468-1.8947s-2.1663.8051-2.4467 1.8947H4.973c-.2805-1.0896-1.2696-1.8947-2.4468-1.8947C1.1311 9.4737 0 10.6047 0 12s1.131 2.5263 2.5263 2.5263c1.1772 0 2.1663-.8051 2.4468-1.8947h1.4223c.2804 1.0896 1.2696 1.8947 2.4467 1.8947 1.1772 0 2.1663-.8051 2.4468-1.8947h1.0008a1.263 1.263 0 0 1 1.2459 1.0555l.1038.623c.203 1.218 1.257 2.111 2.492 2.111h.3692c.2804 1.0895 1.2696 1.8947 2.4468 1.8947 1.3952 0 2.5263-1.131 2.5263-2.5263s-1.131-2.5263-2.5263-2.5263c-1.1772 0-2.1664.805-2.4468 1.8947h-.3692a1.263 1.263 0 0 1-1.246-1.0555l-.1037-.623A2.52 2.52 0 0 0 13.9607 12a2.52 2.52 0 0 0 .821-1.4794l.1038-.623a1.263 1.263 0 0 1 1.2459-1.0555h2.8955c.2805 1.0896 1.2696 1.8947 2.4468 1.8947 1.3952 0 2.5263-1.131 2.5263-2.5263s-1.131-2.5263-2.5263-2.5263m0 1.2632a1.263 1.263 0 0 1 1.2631 1.2631 1.263 1.263 0 0 1-1.2631 1.2632 1.263 1.263 0 0 1-1.2632-1.2632 1.263 1.263 0 0 1 1.2632-1.2631M2.5263 10.7368A1.263 1.263 0 0 1 3.7895 12a1.263 1.263 0 0 1-1.2632 1.2632A1.263 1.263 0 0 1 1.2632 12a1.263 1.263 0 0 1 1.2631-1.2632m6.3158 0A1.263 1.263 0 0 1 10.1053 12a1.263 1.263 0 0 1-1.2632 1.2632A1.263 1.263 0 0 1 7.579 12a1.263 1.263 0 0 1 1.2632-1.2632m10.1053 3.7895a1.263 1.263 0 0 1 1.2631 1.2632 1.263 1.263 0 0 1-1.2631 1.2631 1.263 1.263 0 0 1-1.2632-1.2631 1.263 1.263 0 0 1 1.2632-1.2632"></path></symbol>
+        <symbol id="logo-notion" viewBox="0 0 24 24"><path fill="currentColor" d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"></path></symbol>
+        <symbol id="logo-xero" viewBox="0 0 24 24"><path fill="currentColor" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm6.585 14.655c-1.485 0-2.69-1.206-2.69-2.689 0-1.485 1.207-2.691 2.69-2.691 1.485 0 2.69 1.207 2.69 2.691s-1.207 2.689-2.69 2.689zM7.53 14.644c-.099 0-.192-.041-.267-.116l-2.043-2.04-2.052 2.047c-.069.068-.16.108-.258.108-.202 0-.368-.166-.368-.368 0-.099.04-.191.111-.263l2.04-2.05-2.038-2.047c-.075-.069-.113-.162-.113-.261 0-.203.166-.366.368-.366.098 0 .188.037.258.105l2.055 2.048 2.048-2.045c.069-.071.162-.108.26-.108.211 0 .375.165.375.366 0 .098-.029.188-.104.258l-2.056 2.055 2.055 2.051c.068.069.104.16.104.258 0 .202-.165.368-.365.368h-.01zm8.017-4.591c-.796.101-.882.476-.882 1.404v2.787c0 .202-.165.366-.366.366-.203 0-.367-.165-.368-.366v-4.53c0-.204.16-.366.362-.366.166 0 .316.125.346.289.27-.209.6-.317.93-.317h.105c.195 0 .359.165.359.368 0 .201-.164.352-.375.359 0 0-.09 0-.164.008l.053-.002zm-3.091 2.205H8.625c0 .019.003.037.006.057.02.105.045.211.083.31.194.531.765 1.275 1.829 1.29.33-.003.631-.086.9-.229.21-.12.391-.271.525-.428.045-.058.09-.112.12-.168.18-.229.405-.186.54-.083.164.135.18.391.045.57l-.016.016c-.21.27-.435.495-.689.66-.255.164-.525.284-.811.345-.33.09-.645.104-.975.06-1.095-.135-2.01-.93-2.28-2.01-.06-.21-.09-.42-.09-.645 0-.855.421-1.695 1.125-2.205.885-.615 2.085-.66 3-.075.63.405 1.035 1.021 1.185 1.771.075.419-.21.794-.734.81l.068-.046zm6.129-2.223c-1.064 0-1.931.865-1.931 1.931 0 1.064.866 1.931 1.931 1.931s1.931-.867 1.931-1.931c0-1.065-.866-1.933-1.931-1.933v.002zm0 2.595c-.367 0-.666-.297-.666-.666 0-.367.3-.665.666-.665.367 0 .667.299.667.665 0 .369-.3.667-.667.666zm-8.04-2.603c-.91 0-1.672.623-1.886 1.466v.03h3.776c-.203-.855-.973-1.494-1.891-1.494v-.002z"></path></symbol>
+        <symbol id="logo-sheets" viewBox="0 0 24 24"><path fill="currentColor" d="M11.318 12.545H7.91v-1.909h3.41v1.91zM14.728 0v6h6l-6-6zm1.363 10.636h-3.41v1.91h3.41v-1.91zm0 3.273h-3.41v1.91h3.41v-1.91zM20.727 6.5v15.864c0 .904-.732 1.636-1.636 1.636H4.909a1.636 1.636 0 0 1-1.636-1.636V1.636C3.273.732 4.005 0 4.909 0h9.318v6.5h6.5zm-3.273 2.773H6.545v7.909h10.91v-7.91zm-6.136 4.636H7.91v1.91h3.41v-1.91z"></path></symbol>
+      </defs>
+
+      <rect x="0" y="0" width="2720" height="1200" fill="var(--bg)"></rect>
+      <rect x="0" y="0" width="2720" height="1200" fill="url(#dotgrid)"></rect>
+
+      <text x="60" y="52" class="doc-title">Lead-to-Revenue Workflow — Concept</text>
+      <text x="60" y="78" class="doc-sub">Consulting lead-to-proposal flow · Proposed for discussion, not yet built</text>
+
+      <!-- ================= MAIN PATH CONNECTORS (solid) ================= -->
+      <path id="s1" d="M 192 300 L 338 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="s2" d="M 422 300 L 568 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="s3" d="M 652 300 L 798 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="s4" d="M 882 300 L 1028 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="s5" d="M 1112 300 L 1418 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="s6" d="M 1502 300 L 1738 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="s7" d="M 1822 300 L 2060 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="s8" d="M 2140 300 L 2304 300" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="a1" d="M 2140 520 L 2304 520" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="a2" d="M 2140 720 L 2304 720" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <g fill="var(--port)">
+        <circle cx="192" cy="300" r="3.2"></circle><circle cx="338" cy="300" r="3.2"></circle>
+        <circle cx="422" cy="300" r="3.2"></circle><circle cx="568" cy="300" r="3.2"></circle>
+        <circle cx="652" cy="300" r="3.2"></circle><circle cx="798" cy="300" r="3.2"></circle>
+        <circle cx="882" cy="300" r="3.2"></circle><circle cx="1028" cy="300" r="3.2"></circle>
+        <circle cx="1112" cy="300" r="3.2"></circle><circle cx="1418" cy="300" r="3.2"></circle>
+        <circle cx="1502" cy="300" r="3.2"></circle><circle cx="1738" cy="300" r="3.2"></circle>
+        <circle cx="1822" cy="300" r="3.2"></circle><circle cx="2060" cy="300" r="3.2"></circle>
+        <circle cx="2140" cy="300" r="3.2"></circle><circle cx="2304" cy="300" r="3.2"></circle>
+        <circle cx="2140" cy="520" r="3.2"></circle><circle cx="2304" cy="520" r="3.2"></circle>
+        <circle cx="2140" cy="720" r="3.2"></circle><circle cx="2304" cy="720" r="3.2"></circle>
+      </g>
+
+      <!-- ================= CONDITIONAL / TBC CONNECTORS (dashed) ================= -->
+      <g fill="none" stroke="var(--node-border-tbc)" stroke-width="1.5" stroke-dasharray="5 5" stroke-linecap="round">
+        <path id="li" d="M 150 490 L 150 420 L 265 420 L 265 302"></path>
+        <path id="c4a" d="M 840 342 L 840 490"></path>
+        <path id="c4b" d="M 840 550 L 840 690"></path>
+        <path id="c5a" d="M 1070 342 L 1070 490"></path>
+        <path id="c5b" d="M 1070 550 L 1070 690"></path>
+        <path id="dv" d="M 1460 342 L 1460 470"></path>
+        <path id="c7a" d="M 1780 342 L 1780 490"></path>
+        <path id="c7b" d="M 1780 550 L 1780 690"></path>
+        <path id="e1" d="M 1990 300 L 1990 520 L 2060 520"></path>
+        <path id="e2" d="M 1990 300 L 1990 720 L 2060 720"></path>
+        <path id="s9" d="M 2376 300 L 2544 300"></path>
+      </g>
+      <g fill="var(--node-border-tbc)">
+        <circle cx="265" cy="300" r="3.5"></circle>
+        <circle cx="1990" cy="300" r="3.5"></circle>
+      </g>
+
+      <!-- edge labels -->
+      <g>
+        <rect x="170" y="411" width="74" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="207" y="424" text-anchor="middle" class="edge-label">if approved</text>
+
+        <rect x="937" y="291" width="36" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="955" y="304" text-anchor="middle" class="edge-label">yes</text>
+
+        <rect x="1237" y="291" width="56" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="1265" y="304" text-anchor="middle" class="edge-label">booked</text>
+
+        <rect x="1587" y="291" width="66" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="1620" y="304" text-anchor="middle" class="edge-label">call held</text>
+
+        <rect x="2005" y="291" width="40" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="2025" y="304" text-anchor="middle" class="edge-label">won</text>
+
+        <rect x="1988" y="496" width="76" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="2026" y="509" text-anchor="middle" class="edge-label">maybe later</text>
+
+        <rect x="2006" y="696" width="40" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="2026" y="709" text-anchor="middle" class="edge-label">lost</text>
+
+        <rect x="800" y="407" width="80" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="840" y="420" text-anchor="middle" class="edge-label">no / unclear</text>
+
+        <rect x="740" y="611" width="200" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="840" y="624" text-anchor="middle" class="edge-label">if appropriate + consent allows</text>
+
+        <rect x="1000" y="407" width="140" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="1070" y="420" text-anchor="middle" class="edge-label">no booking · 2 bus. days</text>
+
+        <rect x="1004" y="611" width="132" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="1070" y="624" text-anchor="middle" class="edge-label">still none · 7 days</text>
+
+        <rect x="1412" y="397" width="96" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="1460" y="410" text-anchor="middle" class="edge-label">booking status</text>
+
+        <rect x="1702" y="407" width="156" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="1780" y="420" text-anchor="middle" class="edge-label">no response · 3 bus. days</text>
+
+        <rect x="1698" y="611" width="164" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="1780" y="624" text-anchor="middle" class="edge-label">still unresolved · 7 bus. days</text>
+
+        <rect x="2420" y="291" width="80" height="18" rx="5" fill="var(--label-bg)"></rect>
+        <text x="2460" y="304" text-anchor="middle" class="edge-label">agreed step</text>
+      </g>
+
+      <!-- ================= REVENUE LANE ================= -->
+      <line x1="60" y1="930" x2="2660" y2="930" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 5"></line>
+      <text x="1360" y="916" text-anchor="middle" class="lane-label">Revenue Reporting — Separate Lane</text>
+
+      <path id="r1" d="M 458 1020 L 862 1020" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+      <path id="r2" d="M 938 1020 L 1342 1020" fill="none" stroke="var(--node-border-tbc)" stroke-width="1.5" stroke-dasharray="5 5" stroke-linecap="round"></path>
+      <path id="r3" d="M 1418 1020 L 1822 1020" fill="none" stroke="var(--node-border-tbc)" stroke-width="1.5" stroke-dasharray="5 5" stroke-linecap="round"></path>
+      <g fill="var(--port)"><circle cx="458" cy="1020" r="3.2"></circle><circle cx="862" cy="1020" r="3.2"></circle></g>
+      <rect x="1100" y="1011" width="80" height="18" rx="5" fill="var(--label-bg)"></rect>
+      <text x="1140" y="1024" text-anchor="middle" class="edge-label">method TBC</text>
+
+      <!-- ================= PULSES ================= -->
+      <g>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.1s" begin="0s" repeatCount="indefinite"><mpath href="#s1"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.1s" begin="0.3s" repeatCount="indefinite"><mpath href="#s2"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.1s" begin="0.6s" repeatCount="indefinite"><mpath href="#s3"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.1s" begin="0.9s" repeatCount="indefinite"><mpath href="#s4"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.8s" begin="1.2s" repeatCount="indefinite"><mpath href="#s5"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.5s" begin="1.5s" repeatCount="indefinite"><mpath href="#s6"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.5s" begin="1.8s" repeatCount="indefinite"><mpath href="#s7"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.2s" begin="2.1s" repeatCount="indefinite"><mpath href="#s8"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.2s" begin="0.4s" repeatCount="indefinite"><mpath href="#a1"></mpath></animateMotion></circle>
+        <circle class="pulse" r="4" fill="var(--dot-orange)"><animateMotion dur="1.2s" begin="0.8s" repeatCount="indefinite"><mpath href="#a2"></mpath></animateMotion></circle>
+        <circle class="pulse" r="3.6" fill="var(--dot-orange)"><animateMotion dur="1.8s" begin="0s" repeatCount="indefinite"><mpath href="#r1"></mpath></animateMotion></circle>
+
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="3s" begin="0s" repeatCount="indefinite"><mpath href="#li"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2s" begin="0.2s" repeatCount="indefinite"><mpath href="#c4a"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2s" begin="1.2s" repeatCount="indefinite"><mpath href="#c4b"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2s" begin="0.5s" repeatCount="indefinite"><mpath href="#c5a"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2s" begin="1.5s" repeatCount="indefinite"><mpath href="#c5b"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="1.8s" begin="0.8s" repeatCount="indefinite"><mpath href="#dv"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2s" begin="1s" repeatCount="indefinite"><mpath href="#c7a"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2s" begin="2s" repeatCount="indefinite"><mpath href="#c7b"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2.6s" begin="0.3s" repeatCount="indefinite"><mpath href="#e1"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="3.4s" begin="1.1s" repeatCount="indefinite"><mpath href="#e2"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2s" begin="0.6s" repeatCount="indefinite"><mpath href="#s9"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2.8s" begin="0.4s" repeatCount="indefinite"><mpath href="#r2"></mpath></animateMotion></circle>
+        <circle class="pulse-dim" r="3" fill="var(--dot-orange)"><animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite"><mpath href="#r3"></mpath></animateMotion></circle>
+      </g>
+
+      <!-- ================= MAIN PATH NODES (labels above) ================= -->
+
+      <g class="node" transform="translate(150,300)">
+        <rect class="node-box" x="-42" y="-42" width="84" height="84" rx="20" fill="var(--node-bg-orange)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-form" x="-15" y="-15" width="30" height="30" style="color: var(--icon-orange)"></use>
+        <text y="-73" text-anchor="middle" class="node-label">Website Inquiry</text>
+        <text y="-56" text-anchor="middle" class="node-sub">Form or contact request</text>
+      </g>
+
+      <g class="node" transform="translate(380,300)">
+        <rect class="node-box" x="-42" y="-42" width="84" height="84" rx="20" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#logo-n8n" x="-14" y="-14" width="28" height="28" style="color: var(--brand-n8n)"></use>
+        <text y="-101" text-anchor="middle" class="node-label">n8n Intake</text>
+        <text y="-84" text-anchor="middle" class="node-sub">Required fields, consent</text>
+        <text y="-70" text-anchor="middle" class="node-sub">&amp; duplicate checks</text>
+        <text y="-56" text-anchor="middle" class="node-sub-tbc">Rules — to validate with client</text>
+      </g>
+
+      <g class="node" transform="translate(610,300)">
+        <rect class="node-box" x="-42" y="-42" width="84" height="84" rx="20" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#logo-notion" x="-14" y="-14" width="28" height="28" style="color: var(--brand-notion)"></use>
+        <text y="-103" text-anchor="middle" class="node-label">Notion Contact</text>
+        <text y="-87" text-anchor="middle" class="node-label">+ Opportunity</text>
+        <text y="-70" text-anchor="middle" class="node-sub">Create or update contact,</text>
+        <text y="-56" text-anchor="middle" class="node-sub">organization &amp; opportunity</text>
+      </g>
+
+      <g class="node" transform="translate(840,300)">
+        <rect class="node-box" x="-42" y="-42" width="84" height="84" rx="20" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-fork" x="-15" y="-15" width="30" height="30" style="color: var(--icon-orange)"></use>
+        <text y="-89" text-anchor="middle" class="node-label">Consulting</text>
+        <text y="-73" text-anchor="middle" class="node-label">Interest?</text>
+        <text y="-56" text-anchor="middle" class="node-sub">Qualify the inquiry</text>
+      </g>
+
+      <g class="node" transform="translate(1070,300)">
+        <rect class="node-box" x="-42" y="-42" width="84" height="84" rx="20" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-mail" x="-15" y="-15" width="30" height="30" style="color: var(--icon-navy)"></use>
+        <text y="-73" text-anchor="middle" class="node-label">Flodesk Booking Email</text>
+        <text y="-56" text-anchor="middle" class="node-sub">Sends the booking link</text>
+      </g>
+
+      <g class="node" transform="translate(1460,300)">
+        <rect class="node-box" x="-42" y="-42" width="84" height="84" rx="20" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-video" x="-15" y="-15" width="30" height="30" style="color: var(--icon-orange)"></use>
+        <text y="-87" text-anchor="middle" class="node-label">Discovery Call</text>
+        <text y="-70" text-anchor="middle" class="node-sub">via [approved calendar tool]</text>
+        <text y="-56" text-anchor="middle" class="node-sub-tbc">Booking setup — to validate with client</text>
+      </g>
+
+      <g class="node" transform="translate(1780,300)">
+        <rect class="node-box" x="-42" y="-42" width="84" height="84" rx="20" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-doc" x="-15" y="-15" width="30" height="30" style="color: var(--icon-navy)"></use>
+        <text y="-73" text-anchor="middle" class="node-label">Proposal Sent</text>
+        <text y="-56" text-anchor="middle" class="node-sub">Scope + pricing</text>
+      </g>
+
+      <g class="node" transform="translate(2100,300)">
+        <rect class="node-box" x="-40" y="-40" width="80" height="80" rx="19" fill="var(--node-bg-green)" stroke="var(--node-border-green)" stroke-width="1.5"></rect>
+        <use href="#ic-trophy" x="-15" y="-15" width="30" height="30" style="color: var(--icon-green)"></use>
+        <text y="-71" text-anchor="middle" class="node-label" style="fill: var(--sub-green)">Won</text>
+        <text y="-54" text-anchor="middle" class="node-sub">Deal agreed</text>
+      </g>
+
+      <g class="node" transform="translate(2340,300)">
+        <rect class="node-box" x="-36" y="-36" width="72" height="72" rx="17" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#logo-notion" x="-13" y="-13" width="26" height="26" style="color: var(--brand-notion)"></use>
+        <text y="-69" text-anchor="middle" class="node-label-sm">Notion Project Record</text>
+        <text y="-52" text-anchor="middle" class="node-sub">Created on a win</text>
+      </g>
+
+      <g class="node" transform="translate(2580,300)">
+        <rect class="node-box" x="-36" y="-36" width="72" height="72" rx="17" fill="var(--node-bg)" stroke="var(--node-border-tbc)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+        <use href="#logo-xero" x="-13" y="-13" width="26" height="26" style="color: var(--brand-xero)"></use>
+        <text y="-83" text-anchor="middle" class="node-label-sm">Xero Invoice</text>
+        <text y="-66" text-anchor="middle" class="node-sub">Agreed invoicing step</text>
+        <text y="-52" text-anchor="middle" class="node-sub-tbc">to validate with client</text>
+      </g>
+
+      <!-- ================= BRANCH NODES (labels right) ================= -->
+
+      <g class="node" transform="translate(150,520)">
+        <rect class="node-box" x="-30" y="-30" width="60" height="60" rx="15" fill="var(--node-bg)" stroke="var(--node-border-tbc)" stroke-width="1.5" stroke-dasharray="4 3"></rect>
+        <use href="#logo-linkedin" x="-12" y="-12" width="24" height="24" style="color: var(--brand-linkedin)"></use>
+        <text x="42" y="-8" class="node-label-sm">LinkedIn Lead</text>
+        <text x="42" y="8" class="node-sub">Approved capture only</text>
+        <text x="42" y="22" class="node-sub-tbc">to validate with client</text>
+      </g>
+
+      <g class="node" transform="translate(840,520)">
+        <rect class="node-box" x="-30" y="-30" width="60" height="60" rx="15" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-search" x="-12" y="-12" width="24" height="24" style="color: var(--icon-navy)"></use>
+        <text x="42" y="-6" class="node-label-sm">Manual Review</text>
+        <text x="42" y="10" class="node-sub">Owner decides next step</text>
+      </g>
+
+      <g class="node" transform="translate(840,720)">
+        <rect class="node-box" x="-30" y="-30" width="60" height="60" rx="15" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-book" x="-12" y="-12" width="24" height="24" style="color: var(--icon-navy)"></use>
+        <text x="42" y="-14" class="node-label-sm">Course / Community</text>
+        <text x="42" y="2" class="node-label-sm">Follow-up</text>
+        <text x="42" y="18" class="node-sub">Only if appropriate</text>
+        <text x="42" y="32" class="node-sub-tbc">Consent — to validate</text>
+      </g>
+
+      <g class="node" transform="translate(1070,520)">
+        <rect class="node-box" x="-30" y="-30" width="60" height="60" rx="15" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-bell" x="-12" y="-12" width="24" height="24" style="color: var(--icon-navy)"></use>
+        <text x="42" y="-14" class="node-label-sm">Booking Reminder</text>
+        <text x="42" y="2" class="node-sub">One polite reminder</text>
+        <text x="42" y="16" class="node-sub">after 2 business days</text>
+        <text x="42" y="30" class="node-sub-tbc">Timing — to validate</text>
+      </g>
+
+      <g class="node" transform="translate(1070,720)">
+        <rect class="node-box" x="-30" y="-30" width="60" height="60" rx="15" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-task" x="-12" y="-12" width="24" height="24" style="color: var(--icon-navy)"></use>
+        <text x="42" y="-14" class="node-label-sm">Manual Task</text>
+        <text x="42" y="2" class="node-label-sm">or Nurture</text>
+        <text x="42" y="18" class="node-sub">No booking after 7 days</text>
+        <text x="42" y="32" class="node-sub">Approved nurture path only</text>
+      </g>
+
+      <g class="node" transform="translate(1780,520)">
+        <rect class="node-box" x="-30" y="-30" width="60" height="60" rx="15" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-mail" x="-12" y="-12" width="24" height="24" style="color: var(--icon-navy)"></use>
+        <text x="42" y="-14" class="node-label-sm">Proposal Follow-up</text>
+        <text x="42" y="2" class="node-sub">One follow-up after</text>
+        <text x="42" y="16" class="node-sub">3 business days</text>
+        <text x="42" y="30" class="node-sub-tbc">Timing — to validate</text>
+      </g>
+
+      <g class="node" transform="translate(1780,720)">
+        <rect class="node-box" x="-30" y="-30" width="60" height="60" rx="15" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-task" x="-12" y="-12" width="24" height="24" style="color: var(--icon-navy)"></use>
+        <text x="42" y="-14" class="node-label-sm">Manual Task or</text>
+        <text x="42" y="2" class="node-label-sm">Maybe Later</text>
+        <text x="42" y="18" class="node-sub">Unresolved after</text>
+        <text x="42" y="32" class="node-sub">7 business days</text>
+      </g>
+
+      <!-- ================= OUTCOMES + ACTIONS (labels below) ================= -->
+
+      <g class="node" transform="translate(2100,520)">
+        <rect class="node-box" x="-40" y="-40" width="80" height="80" rx="19" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-hourglass" x="-15" y="-15" width="30" height="30" style="color: var(--icon-navy)"></use>
+        <text y="62" text-anchor="middle" class="node-label">Maybe Later</text>
+        <text y="78" text-anchor="middle" class="node-sub">Not ready yet</text>
+      </g>
+
+      <g class="node" transform="translate(2340,520)">
+        <rect class="node-box" x="-36" y="-36" width="72" height="72" rx="17" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-calendar" x="-13" y="-13" width="26" height="26" style="color: var(--icon-navy)"></use>
+        <text y="58" text-anchor="middle" class="node-label-sm">Agreed-Date Follow-up</text>
+        <text y="74" text-anchor="middle" class="node-sub">On the date agreed</text>
+        <text y="88" text-anchor="middle" class="node-sub">with the prospect</text>
+      </g>
+
+      <g class="node" transform="translate(2100,720)">
+        <rect class="node-box" x="-40" y="-40" width="80" height="80" rx="19" fill="var(--node-bg-rust)" stroke="var(--node-border-rust)" stroke-width="1.5"></rect>
+        <use href="#ic-xcircle" x="-15" y="-15" width="30" height="30" style="color: var(--icon-rust)"></use>
+        <text y="62" text-anchor="middle" class="node-label" style="fill: var(--sub-rust)">Lost</text>
+        <text y="78" text-anchor="middle" class="node-sub">Closed without a win</text>
+      </g>
+
+      <g class="node" transform="translate(2340,720)">
+        <rect class="node-box" x="-36" y="-36" width="72" height="72" rx="17" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#ic-doc" x="-13" y="-13" width="26" height="26" style="color: var(--icon-navy)"></use>
+        <text y="58" text-anchor="middle" class="node-label-sm">Record Loss Reason</text>
+        <text y="74" text-anchor="middle" class="node-sub">Stop sales follow-ups;</text>
+        <text y="88" text-anchor="middle" class="node-sub">nurture only if rules allow</text>
+        <text y="102" text-anchor="middle" class="node-sub-tbc">Rules — to validate with client</text>
+      </g>
+
+      <!-- ================= BOOKING STATES PANEL ================= -->
+      <g>
+        <rect x="1280" y="470" width="360" height="366" rx="16" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <text x="1302" y="500" class="panel-title">Booking states</text>
+        <text x="1620" y="500" text-anchor="end" class="node-sub-tbc">[approved calendar tool]</text>
+        <line x1="1300" y1="514" x2="1620" y2="514" stroke="var(--node-border)" stroke-width="1"></line>
+
+        <g class="node" transform="translate(1316,550)">
+          <rect class="node-box" x="-18" y="-18" width="36" height="36" rx="10" fill="var(--node-bg-green)" stroke="var(--node-border-green)" stroke-width="1.3"></rect>
+          <use href="#ic-check" x="-10" y="-10" width="20" height="20" style="color: var(--icon-green)"></use>
+          <text x="30" y="-3" class="node-label-sm">Booked</text>
+          <text x="30" y="13" class="node-sub">Confirmation + reminders 24h &amp; 1h before</text>
+        </g>
+
+        <g class="node" transform="translate(1316,618)">
+          <rect class="node-box" x="-18" y="-18" width="36" height="36" rx="10" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.3"></rect>
+          <use href="#ic-refresh" x="-10" y="-10" width="20" height="20" style="color: var(--icon-navy)"></use>
+          <text x="30" y="-3" class="node-label-sm">Rescheduled</text>
+          <text x="30" y="13" class="node-sub">Update Notion; replace old reminders</text>
+        </g>
+
+        <g class="node" transform="translate(1316,686)">
+          <rect class="node-box" x="-18" y="-18" width="36" height="36" rx="10" fill="var(--node-bg-rust)" stroke="var(--node-border-rust)" stroke-width="1.3"></rect>
+          <use href="#ic-x" x="-10" y="-10" width="20" height="20" style="color: var(--icon-rust)"></use>
+          <text x="30" y="-3" class="node-label-sm">Canceled</text>
+          <text x="30" y="13" class="node-sub">Stop pending reminders; follow-up task</text>
+        </g>
+
+        <g class="node" transform="translate(1316,754)">
+          <rect class="node-box" x="-18" y="-18" width="36" height="36" rx="10" fill="var(--node-bg-rust)" stroke="var(--node-border-rust)" stroke-width="1.3"></rect>
+          <use href="#ic-userx" x="-10" y="-10" width="20" height="20" style="color: var(--icon-rust)"></use>
+          <text x="30" y="-3" class="node-label-sm">No-show</text>
+          <text x="30" y="13" class="node-sub">Rescheduling email + task for owner</text>
+        </g>
+
+        <text x="1302" y="806" class="node-sub-tbc">Booking setup, reminder timing &amp; app support</text>
+        <text x="1302" y="820" class="node-sub-tbc">— to validate with client</text>
+      </g>
+
+      <!-- ================= REVENUE LANE NODES ================= -->
+
+      <g class="node" transform="translate(420,1020)">
+        <rect class="node-box" x="-38" y="-38" width="76" height="76" rx="17" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#logo-xero" x="-13" y="-13" width="26" height="26" style="color: var(--brand-xero)"></use>
+        <text y="58" text-anchor="middle" class="node-label-sm">Xero Records</text>
+        <text y="74" text-anchor="middle" class="node-sub">Revenue &amp; invoice data</text>
+      </g>
+
+      <g class="node" transform="translate(900,1020)">
+        <rect class="node-box" x="-38" y="-38" width="76" height="76" rx="17" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#logo-notion" x="-13" y="-13" width="26" height="26" style="color: var(--brand-notion)"></use>
+        <text y="58" text-anchor="middle" class="node-label-sm">Notion Context</text>
+        <text y="74" text-anchor="middle" class="node-sub">Linked project &amp; client data</text>
+      </g>
+
+      <g class="node" transform="translate(1380,1020)">
+        <rect class="node-box" x="-38" y="-38" width="76" height="76" rx="17" fill="var(--node-bg)" stroke="var(--node-border-tbc)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+        <use href="#ic-sync" x="-13" y="-13" width="26" height="26" style="color: var(--icon-navy)"></use>
+        <text y="58" text-anchor="middle" class="node-label-sm">Approved Sync / Export</text>
+        <text y="74" text-anchor="middle" class="node-sub-tbc">Tool &amp; method — to validate with client</text>
+      </g>
+
+      <g class="node" transform="translate(1860,1020)">
+        <rect class="node-box" x="-38" y="-38" width="76" height="76" rx="17" fill="var(--node-bg)" stroke="var(--node-border)" stroke-width="1.5"></rect>
+        <use href="#logo-sheets" x="-13" y="-13" width="26" height="26" style="color: var(--brand-sheets)"></use>
+        <text y="58" text-anchor="middle" class="node-label-sm">Google Sheets Dashboard</text>
+        <text y="74" text-anchor="middle" class="node-sub">Revenue reporting view</text>
+      </g>
+
+      <!-- ================= LEGEND + FOOTER ================= -->
+      <line x1="60" y1="1128" x2="2660" y2="1128" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 5"></line>
+      <line x1="60" y1="1160" x2="100" y2="1160" stroke="var(--line)" stroke-width="1.5"></line>
+      <text x="110" y="1164" class="legend-txt">Confirmed step in the proposed flow</text>
+      <line x1="360" y1="1160" x2="400" y2="1160" stroke="var(--node-border-tbc)" stroke-width="1.5" stroke-dasharray="5 5"></line>
+      <text x="410" y="1164" class="legend-txt">Conditional / to validate with client</text>
+      <circle cx="680" cy="1160" r="6" fill="var(--node-bg-green)" stroke="var(--node-border-green)" stroke-width="1.5"></circle>
+      <text x="694" y="1164" class="legend-txt">Positive outcome</text>
+      <circle cx="850" cy="1160" r="6" fill="var(--node-bg-rust)" stroke="var(--node-border-rust)" stroke-width="1.5"></circle>
+      <text x="864" y="1164" class="legend-txt">Closed / stopped</text>
+      <text x="2660" y="1164" text-anchor="end" class="footer-txt">Proposed flow — validate with client.</text>
+    </svg>
+  </div>
+</div>

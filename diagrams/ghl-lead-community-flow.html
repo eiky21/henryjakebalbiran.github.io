@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GHL Lead and Community Flow</title>
+<meta name="description" content="Everything inside GHL for a consulting and community business: website forms, community welcome, existing members, smart lists and events.">
+<style>
+:root {
+  --bg:#F7F2EA; --ink:#2C0D15; --muted:#6d5a5e; --line:#b7a29d; --dot:#e2d6cb;
+  --node-bg:#fffdf9; --node-border:#d9c9c2; --ico:#2C0D15;
+  --trigger-bg:#f6dedb; --decision-bg:#efe6dc; --good-bg:#6F2029; --good-ico:#F7F2EA; --muted-bg:#ece5de; --muted-ico:#8a7a7c;
+  --accent:#E3AAA6; --wine:#6F2029; --pulse:#6F2029; --pill-bg:#F7F2EA; --pill-border:#e0cfc8;
+  --brand-stripe:#635BFF;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#1a080d; --ink:#F7F2EA; --muted:#c7b4b2; --line:#7a5a60; --dot:#2f1a20;
+    --node-bg:#2C0D15; --node-border:#55313a; --ico:#F7F2EA;
+    --trigger-bg:#4a1d27; --decision-bg:#3a1a21; --good-bg:#E3AAA6; --good-ico:#2C0D15; --muted-bg:#25131a; --muted-ico:#a18c8e;
+    --pulse:#E3AAA6; --pill-bg:#1a080d; --pill-border:#55313a; --brand-stripe:#8f89ff;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#1a080d; --ink:#F7F2EA; --muted:#c7b4b2; --line:#7a5a60; --dot:#2f1a20;
+  --node-bg:#2C0D15; --node-border:#55313a; --ico:#F7F2EA;
+  --trigger-bg:#4a1d27; --decision-bg:#3a1a21; --good-bg:#E3AAA6; --good-ico:#2C0D15; --muted-bg:#25131a; --muted-ico:#a18c8e;
+  --pulse:#E3AAA6; --pill-bg:#1a080d; --pill-border:#55313a; --brand-stripe:#8f89ff;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--ink); }
+body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width:1320px; margin:0 auto; padding:28px 16px 40px; }
+h1 { font-size:clamp(22px,3vw,30px); line-height:1.2; margin:0 0 6px; }
+.lede { margin:0 0 18px; color:var(--muted); max-width:70ch; }
+.frame { border:1px solid var(--node-border); border-radius:16px; background:var(--bg); overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.frame svg { display:block; width:100%; min-width:980px; height:auto; }
+.hint { display:none; font-size:13px; color:var(--muted); margin:8px 0 0; }
+@media (max-width: 1000px) { .hint { display:block; } }
+.dot { fill:var(--dot); }
+.lane { font-size:12px; font-weight:700; letter-spacing:.08em; fill:var(--muted); }
+.lane-rule { stroke:var(--node-border); stroke-width:1; }
+.edge { fill:none; stroke:var(--line); stroke-width:1.6; }
+.edge.dashed { stroke-dasharray:6 5; }
+.arrowhead { fill:var(--line); }
+.node-box { fill:var(--node-bg); stroke:var(--node-border); stroke-width:1.4; transition: stroke .2s ease; }
+.node:hover .node-box, .node:focus .node-box { stroke:var(--wine); }
+.node:focus { outline:none; }
+.k-trigger .node-box { fill:var(--trigger-bg); }
+.k-decision .node-box { fill:var(--decision-bg); }
+.k-good .node-box { fill:var(--good-bg); }
+.k-muted .node-box { fill:var(--muted-bg); }
+.ico { fill:none; stroke:var(--ico); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.k-good .ico { stroke:var(--good-ico); }
+.k-muted .ico { stroke:var(--muted-ico); }
+.lbl { font-size:13.5px; font-weight:700; text-anchor:middle; fill:var(--ink); }
+.sub { font-size:11.5px; text-anchor:middle; fill:var(--muted); }
+.pill rect { fill:var(--pill-bg); stroke:var(--pill-border); }
+.pill text { font-size:11px; text-anchor:middle; fill:var(--muted); font-style:italic; }
+.pulse { fill:var(--pulse); opacity:.75; }
+.pulse.dim { opacity:.3; }
+.legend text { font-size:12px; fill:var(--muted); }
+.sw { stroke:var(--node-border); }
+.k-trigger-sw { fill:var(--trigger-bg); } .k-decision-sw { fill:var(--decision-bg); }
+.k-good-sw { fill:var(--good-bg); } .k-muted-sw { fill:var(--muted-bg); }
+@media (prefers-reduced-motion: reduce) { .pulses { display:none; } }
+.notes { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin-top:22px; }
+.card { background:var(--node-bg); border:1px solid var(--node-border); border-radius:14px; padding:14px 16px; }
+.card h2 { font-size:15px; margin:0 0 6px; }
+.card ul { margin:0; padding-left:18px; color:var(--muted); font-size:14px; }
+code { font-size:.92em; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Lead and community flow in GHL</h1>
+  <p class="lede">Everything that happens inside GHL once someone fills in a website form, plus the one-off move of the existing community and how events are sold, confirmed and reminded. Draft design, nothing is live yet.</p>
+  <div class="frame">
+<svg viewBox="0 0 1560 1330" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="dtitle ddesc">
+<title id="dtitle">Lead and community flow inside GHL</title>
+<desc id="ddesc">Website forms post to an Inbound Webhook workflow that creates and tags the contact, notifies the owner, and branches by interest and consent to a community welcome. The existing sheet is imported and asked to confirm consent. Smart lists feed the event invite, the ticket is bought on a GHL booking calendar with Stripe, and a workflow sends confirmation, reminders and a thank-you, with a cancel workflow that stops reminders.</desc>
+<defs>
+<pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" class="dot"/></pattern>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="arrowhead"/></marker>
+</defs>
+<rect width="1560" height="1330" fill="url(#dots)"/>
+<text class="lane" x="40" y="60">1 · WEBSITE FORM → WORKFLOW 1 “WEBSITE FORM SUBMISSIONS”</text><line class="lane-rule" x1="40" x2="1520" y1="70" y2="70"/>
+<text class="lane" x="40" y="512">2 · EXISTING MEMBERS AND SMART LISTS</text><line class="lane-rule" x1="40" x2="1520" y1="522" y2="522"/>
+<text class="lane" x="150" y="912">3 · EVENTS SOLD IN GHL → WORKFLOWS 2 AND 3</text><line class="lane-rule" x1="40" x2="1520" y1="922" y2="922"/>
+<g class="edges"><path id="e0" class="edge" d="M148 160 L262 160" marker-end="url(#arrow)"/>
+<path id="e1" class="edge" d="M338 160 L452 160" marker-end="url(#arrow)"/>
+<path id="e2" class="edge" d="M528 160 L642 160" marker-end="url(#arrow)"/>
+<path id="e3" class="edge" d="M718 160 L832 160" marker-end="url(#arrow)"/>
+<path id="e4" class="edge" d="M908 160 L1022 160" marker-end="url(#arrow)"/>
+<path id="e5" class="edge" d="M1098 160 L1212 160" marker-end="url(#arrow)"/>
+<path id="e6" class="edge" d="M1288 160 L1402 160" marker-end="url(#arrow)"/>
+<path id="e7" class="edge dashed" d="M870 242 L870 322" marker-end="url(#arrow)"/>
+<path id="e8" class="edge dashed" d="M1250 242 L1250 322" marker-end="url(#arrow)"/>
+<path id="e9" class="edge" d="M148 560 L262 560" marker-end="url(#arrow)"/>
+<path id="e10" class="edge" d="M338 560 L452 560" marker-end="url(#arrow)"/>
+<path id="e11" class="edge dashed" d="M528 560 L642 560" marker-end="url(#arrow)"/>
+<path id="e12" class="edge dashed" d="M718 560 L832 560" marker-end="url(#arrow)"/>
+<path id="e13" class="edge dashed" d="M870 522 L870 470 L300 470 L300 242" marker-end="url(#arrow)"/>
+<path id="e14" class="edge" d="M1060 242 L1060 470 L1250 470 L1250 522" marker-end="url(#arrow)"/>
+<path id="e15" class="edge" d="M1250 642 L1250 850 L110 850 L110 922" marker-end="url(#arrow)"/>
+<path id="e16" class="edge" d="M148 960 L262 960" marker-end="url(#arrow)"/>
+<path id="e17" class="edge dashed" d="M338 960 L452 960" marker-end="url(#arrow)"/>
+<path id="e18" class="edge" d="M528 960 L642 960" marker-end="url(#arrow)"/>
+<path id="e19" class="edge" d="M718 960 L832 960" marker-end="url(#arrow)"/>
+<path id="e20" class="edge" d="M908 960 L1022 960" marker-end="url(#arrow)"/>
+<path id="e21" class="edge dashed" d="M1098 960 L1212 960" marker-end="url(#arrow)"/>
+<path id="e22" class="edge" d="M1288 960 L1402 960" marker-end="url(#arrow)"/>
+<path id="e23" class="edge dashed" d="M680 1042 L680 1112" marker-end="url(#arrow)"/>
+<path id="e24" class="edge dashed" d="M110 1042 L110 1112" marker-end="url(#arrow)"/></g>
+<g class="pulses"><circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="0.00s" repeatCount="indefinite"><mpath href="#e0"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="0.37s" repeatCount="indefinite"><mpath href="#e1"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="0.74s" repeatCount="indefinite"><mpath href="#e2"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="1.11s" repeatCount="indefinite"><mpath href="#e3"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="1.48s" repeatCount="indefinite"><mpath href="#e4"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="1.85s" repeatCount="indefinite"><mpath href="#e5"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="2.22s" repeatCount="indefinite"><mpath href="#e6"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="2.59s" repeatCount="indefinite"><mpath href="#e7"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="2.96s" repeatCount="indefinite"><mpath href="#e8"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="0.33s" repeatCount="indefinite"><mpath href="#e9"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="0.70s" repeatCount="indefinite"><mpath href="#e10"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="1.07s" repeatCount="indefinite"><mpath href="#e11"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="1.44s" repeatCount="indefinite"><mpath href="#e12"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="1.81s" repeatCount="indefinite"><mpath href="#e13"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="2.18s" repeatCount="indefinite"><mpath href="#e14"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="2.55s" repeatCount="indefinite"><mpath href="#e15"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="2.92s" repeatCount="indefinite"><mpath href="#e16"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="0.29s" repeatCount="indefinite"><mpath href="#e17"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="0.66s" repeatCount="indefinite"><mpath href="#e18"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="1.03s" repeatCount="indefinite"><mpath href="#e19"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="1.40s" repeatCount="indefinite"><mpath href="#e20"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="1.77s" repeatCount="indefinite"><mpath href="#e21"/></animateMotion></circle>
+<circle class="pulse" r="3.6"><animateMotion dur="2.4s" begin="2.14s" repeatCount="indefinite"><mpath href="#e22"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="2.51s" repeatCount="indefinite"><mpath href="#e23"/></animateMotion></circle>
+<circle class="pulse dim" r="3.6"><animateMotion dur="4.2s" begin="2.88s" repeatCount="indefinite"><mpath href="#e24"/></animateMotion></circle></g>
+<g class="nodes"><g class="node k-trigger" transform="translate(110,160)" tabindex="0" role="img" aria-label="Website forms: Connect · Join"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></g><text class="lbl" y="56">Website forms</text><text class="sub" y="74">Connect · Join</text></g><g class="node k-trigger" transform="translate(300,160)" tabindex="0" role="img" aria-label="Inbound Webhook: Workflow 1 · 18 keys"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><circle cx="12" cy="6" r="2.5"/><path d="M10.8 8.2 7.2 14.8M13.2 8.2l3.6 6.6M8.5 17h7"/></g><text class="lbl" y="56">Inbound Webhook</text><text class="sub" y="74">Workflow 1 · 18 keys</text></g><g class="node k-action" transform="translate(490,160)" tabindex="0" role="img" aria-label="Create Contact: + 3 dynamic tags"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></g><text class="lbl" y="56">Create Contact</text><text class="sub" y="74">+ 3 dynamic tags</text></g><g class="node k-action" transform="translate(680,160)" tabindex="0" role="img" aria-label="Notify owner: every submission"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></g><text class="lbl" y="56">Notify owner</text><text class="sub" y="74">every submission</text></g><g class="node k-decision" transform="translate(870,160)" tabindex="0" role="img" aria-label="Interest?: Website interest field"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M12 3l9 9-9 9-9-9z"/><path d="M12 9v4M12 16v.5"/></g><text class="lbl" y="56">Interest?</text><text class="sub" y="74">Website interest field</text></g><g class="node k-action" transform="translate(1060,160)" tabindex="0" role="img" aria-label="Community member: tag + source = website"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.5"/></g><text class="lbl" y="56">Community member</text><text class="sub" y="74">tag + source = website</text></g><g class="node k-decision" transform="translate(1250,160)" tabindex="0" role="img" aria-label="Consent yes?: and not yet welcomed"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M12 3l9 9-9 9-9-9z"/><path d="M12 9v4M12 16v.5"/></g><text class="lbl" y="56">Consent yes?</text><text class="sub" y="74">and not yet welcomed</text></g><g class="node k-good" transform="translate(1440,160)" tabindex="0" role="img" aria-label="Welcome email: about 5 min later"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></g><text class="lbl" y="56">Welcome email</text><text class="sub" y="74">about 5 min later</text></g><g class="node k-muted" transform="translate(870,360)" tabindex="0" role="img" aria-label="Owner follows up: personally, no nurture"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/></g><text class="lbl" y="56">Owner follows up</text><text class="sub" y="74">personally, no nurture</text></g><g class="node k-muted" transform="translate(1250,360)" tabindex="0" role="img" aria-label="On the list only: no marketing email"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></g><text class="lbl" y="56">On the list only</text><text class="sub" y="74">no marketing email</text></g><g class="node k-action" transform="translate(110,560)" tabindex="0" role="img" aria-label="Master sheet: Owner&#x27;s, one-off CSV"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></g><text class="lbl" y="56">Master sheet</text><text class="sub" y="74">Owner&#x27;s, one-off CSV</text></g><g class="node k-action" transform="translate(300,560)" tabindex="0" role="img" aria-label="Contacts → Import: matched on email"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></g><text class="lbl" y="56">Contacts → Import</text><text class="sub" y="74">matched on email</text></g><g class="node k-action" transform="translate(490,560)" tabindex="0" role="img" aria-label="Tagged on import: consent-unconfirmed"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.5"/></g><text class="lbl" y="56">Tagged on import</text><text class="sub" y="74">consent-unconfirmed</text></g><g class="node k-action" transform="translate(680,560)" tabindex="0" role="img" aria-label="Confirm email: sent once"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></g><text class="lbl" y="56">Confirm email</text><text class="sub" y="74">sent once</text></g><g class="node k-good" transform="translate(870,560)" tabindex="0" role="img" aria-label="Ticks consent: on /community#join"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></g><text class="lbl" y="56">Ticks consent</text><text class="sub" y="74">on /community#join</text></g><g class="node k-action" transform="translate(1250,560)" tabindex="0" role="img" aria-label="Smart lists: fill from tags"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></g><text class="lbl" y="56">Smart lists</text><text class="sub" y="74">fill from tags</text></g><g class="node k-trigger" transform="translate(110,960)" tabindex="0" role="img" aria-label="Invite campaign: to: can email"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M3 10v4h4l7 5V5L7 10z"/><path d="M18 9a4 4 0 0 1 0 6"/></g><text class="lbl" y="56">Invite campaign</text><text class="sub" y="74">to: can email</text></g><g class="node k-action" transform="translate(300,960)" tabindex="0" role="img" aria-label="Event booking page: Class booking · A$50"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></g><text class="lbl" y="56">Event booking page</text><text class="sub" y="74">Class booking · A$50</text></g><g class="node k-stripe" transform="translate(490,960)" tabindex="0" role="img" aria-label="Stripe checkout: Owner&#x27;s account"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z" fill="var(--brand-stripe)"/></g><text class="lbl" y="56">Stripe checkout</text><text class="sub" y="74">Owner&#x27;s account</text></g><g class="node k-action" transform="translate(680,960)" tabindex="0" role="img" aria-label="Registered: Workflow 2 · event tag"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.5"/></g><text class="lbl" y="56">Registered</text><text class="sub" y="74">Workflow 2 · event tag</text></g><g class="node k-action" transform="translate(870,960)" tabindex="0" role="img" aria-label="Confirmation: email + notify owner"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></g><text class="lbl" y="56">Confirmation</text><text class="sub" y="74">email + notify owner</text></g><g class="node k-action" transform="translate(1060,960)" tabindex="0" role="img" aria-label="Reminder: 1 day before"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g><text class="lbl" y="56">Reminder</text><text class="sub" y="74">1 day before</text></g><g class="node k-action" transform="translate(1250,960)" tabindex="0" role="img" aria-label="Reminder: 2 hours before"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g><text class="lbl" y="56">Reminder</text><text class="sub" y="74">2 hours before</text></g><g class="node k-good" transform="translate(1440,960)" tabindex="0" role="img" aria-label="Thank-you email: the day after"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></g><text class="lbl" y="56">Thank-you email</text><text class="sub" y="74">the day after</text></g><g class="node k-muted" transform="translate(680,1150)" tabindex="0" role="img" aria-label="Cancelled: Workflow 3 stops reminders"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></g><text class="lbl" y="56">Cancelled</text><text class="sub" y="74">Workflow 3 stops reminders</text></g><g class="node k-muted" transform="translate(110,1150)" tabindex="0" role="img" aria-label="Luma: events already on sale"><rect class="node-box" x="-34" y="-34" width="68" height="68" rx="18"/><g transform="translate(-13.2,-13.2) scale(1.1)" class="ico"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></g><text class="lbl" y="56">Luma</text><text class="sub" y="74">events already on sale</text></g></g>
+<g class="pills"><g class="pill" transform="translate(965.0,160)"><rect x="-37.8" y="-10" width="75.6" height="20" rx="10"/><text y="4">community</text></g>
+<g class="pill" transform="translate(1345.0,160)"><rect x="-18.6" y="-10" width="37.2" height="20" rx="10"/><text y="4">yes</text></g>
+<g class="pill" transform="translate(870,282.0)"><rect x="-117.80000000000001" y="-10" width="235.60000000000002" height="20" rx="10"/><text y="4">collaboration · courses · not sure</text></g>
+<g class="pill" transform="translate(1250,282.0)"><rect x="-41.0" y="-10" width="82.0" height="20" rx="10"/><text y="4">no consent</text></g>
+<g class="pill" transform="translate(585.0,560)"><rect x="-53.800000000000004" y="-10" width="107.60000000000001" height="20" rx="10"/><text y="4">Spam Act check</text></g>
+<g class="pill" transform="translate(775.0,560)"><rect x="-53.800000000000004" y="-10" width="107.60000000000001" height="20" rx="10"/><text y="4">if they opt in</text></g>
+<g class="pill" transform="translate(585.0,470)"><rect x="-121.0" y="-10" width="242.0" height="20" rx="10"/><text y="4">re-enters Workflow 1 as consent-yes</text></g>
+<g class="pill" transform="translate(680.0,850)"><rect x="-76.2" y="-10" width="152.4" height="20" rx="10"/><text y="4">Community – can email</text></g>
+<g class="pill" transform="translate(395.0,960)"><rect x="-57.0" y="-10" width="114.0" height="20" rx="10"/><text y="4">connect pending</text></g>
+<g class="pill" transform="translate(585.0,960)"><rect x="-21.8" y="-10" width="43.6" height="20" rx="10"/><text y="4">paid</text></g>
+<g class="pill" transform="translate(1155.0,960)"><rect x="-47.400000000000006" y="-10" width="94.80000000000001" height="20" rx="10"/><text y="4">Owner: keep?</text></g>
+<g class="pill" transform="translate(680,1077.0)"><rect x="-53.800000000000004" y="-10" width="107.60000000000001" height="20" rx="10"/><text y="4">if they cancel</text></g>
+<g class="pill" transform="translate(110,1077.0)"><rect x="-53.800000000000004" y="-10" width="107.60000000000001" height="20" rx="10"/><text y="4">until cut-over</text></g></g>
+<g class="legend" transform="translate(40,1262)">
+  <line class="edge" x1="0" y1="0" x2="44" y2="0"/><text x="54" y="4">confirmed design</text>
+  <line class="edge dashed" x1="200" y1="0" x2="244" y2="0"/><text x="254" y="4">needs a confirmation or choice</text>
+  <rect class="sw k-trigger-sw" x="500" y="-9" width="18" height="18" rx="6"/><text x="526" y="4">start / trigger</text>
+  <rect class="sw k-decision-sw" x="650" y="-9" width="18" height="18" rx="6"/><text x="676" y="4">If/Else</text>
+  <rect class="sw k-good-sw" x="760" y="-9" width="18" height="18" rx="6"/><text x="786" y="4">person gets an email</text>
+  <rect class="sw k-muted-sw" x="960" y="-9" width="18" height="18" rx="6"/><text x="986" y="4">stops / no automation</text>
+</g>
+</svg>
+  </div>
+  <p class="hint">Scroll sideways inside the diagram to see the whole flow.</p>
+  <section class="notes" aria-label="Notes">
+    <div class="card"><h2>1 · Website forms</h2><ul>
+      <li>One workflow for both forms; every payload key saved to a field</li>
+      <li>Tags: <code>website-</code>, <code>cohort-</code>, <code>consent-</code></li>
+      <li>Welcome only with ticked consent, never twice</li></ul></div>
+    <div class="card"><h2>2 · Existing members</h2><ul>
+      <li>Imported once as <code>consent-unconfirmed</code></li>
+      <li>One confirm email; only those who tick consent can be emailed</li>
+      <li>Smart lists update themselves from tags</li></ul></div>
+    <div class="card"><h2>3 · Events in GHL</h2><ul>
+      <li>Invite goes to <em>Community – can email</em></li>
+      <li>A$50 paid on a GHL booking calendar through Stripe (connection pending)</li>
+      <li>Confirmation, reminders and thank-you are automatic; cancelling stops them</li></ul></div>
+  </section>
+</main>
+</body>
+</html>

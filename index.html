@@ -1,16 +1,22 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
+<script>document.documentElement.classList.add('js-anim')</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Henry Jake Balbiran — GHL Automation Portfolio</title>
+<title>Henry Jake Balbiran | GHL Automation Portfolio</title>
+<meta name="description" content="GoHighLevel automation and funnel specialist. Workflows, CRM, custom code, n8n integrations and system diagrams.">
 <style>
   :root{
     --bg:#0a0e16; --card:#121826; --card-2:#0d1420; --ink:#e7edf5; --muted:#93a1b8;
     --line:rgba(148,178,255,.14); --accent:#22d3ee; --accent-2:#a78bfa; --accent-soft:rgba(34,211,238,.12);
+    --good:#34d399; --warn:#fbbf24;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
     --mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{
     margin:0; color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -31,9 +37,24 @@
   }
   @media (prefers-reduced-motion: reduce){
     body{ animation: none }
+    .pulse{ display:none }
+    .cursor{ animation:none }
   }
-  .wrap{max-width:960px; margin:0 auto; padding:48px 24px 80px}
+  .wrap{max-width:1040px; margin:0 auto; padding:48px 24px 80px}
+  @media (max-width:600px){ .wrap{padding:32px 16px 64px} }
+
+  nav.jump{position:sticky; top:0; z-index:20; display:flex; gap:18px; margin:-16px -12px 40px; padding:12px 12px 14px; font-family:var(--mono); font-size:.78rem; overflow-x:auto; scrollbar-width:none; background:rgba(10,14,22,.82); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+  nav.jump::-webkit-scrollbar{display:none}
+  nav.jump a{position:relative; display:inline-block; flex-shrink:0; color:var(--muted); text-decoration:none; transition:color .2s ease, transform .16s var(--ease-out)}
+  nav.jump a.active{color:var(--accent)}
+  nav.jump a:active{transform:scale(.97)}
+  @media (hover:hover) and (pointer:fine){ nav.jump a:hover{color:var(--accent)} }
+  .jump-ind{position:absolute; left:0; bottom:6px; width:100px; height:2px; border-radius:2px; background:var(--accent); box-shadow:0 0 8px rgba(34,211,238,.7); transform-origin:0 0; transform:translateX(var(--x,0)) scaleX(var(--w,0)); opacity:0; transition:transform .3s var(--ease-in-out), opacity .2s ease; pointer-events:none}
+  .jump-ind.on{opacity:1}
+  nav.jump a::before{content:"./"; color:var(--accent); opacity:.6}
+
   header.hero{margin-bottom:40px; display:flex; gap:28px; align-items:flex-start}
+  @media (max-width:600px){ header.hero{flex-direction:column; gap:18px} }
   .headshot{width:112px; height:112px; border-radius:50%; object-fit:cover; flex-shrink:0; border:2px solid var(--accent); box-shadow:0 0 0 4px var(--accent-soft), 0 8px 24px rgba(0,0,0,.4); background:var(--card)}
   .headshot[hidden]{display:none}
   .hero-text{flex:1; min-width:0}
@@ -46,32 +67,119 @@
   .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
   .tag{background:var(--accent-soft); color:var(--accent); border:1px solid rgba(34,211,238,.28); border-radius:6px; padding:4px 12px; font-size:0.78rem; font-weight:600; font-family:var(--mono)}
 
-  section{margin-bottom:48px}
+  section{margin-bottom:56px; scroll-margin-top:64px}
   h2{font-size:1rem; letter-spacing:.03em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:20px; font-family:var(--mono)}
   h2::before{content:"// "; color:var(--accent); opacity:.75}
+  .section-lede{color:var(--muted); max-width:70ch; margin:-6px 0 22px}
 
   p.about{max-width:70ch; color:var(--ink)}
+
+  /* tools marquee */
+  .marquee{overflow:hidden; padding:6px 0; -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent); mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+  .marquee-track{display:flex; width:max-content; animation:marq 48s linear infinite}
+  .marquee.rev .marquee-track{animation-direction:reverse; animation-duration:54s}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  @keyframes marq{to{transform:translateX(-50%)}}
+  .logo{display:inline-flex; align-items:center; gap:9px; margin-right:12px; padding:9px 16px; border:1px solid var(--line); border-radius:10px; background:linear-gradient(180deg,var(--card),var(--card-2)); font-family:var(--mono); font-size:.8rem; color:var(--ink); white-space:nowrap; transition:border-color .2s ease}
+  .logo:hover{border-color:rgba(34,211,238,.4)}
+  .logo svg{width:20px; height:20px; flex-shrink:0}
+  @media (prefers-reduced-motion: reduce){
+    .marquee{-webkit-mask-image:none; mask-image:none}
+    .marquee-track{animation:none; flex-wrap:wrap; width:auto; gap:10px 0}
+    .logo.dup{display:none}
+  }
+
+  /* services */
+  .services{display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:14px}
+  @media (min-width:900px){ .services{grid-template-columns:repeat(3,1fr)} }
+  .svc{position:relative; background:linear-gradient(180deg, var(--card), var(--card-2)); border:1px solid var(--line); border-radius:14px; padding:18px 16px 16px; transition:transform .25s ease, border-color .25s ease}
+  @media (hover:hover) and (pointer:fine){ .svc:hover{transform:translateY(-3px); border-color:rgba(34,211,238,.35)} }
+  .svc:active{transform:scale(.98); transition-duration:.16s}
+  .svc .num{position:absolute; top:14px; right:14px; font-family:var(--mono); font-size:.7rem; color:var(--muted)}
+  .svc .ico{width:34px; height:34px; border-radius:9px; display:grid; place-items:center; background:var(--accent-soft); border:1px solid rgba(34,211,238,.25); margin-bottom:12px}
+  .svc .ico svg{width:18px; height:18px; stroke:var(--accent); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+  .svc h3{margin:0 0 4px; font-size:1rem; color:#fff}
+  .svc .tagline{font-size:.84rem; color:var(--muted); margin:0 0 10px}
+  .svc .pill{display:inline-block; font-family:var(--mono); font-size:.66rem; font-weight:700; letter-spacing:.06em; padding:3px 8px; border-radius:999px; background:rgba(167,139,250,.14); color:var(--accent-2); border:1px solid rgba(167,139,250,.3); margin-bottom:10px}
+  .svc ul{list-style:none; margin:0; padding:0; font-size:.82rem}
+  .svc li{padding-left:18px; position:relative; margin-bottom:4px}
+  .svc li::before{content:"✓"; position:absolute; left:0; color:var(--good); font-weight:700}
+
+  /* live automation */
+  .eyebrow{font-family:var(--mono); font-size:.75rem; color:var(--accent); letter-spacing:.08em; text-transform:uppercase; margin:0 0 6px}
+  .big{font-size:1.6rem; font-weight:700; color:#fff; margin:0 0 6px}
+  .platforms{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 18px}
+  .platforms span{font-family:var(--mono); font-size:.74rem; padding:4px 10px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink)}
+  .platforms span::before{content:"●"; color:var(--good); margin-right:6px; font-size:.6rem; vertical-align:2px}
+
+  .window{position:relative; border-radius:12px; overflow:hidden; background:#0b111c; border:1px solid var(--line); box-shadow:0 14px 34px rgba(0,0,0,.5), 0 0 0 1px rgba(34,211,238,.05)}
+  .window .bar{height:30px; display:flex; align-items:center; gap:8px; padding:0 12px; background:#161d2e; border-bottom:1px solid rgba(255,255,255,.06); font-family:var(--mono); font-size:.72rem; color:var(--muted)}
+  .window .dots{display:flex; gap:6px; margin-right:6px}
+  .window .dots i{width:9px; height:9px; border-radius:50%; display:block}
+  .window .dots i:nth-child(1){background:#ff5f56}.window .dots i:nth-child(2){background:#ffbd2e}.window .dots i:nth-child(3){background:#27c93f}
+  .window .bar a{margin-left:auto; color:var(--accent); text-decoration:none}
+  .flow-scroll{overflow-x:auto; padding:18px 14px}
+  .flow-scroll svg{display:block; min-width:860px; width:100%; height:auto}
+  .legend{display:flex; flex-wrap:wrap; gap:16px; padding:10px 16px 14px; font-family:var(--mono); font-size:.7rem; color:var(--muted); border-top:1px solid var(--line)}
+  .legend b{display:inline-block; width:22px; vertical-align:middle; margin-right:6px; border-top:2px solid #5d7196}
+  .legend b.dash{border-top-style:dashed}
+
+  /* svg flow */
+  .f-edge{fill:none; stroke:#3c4c6b; stroke-width:1.6}
+  .f-edge.dash{stroke-dasharray:5 5; stroke:#4f5f80}
+  .f-node rect{fill:#121a2a; stroke:#2b3954; stroke-width:1.2}
+  .f-node.trigger rect{stroke:var(--accent); fill:#0f2230}
+  .f-node.code rect{stroke:var(--accent-2); fill:#1a1630}
+  .f-node.decision rect{stroke:var(--warn); fill:#231d10}
+  .f-node.good rect{stroke:var(--good); fill:#0f241c}
+  .f-node.muted rect{stroke-dasharray:4 4; fill:#121826}
+  .f-t{fill:#fff; font:600 12.5px -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  .f-s{fill:#93a1b8; font:10.5px ui-monospace,Consolas,monospace}
+  .f-pill rect{fill:#0b111c; stroke:#2b3954}
+  .f-pill text{fill:#93a1b8; font:10px ui-monospace,Consolas,monospace}
+  .pulse{fill:var(--accent); filter:drop-shadow(0 0 4px rgba(34,211,238,.9))}
+  .pulse.dim{fill:var(--accent-2); opacity:.8}
+
+  /* command center: view-only preview */
+  .cc{display:grid; gap:20px}
+  .cc-box{user-select:none; -webkit-user-select:none; -webkit-touch-callout:none}
+  .cc-stage{position:relative; aspect-ratio:1440/860; overflow:hidden; background:#070b12}
+  .cc-stage iframe{position:absolute; top:0; left:0; width:1440px; height:860px; border:0; transform-origin:0 0; transform:scale(var(--cc-s,.65)); pointer-events:none}
+  .cc-box::after{content:""; position:absolute; inset:30px 0 0; z-index:2; cursor:default}
+
+  /* embedded diagrams */
+  .diagram iframe{display:block; width:100%; height:620px; border:0; background:#f7f2ea}
+  @media (max-width:600px){ .diagram iframe{height:480px} }
+  .diagram-note{font-size:.85rem; color:var(--muted); margin:10px 2px 28px}
 
   .history{list-style:none; padding:0; margin:0}
   .history li{display:flex; gap:16px; padding:10px 0; border-bottom:1px dashed var(--line)}
   .history li:last-child{border-bottom:none}
+  @media (max-width:600px){ .history li{flex-direction:column; gap:2px} }
   .history .role{font-weight:600; color:#fff}
   .history .period{color:var(--accent); font-size:0.82rem; white-space:nowrap; font-family:var(--mono)}
   .history .detail{color:var(--muted); font-size:0.88rem}
 
-  .skills{display:flex; flex-wrap:wrap; gap:8px}
-  .skills span{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 12px; font-size:0.85rem; color:var(--ink)}
-
   .card{background:linear-gradient(180deg, var(--card), var(--card-2)); border:1px solid var(--line); border-radius:14px; padding:24px; margin-bottom:24px; box-shadow:0 12px 32px rgba(0,0,0,.35); transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease}
-  .card:hover{transform:translateY(-3px); border-color:rgba(34,211,238,.35); box-shadow:0 16px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(34,211,238,.08)}
+  @media (hover:hover) and (pointer:fine){ .card:hover{transform:translateY(-3px); border-color:rgba(34,211,238,.35); box-shadow:0 16px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(34,211,238,.08)} }
+  .card:active{transform:scale(.995); transition-duration:.16s}
+  @media (max-width:600px){ .card{padding:18px} }
   .card h3{margin:0 0 6px; font-size:1.15rem; color:#fff}
   .card .meta{color:var(--accent); font-size:0.78rem; margin-bottom:14px; font-family:var(--mono); letter-spacing:.02em}
   .card p{margin:0 0 12px; color:var(--ink)}
   .card h4{font-size:0.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:16px 0 6px; font-family:var(--mono)}
   .card ul{margin:0; padding-left:20px; color:var(--ink)}
   .card ul li{margin-bottom:4px}
+  .badge{display:inline-block; font-family:var(--mono); font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:999px; margin-left:8px; vertical-align:3px}
+  .badge.new{background:rgba(52,211,153,.14); color:var(--good); border:1px solid rgba(52,211,153,.35)}
+  .badge.wip{background:rgba(251,191,36,.12); color:var(--warn); border:1px solid rgba(251,191,36,.35)}
 
-  /* screenshots presented inside a browser-window / PC-screen frame you can hover to auto-scroll through */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:14px 0 4px}
+  .stat{border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:rgba(255,255,255,.02)}
+  .stat .v{font-variant-numeric:tabular-nums; font-family:var(--mono); font-size:1.15rem; font-weight:700; color:var(--accent)}
+  .stat .k{font-size:.76rem; color:var(--muted)}
+
+  /* screenshots inside a browser-window frame; hover to auto-scroll */
   .gallery{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-top:14px}
   .gallery figure{
     --screen-h: 210px;
@@ -89,6 +197,11 @@
       radial-gradient(circle 3.5px at 29px 12px, #ffbd2e 99%, transparent 100%),
       radial-gradient(circle 3.5px at 43px 12px, #27c93f 99%, transparent 100%);
   }
+  .gallery figure.before::after,.gallery figure.after::after{
+    position:absolute; top:3px; right:8px; z-index:3; font:700 .64rem var(--mono); padding:2px 7px; border-radius:999px;
+  }
+  .gallery figure.before::after{content:"BEFORE"; background:rgba(251,113,133,.16); color:#fb7185; border:1px solid rgba(251,113,133,.4)}
+  .gallery figure.after::after{content:"AFTER"; background:rgba(52,211,153,.14); color:var(--good); border:1px solid rgba(52,211,153,.4)}
   .screen{height:var(--screen-h); overflow:hidden; cursor:zoom-in; background:#080c14}
   .gallery img{
     width:100%; display:block; transform:translateY(0);
@@ -98,6 +211,7 @@
     transition:transform 7s linear;
     transform:translateY(min(0px, calc(-100% + var(--screen-h))));
   }
+  @media (prefers-reduced-motion: reduce){ .gallery figure:hover img{transform:none} }
   .gallery figcaption{font-size:0.72rem; color:var(--muted); padding:8px 10px; font-family:var(--mono); border-top:1px solid var(--line); position:relative; z-index:2; background:#0d1420}
 
   .pdf-link{display:inline-block; margin-top:10px; padding:8px 14px; background:var(--accent-soft); color:var(--accent); border:1px solid rgba(34,211,238,.28); border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:600; font-family:var(--mono)}
@@ -105,162 +219,389 @@
   footer{color:var(--muted); font-size:0.8rem; text-align:center; margin-top:60px; font-family:var(--mono)}
 
   /* lightbox */
-  #lightbox{display:none; position:fixed; inset:0; background:rgba(3,6,12,.92); z-index:99; align-items:center; justify-content:center; padding:24px}
-  #lightbox img{max-width:100%; max-height:100%; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  #lightbox{display:none; position:fixed; inset:0; z-index:99; align-items:center; justify-content:center; padding:24px; cursor:zoom-out}
+  #lightbox .lb-bg{position:absolute; inset:0; background:rgba(3,6,12,.92)}
+  #lightbox img{position:relative; max-width:100%; max-height:100%; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,.6); will-change:transform}
   #lightbox.open{display:flex}
+
+  /* 1-2. entrance + scroll reveal (only when JS runs; content stays visible otherwise) */
+  @keyframes rise{from{opacity:0; transform:translateY(10px)}}
+  .js-anim .hero .headshot, .js-anim .hero-text > *{animation:rise .6s var(--ease-out) both; animation-delay:calc(var(--i,0) * 70ms + 60ms)}
+  .rv{opacity:0; transform:translateY(14px); transition:opacity .5s var(--ease-out), transform .5s var(--ease-out); transition-delay:var(--d,0ms)}
+  .rv.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    @keyframes rise{from{opacity:0}}
+    .rv{transform:none; transition:opacity .3s ease}
+    .jump-ind{transition:opacity .2s ease}
+  }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="lg-ghl" viewBox="0 0 24 24"><polygon points="2,11 5.5,6 9,11" fill="#FFBC00"/><rect x="4" y="11" width="3" height="11" fill="#FFBC00"/><polygon points="8.5,7 12,2 15.5,7" fill="#188BF6"/><rect x="10.5" y="7" width="3" height="15" fill="#188BF6"/><polygon points="15,13 18.5,8 22,13" fill="#37CA37"/><rect x="17" y="13" width="3" height="9" fill="#37CA37"/></symbol><symbol id="lg-clickfunnels" viewBox="0 0 24 24"><path d="M2.5 3.5h19l-7.5 8.6v7.4l-4 2V12.1z" fill="#2F7DF6"/></symbol><symbol id="lg-n8n" viewBox="0 0 24 24"><path fill="#EA4B71" d="M21.4737 5.6842c-1.1772 0-2.1663.8051-2.4468 1.8947h-2.8955c-1.235 0-2.289.893-2.492 2.111l-.1038.623a1.263 1.263 0 0 1-1.246 1.0555H11.289c-.2805-1.0896-1.2696-1.8947-2.4468-1.8947s-2.1663.8051-2.4467 1.8947H4.973c-.2805-1.0896-1.2696-1.8947-2.4468-1.8947C1.1311 9.4737 0 10.6047 0 12s1.131 2.5263 2.5263 2.5263c1.1772 0 2.1663-.8051 2.4468-1.8947h1.4223c.2804 1.0896 1.2696 1.8947 2.4467 1.8947 1.1772 0 2.1663-.8051 2.4468-1.8947h1.0008a1.263 1.263 0 0 1 1.2459 1.0555l.1038.623c.203 1.218 1.257 2.111 2.492 2.111h.3692c.2804 1.0895 1.2696 1.8947 2.4468 1.8947 1.3952 0 2.5263-1.131 2.5263-2.5263s-1.131-2.5263-2.5263-2.5263c-1.1772 0-2.1664.805-2.4468 1.8947h-.3692a1.263 1.263 0 0 1-1.246-1.0555l-.1037-.623A2.52 2.52 0 0 0 13.9607 12a2.52 2.52 0 0 0 .821-1.4794l.1038-.623a1.263 1.263 0 0 1 1.2459-1.0555h2.8955c.2805 1.0896 1.2696 1.8947 2.4468 1.8947 1.3952 0 2.5263-1.131 2.5263-2.5263s-1.131-2.5263-2.5263-2.5263m0 1.2632a1.263 1.263 0 0 1 1.2631 1.2631 1.263 1.263 0 0 1-1.2631 1.2632 1.263 1.263 0 0 1-1.2632-1.2632 1.263 1.263 0 0 1 1.2632-1.2631M2.5263 10.7368A1.263 1.263 0 0 1 3.7895 12a1.263 1.263 0 0 1-1.2632 1.2632A1.263 1.263 0 0 1 1.2632 12a1.263 1.263 0 0 1 1.2631-1.2632m6.3158 0A1.263 1.263 0 0 1 10.1053 12a1.263 1.263 0 0 1-1.2632 1.2632A1.263 1.263 0 0 1 7.579 12a1.263 1.263 0 0 1 1.2632-1.2632m10.1053 3.7895a1.263 1.263 0 0 1 1.2631 1.2632 1.263 1.263 0 0 1-1.2631 1.2631 1.263 1.263 0 0 1-1.2632-1.2631 1.263 1.263 0 0 1 1.2632-1.2632"/></symbol><symbol id="lg-notion" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></symbol><symbol id="lg-zapier" viewBox="0 0 24 24"><path fill="#FF4F00" d="M4.157 0A4.151 4.151 0 0 0 0 4.161v15.678A4.151 4.151 0 0 0 4.157 24h15.682A4.152 4.152 0 0 0 24 19.839V4.161A4.152 4.152 0 0 0 19.839 0H4.157Zm10.61 8.761h.03a.577.577 0 0 1 .23.038.585.585 0 0 1 .201.124.63.63 0 0 1 .162.431.612.612 0 0 1-.162.435.58.58 0 0 1-.201.128.58.58 0 0 1-.23.042.529.529 0 0 1-.235-.042.585.585 0 0 1-.332-.328.559.559 0 0 1-.038-.235.613.613 0 0 1 .17-.431.59.59 0 0 1 .405-.162Zm2.853 1.572c.03.004.061.004.095.004.325-.011.646.064.937.219.238.144.431.355.552.609.128.279.189.582.185.888v.193a2 2 0 0 1 0 .219h-2.498c.003.227.075.45.204.642a.78.78 0 0 0 .646.265.714.714 0 0 0 .484-.136.642.642 0 0 0 .23-.318l.915.257a1.398 1.398 0 0 1-.28.537c-.14.159-.321.284-.521.355a2.234 2.234 0 0 1-.836.136 1.923 1.923 0 0 1-1.001-.245 1.618 1.618 0 0 1-.665-.703 2.221 2.221 0 0 1-.227-1.036 1.95 1.95 0 0 1 .48-1.398 1.9 1.9 0 0 1 1.3-.488Zm-9.607.023c.162.004.325.026.48.079.207.065.4.174.563.314.26.302.393.692.366 1.088v2.276H8.53l-.109-.711h-.065c-.064.163-.155.31-.272.439a1.122 1.122 0 0 1-.374.264 1.023 1.023 0 0 1-.453.083 1.334 1.334 0 0 1-.866-.264.965.965 0 0 1-.329-.801.993.993 0 0 1 .076-.431 1.02 1.02 0 0 1 .242-.363 1.478 1.478 0 0 1 1.043-.303h.952v-.181a.696.696 0 0 0-.136-.454.553.553 0 0 0-.438-.154.695.695 0 0 0-.378.086.48.48 0 0 0-.193.254l-.99-.144a1.26 1.26 0 0 1 .257-.563c.14-.174.321-.302.533-.378.261-.091.54-.136.82-.129.053-.003.106-.007.163-.007Zm4.384.007c.174 0 .347.038.506.114.182.083.34.211.458.374.257.423.377.911.351 1.406a2.53 2.53 0 0 1-.355 1.448 1.148 1.148 0 0 1-1.009.517c-.204 0-.401-.045-.582-.136a1.052 1.052 0 0 1-.48-.457 1.298 1.298 0 0 1-.114-.234h-.045l.004 1.784h-1.059v-4.713h.904l.117.805h.057c.068-.208.177-.401.328-.56a1.129 1.129 0 0 1 .843-.344h.076v-.004Zm7.559.084h.903l.113.805h.053a1.37 1.37 0 0 1 .235-.484.813.813 0 0 1 .313-.242.82.82 0 0 1 .39-.076h.234v1.051h-.401a.662.662 0 0 0-.313.008.623.623 0 0 0-.272.155.663.663 0 0 0-.174.26.683.683 0 0 0-.027.314v1.875h-1.054v-3.666Zm-17.515.003h3.262v.896L3.73 13.104l.034.113h1.973l.042.9H2.4v-.9l1.931-1.754-.045-.117H2.441v-.896Zm11.815 0h1.055v3.659h-1.055V10.45Zm3.443.684.019.016a.69.69 0 0 0-.351.045.756.756 0 0 0-.287.204c-.11.155-.174.336-.189.522h1.545c-.034-.526-.257-.787-.74-.787h.003Zm-5.718.163c-.026 0-.057 0-.083.004a.78.78 0 0 0-.31.053.746.746 0 0 0-.257.189 1.016 1.016 0 0 0-.204.695v.064c-.015.257.057.507.204.711a.634.634 0 0 0 .253.196.638.638 0 0 0 .314.061.644.644 0 0 0 .578-.265c.14-.223.204-.48.189-.74a1.216 1.216 0 0 0-.181-.711.677.677 0 0 0-.503-.257Zm-4.509 1.266a.464.464 0 0 0-.268.102.373.373 0 0 0-.114.276c0 .053.008.106.027.155a.375.375 0 0 0 .087.132.576.576 0 0 0 .397.11v.004a.863.863 0 0 0 .563-.182.573.573 0 0 0 .211-.457v-.14h-.903Z"/></symbol><symbol id="lg-make" viewBox="0 0 24 24"><path fill="#A259FF" d="M13.38 3.498c-.27 0-.511.19-.566.465L9.85 18.986a.578.578 0 0 0 .453.678l4.095.826a.58.58 0 0 0 .682-.455l2.963-15.021a.578.578 0 0 0-.453-.678l-4.096-.826a.589.589 0 0 0-.113-.012zm-5.876.098a.576.576 0 0 0-.516.318L.062 17.697a.575.575 0 0 0 .256.774l3.733 1.877a.578.578 0 0 0 .775-.258l6.926-13.781a.577.577 0 0 0-.256-.776L7.762 3.658a.571.571 0 0 0-.258-.062zm11.74.115a.576.576 0 0 0-.576.576v15.426c0 .318.258.578.576.578h4.178a.58.58 0 0 0 .578-.578V4.287a.578.578 0 0 0-.578-.576Z"/></symbol><symbol id="lg-stripe" viewBox="0 0 24 24"><path fill="#635BFF" d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></symbol><symbol id="lg-twilio" viewBox="0 0 24 24"><path fill="#F22F46" d="M12 0C5.381-.008.008 5.352 0 11.971V12c0 6.64 5.359 12 12 12 6.64 0 12-5.36 12-12 0-6.641-5.36-12-12-12zm0 20.801c-4.846.015-8.786-3.904-8.801-8.75V12c-.014-4.846 3.904-8.786 8.75-8.801H12c4.847-.014 8.786 3.904 8.801 8.75V12c.015 4.847-3.904 8.786-8.75 8.801H12zm5.44-11.76c0 1.359-1.12 2.479-2.481 2.479-1.366-.007-2.472-1.113-2.479-2.479 0-1.361 1.12-2.481 2.479-2.481 1.361 0 2.481 1.12 2.481 2.481zm0 5.919c0 1.36-1.12 2.48-2.481 2.48-1.367-.008-2.473-1.114-2.479-2.48 0-1.359 1.12-2.479 2.479-2.479 1.361-.001 2.481 1.12 2.481 2.479zm-5.919 0c0 1.36-1.12 2.48-2.479 2.48-1.368-.007-2.475-1.113-2.481-2.48 0-1.359 1.12-2.479 2.481-2.479 1.358-.001 2.479 1.12 2.479 2.479zm0-5.919c0 1.359-1.12 2.479-2.479 2.479-1.367-.007-2.475-1.112-2.481-2.479 0-1.361 1.12-2.481 2.481-2.481 1.358 0 2.479 1.12 2.479 2.481z"/></symbol><symbol id="lg-mailgun" viewBox="0 0 24 24"><path fill="#F06B66" d="M11.837 0c6.602 0 11.984 5.381 11.984 11.994-.017 2.99-3.264 4.84-5.844 3.331a3.805 3.805 0 0 1-.06-.035l-.055-.033-.022.055c-2.554 4.63-9.162 4.758-11.894.232-2.732-4.527.46-10.313 5.746-10.416a6.868 6.868 0 0 1 7.002 6.866 1.265 1.265 0 0 0 2.52 0c0-5.18-4.197-9.38-9.377-9.387C4.611 2.594.081 10.41 3.683 16.673c3.238 5.632 11.08 6.351 15.289 1.402l1.997 1.686A11.95 11.95 0 0 1 11.837 24C2.6 23.72-2.87 13.543 1.992 5.684A12.006 12.006 0 0 1 11.837 0Zm0 7.745c-3.276-.163-5.5 3.281-4.003 6.2a4.26 4.26 0 0 0 4.014 2.31c3.276-.171 5.137-3.824 3.35-6.575a4.26 4.26 0 0 0-3.36-1.935Zm0 2.53c1.324 0 2.152 1.433 1.49 2.58a1.72 1.72 0 0 1-1.49.86 1.72 1.72 0 1 1 0-3.44Z"/></symbol><symbol id="lg-googlesheets" viewBox="0 0 24 24"><path fill="#34A853" d="M11.318 12.545H7.91v-1.909h3.41v1.91zM14.728 0v6h6l-6-6zm1.363 10.636h-3.41v1.91h3.41v-1.91zm0 3.273h-3.41v1.91h3.41v-1.91zM20.727 6.5v15.864c0 .904-.732 1.636-1.636 1.636H4.909a1.636 1.636 0 0 1-1.636-1.636V1.636C3.273.732 4.005 0 4.909 0h9.318v6.5h6.5zm-3.273 2.773H6.545v7.909h10.91v-7.91zm-6.136 4.636H7.91v1.91h3.41v-1.91z"/></symbol><symbol id="lg-gmail" viewBox="0 0 24 24"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></symbol><symbol id="lg-googledrive" viewBox="0 0 24 24"><path fill="#4285F4" d="M12.01 1.485c-2.082 0-3.754.02-3.743.047.01.02 1.708 3.001 3.774 6.62l3.76 6.574h3.76c2.081 0 3.753-.02 3.742-.047-.005-.02-1.708-3.001-3.775-6.62l-3.76-6.574zm-4.76 1.73a789.828 789.861 0 0 0-3.63 6.319L0 15.868l1.89 3.298 1.885 3.297 3.62-6.335 3.618-6.33-1.88-3.287C8.1 4.704 7.255 3.22 7.25 3.214zm2.259 12.653-.203.348c-.114.198-.96 1.672-1.88 3.287a423.93 423.948 0 0 1-1.698 2.97c-.01.026 3.24.042 7.222.042h7.244l1.796-3.157c.992-1.734 1.85-3.23 1.906-3.323l.104-.167h-7.249z"/></symbol><symbol id="lg-airtable" viewBox="0 0 24 24"><path fill="#18BFFF" d="M11.992 1.966c-.434 0-.87.086-1.28.257L1.779 5.917c-.503.208-.49.908.012 1.116l8.982 3.558a3.266 3.266 0 0 0 2.454 0l8.982-3.558c.503-.196.503-.908.012-1.116l-8.957-3.694a3.255 3.255 0 0 0-1.272-.257zM23.4 8.056a.589.589 0 0 0-.222.045l-10.012 3.877a.612.612 0 0 0-.38.564v8.896a.6.6 0 0 0 .821.552L23.62 18.1a.583.583 0 0 0 .38-.551V8.653a.6.6 0 0 0-.6-.596zM.676 8.095a.644.644 0 0 0-.48.19C.086 8.396 0 8.53 0 8.69v8.355c0 .442.515.737.908.54l6.27-3.006.307-.147 2.969-1.436c.466-.22.43-.908-.061-1.092L.883 8.138a.57.57 0 0 0-.207-.044z"/></symbol><symbol id="lg-calendly" viewBox="0 0 24 24"><path fill="#006BFF" d="M19.655 14.262c.281 0 .557.023.828.064 0 .005-.005.01-.005.014-.105.267-.234.534-.381.786l-1.219 2.106c-1.112 1.936-3.177 3.127-5.411 3.127h-2.432c-2.23 0-4.294-1.191-5.412-3.127l-1.218-2.106a6.251 6.251 0 0 1 0-6.252l1.218-2.106C6.736 4.832 8.8 3.641 11.035 3.641h2.432c2.23 0 4.294 1.191 5.411 3.127l1.219 2.106c.147.252.271.519.381.786 0 .004.005.009.005.014-.267.041-.543.064-.828.064-1.816 0-2.501-.607-3.291-1.306-.764-.676-1.711-1.517-3.44-1.517h-1.029c-1.251 0-2.387.455-3.2 1.278-.796.805-1.233 1.904-1.233 3.099v1.411c0 1.196.437 2.295 1.233 3.099.813.823 1.949 1.278 3.2 1.278h1.034c1.729 0 2.676-.841 3.439-1.517.791-.703 1.471-1.306 3.287-1.301Zm.005-3.237c.399 0 .794-.036 1.179-.11-.002-.004-.002-.01-.002-.014-.073-.414-.193-.823-.349-1.218.731-.12 1.407-.396 1.986-.819 0-.004-.005-.013-.005-.018-.331-1.085-.832-2.101-1.489-3.03-.649-.915-1.435-1.719-2.331-2.395-1.867-1.398-4.088-2.138-6.428-2.138-1.448 0-2.855.28-4.175.841-1.273.543-2.423 1.315-3.407 2.299S2.878 6.552 2.341 7.83c-.557 1.324-.842 2.726-.842 4.175 0 1.448.281 2.855.842 4.174.542 1.274 1.314 2.423 2.298 3.407s2.129 1.761 3.407 2.299c1.324.556 2.727.841 4.175.841 2.34 0 4.561-.74 6.428-2.137a10.815 10.815 0 0 0 2.331-2.396c.652-.929 1.158-1.949 1.489-3.03 0-.004.005-.014.005-.018-.579-.423-1.255-.699-1.986-.819.161-.395.276-.804.349-1.218.005-.009.005-.014.005-.023.869.166 1.692.506 2.404 1.035.685.505.552 1.075.446 1.416C22.184 20.437 17.619 24 12.221 24c-6.625 0-12-5.375-12-12s5.37-12 12-12c5.398 0 9.963 3.563 11.471 8.464.106.341.239.915-.446 1.421-.717.529-1.535.873-2.404 1.034.128.716.128 1.45 0 2.166-.387-.074-.782-.11-1.182-.11-4.184 0-3.968 2.823-6.736 2.823h-1.029c-1.899 0-3.15-1.357-3.15-3.095v-1.411c0-1.738 1.251-3.094 3.15-3.094h1.034c2.768 0 2.552 2.823 6.731 2.827Z"/></symbol><symbol id="lg-slack" viewBox="0 0 24 24"><path fill="#E01E5A" d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></symbol><symbol id="lg-telegram" viewBox="0 0 24 24"><path fill="#26A5E4" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></symbol><symbol id="lg-zoom" viewBox="0 0 24 24"><path fill="#2D8CFF" d="M5.033 14.649H.743a.74.74 0 0 1-.686-.458.74.74 0 0 1 .16-.808L3.19 10.41H1.06A1.06 1.06 0 0 1 0 9.35h3.957c.301 0 .57.18.686.458a.74.74 0 0 1-.161.808L1.51 13.59h2.464c.585 0 1.06.475 1.06 1.06zM24 11.338c0-1.14-.927-2.066-2.066-2.066-.61 0-1.158.265-1.537.686a2.061 2.061 0 0 0-1.536-.686c-1.14 0-2.066.926-2.066 2.066v3.311a1.06 1.06 0 0 0 1.06-1.06v-2.251a1.004 1.004 0 0 1 2.013 0v2.251c0 .586.474 1.06 1.06 1.06v-3.311a1.004 1.004 0 0 1 2.012 0v2.251c0 .586.475 1.06 1.06 1.06zM16.265 12a2.728 2.728 0 1 1-5.457 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0zm-4.82 0a2.728 2.728 0 1 1-5.458 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0z"/></symbol><symbol id="lg-openai" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></symbol><symbol id="lg-claude" viewBox="0 0 24 24"><path fill="#D97757" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></symbol><symbol id="lg-googlegemini" viewBox="0 0 24 24"><path fill="#8E75B2" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></symbol></svg>
 <div class="wrap">
 
   <header class="hero">
-    <img class="headshot" src="images/jake-headshot.png" alt="Headshot" onerror="this.hidden=true">
+    <img style="--i:0" class="headshot" src="images/jake-headshot.png" alt="Henry Jake Balbiran" onerror="this.hidden=true">
     <div class="hero-text">
-      <p class="name">Henry Jake Balbiran</p>
-      <p class="headline">GoHighLevel (GHL) Automation &amp; Funnel Specialist — Workflows, CRM, Marketing Automation<span class="cursor">▌</span></p>
-      <p class="contact">hbalbiran@gmail.com &nbsp;·&nbsp; <a href="https://wa.me/639185379969">WhatsApp +63 918 537 9969</a> &nbsp;·&nbsp; Davao City, Philippines &nbsp;·&nbsp; <a href="https://www.onlinejobs.ph/jobseekers/info/2530882">OnlineJobs.ph profile</a></p>
-      <div class="tags">
+      <p style="--i:1" class="name">Henry Jake Balbiran</p>
+      <p style="--i:2" class="headline">GoHighLevel (GHL) Automation &amp; Funnel Specialist | Workflows, CRM, Custom Code, Integrations<span class="cursor">▌</span></p>
+      <p style="--i:3" class="contact">hbalbiran@gmail.com &nbsp;·&nbsp; <a href="https://wa.me/639185379969">WhatsApp +63 918 537 9969</a> &nbsp;·&nbsp; Davao City, Philippines &nbsp;·&nbsp; <a href="https://www.onlinejobs.ph/jobseekers/info/2530882">OnlineJobs.ph profile</a></p>
+      <div style="--i:4" class="tags">
         <span class="tag">GoHighLevel</span>
-        <span class="tag">Zapier</span>
-        <span class="tag">ClickFunnels</span>
-        <span class="tag">Twilio</span>
         <span class="tag">Workflow Automation</span>
+        <span class="tag">Custom Code (JS)</span>
+        <span class="tag">n8n</span>
+        <span class="tag">Zapier</span>
+        <span class="tag">Notion</span>
         <span class="tag">Funnel Design</span>
         <span class="tag">CRM &amp; Pipelines</span>
-        <span class="tag">API Integrations</span>
+        <span class="tag">Webhooks &amp; APIs</span>
+        <span class="tag">Twilio</span>
       </div>
     </div>
   </header>
 
-  <section>
+  <nav class="jump" aria-label="Sections">
+    <a href="#tools">tools</a>
+    <a href="#services">services</a>
+    <a href="#live">live-automation</a>
+    <a href="#command-center">command-center</a>
+    <a href="#diagrams">system-diagrams</a>
+    <a href="#featured">featured-work</a>
+    <a href="#projects">more-projects</a>
+    <a href="#history">work-history</a>
+  </nav>
+
+  <section id="tools" aria-label="Tools I work with">
+    <h2>Tools I work with</h2>
+    <div class="marquee"><div class="marquee-track"><span class="logo"><svg aria-hidden="true"><use href="#lg-ghl"/></svg>GoHighLevel</span><span class="logo"><svg aria-hidden="true"><use href="#lg-clickfunnels"/></svg>ClickFunnels</span><span class="logo"><svg aria-hidden="true"><use href="#lg-n8n"/></svg>n8n</span><span class="logo"><svg aria-hidden="true"><use href="#lg-zapier"/></svg>Zapier</span><span class="logo"><svg aria-hidden="true"><use href="#lg-make"/></svg>Make</span><span class="logo"><svg aria-hidden="true"><use href="#lg-notion"/></svg>Notion</span><span class="logo"><svg aria-hidden="true"><use href="#lg-stripe"/></svg>Stripe</span><span class="logo"><svg aria-hidden="true"><use href="#lg-twilio"/></svg>Twilio</span><span class="logo"><svg aria-hidden="true"><use href="#lg-mailgun"/></svg>Mailgun</span><span class="logo"><svg aria-hidden="true"><use href="#lg-calendly"/></svg>Calendly</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-ghl"/></svg>GoHighLevel</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-clickfunnels"/></svg>ClickFunnels</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-n8n"/></svg>n8n</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-zapier"/></svg>Zapier</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-make"/></svg>Make</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-notion"/></svg>Notion</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-stripe"/></svg>Stripe</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-twilio"/></svg>Twilio</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-mailgun"/></svg>Mailgun</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-calendly"/></svg>Calendly</span></div></div>
+    <div class="marquee rev"><div class="marquee-track"><span class="logo"><svg aria-hidden="true"><use href="#lg-openai"/></svg>ChatGPT</span><span class="logo"><svg aria-hidden="true"><use href="#lg-claude"/></svg>Claude</span><span class="logo"><svg aria-hidden="true"><use href="#lg-googlegemini"/></svg>Gemini</span><span class="logo"><svg aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail</span><span class="logo"><svg aria-hidden="true"><use href="#lg-googlesheets"/></svg>Google Sheets</span><span class="logo"><svg aria-hidden="true"><use href="#lg-googledrive"/></svg>Google Drive</span><span class="logo"><svg aria-hidden="true"><use href="#lg-airtable"/></svg>Airtable</span><span class="logo"><svg aria-hidden="true"><use href="#lg-slack"/></svg>Slack</span><span class="logo"><svg aria-hidden="true"><use href="#lg-telegram"/></svg>Telegram</span><span class="logo"><svg aria-hidden="true"><use href="#lg-zoom"/></svg>Zoom</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-openai"/></svg>ChatGPT</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-claude"/></svg>Claude</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-googlegemini"/></svg>Gemini</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-googlesheets"/></svg>Google Sheets</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-googledrive"/></svg>Google Drive</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-airtable"/></svg>Airtable</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-slack"/></svg>Slack</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-telegram"/></svg>Telegram</span><span class="logo dup" aria-hidden="true"><svg aria-hidden="true"><use href="#lg-zoom"/></svg>Zoom</span></div></div>
+  </section>
+
+  <section id="about">
     <h2>About</h2>
-    <p class="about">5+ years building GoHighLevel automations, funnels, and CRM systems for agencies, coaches, real estate, and service-based businesses. Also trained as a Digital Marketing Assistant, which shapes how I approach a build: knowing the difference between a lead-magnet funnel, a webinar funnel, an application funnel, and a sales funnel, and building the GHL logic to match the actual marketing strategy behind it, not just the tech spec. Recent work spans workflow automation, API integrations, contact migrations, and large CRM database cleanup. Comfortable using AI tools to speed up delivery, including building AI-driven conversation flows in GHL and AI voice agents. Builds for long-term scalability using consistent custom values and fields, clear naming conventions, organized logic, and documented processes for team handoff.</p>
+    <p class="about">5+ years building GoHighLevel automations, funnels, and CRM systems for agencies, coaches, real estate, and service-based businesses. I'm also trained as a Digital Marketing Assistant, which shapes how I approach a build: I know the difference between a lead-magnet funnel, a webinar funnel, an application funnel, and a sales funnel, and I build the GHL logic to match the marketing strategy behind it, not just the tech spec. Recent work includes Custom Code steps inside GHL workflows, payment-triggered automations, n8n and Notion integrations, contact migrations, and CRM cleanup. I use AI tools to speed up delivery, including AI conversation flows in GHL and AI voice agents. I build for long-term scalability with consistent custom values and fields, clear naming conventions, organized logic, and documented processes for team handoff.</p>
   </section>
 
-  <section>
-    <h2>Skills</h2>
-    <div class="skills">
-      <span>GHL funnels, pipelines &amp; automations</span>
-      <span>CRM setup &amp; snapshots</span>
-      <span>Custom values / fields</span>
-      <span>Email + SMS workflows</span>
-      <span>Twilio &amp; Mailgun</span>
-      <span>Zapier / webhooks / API integrations</span>
-      <span>Contact database migration &amp; cleanup</span>
-      <span>Landing, thank-you &amp; replay page design</span>
-      <span>AI Agents (lead qualification, support)</span>
-      <span>Documentation / SOPs</span>
-    </div>
-  </section>
-
-  <section>
-    <h2>Work History</h2>
-    <ul class="history">
-      <li>
-        <div style="flex:1">
-          <div class="role">GoHighLevel Specialist / Workflow Automation VA — Azulio.ai</div>
-          <div class="detail">Real estate/mortgage CRM: lead qualification, loan &amp; appointment funnels, lead routing, pipelines, automated follow-ups, Zapier, QA.</div>
-        </div>
-        <div class="period">Jan – Mar 2026</div>
-      </li>
-      <li>
-        <div style="flex:1">
-          <div class="role">Virtual Assistant — DojoMax</div>
-          <div class="detail">GHL systems, Zapier.</div>
-        </div>
-        <div class="period">Nov 2023 – Feb 2025</div>
-      </li>
-      <li>
-        <div style="flex:1">
-          <div class="role">Virtual Assistant — White Label Ads Factory</div>
-          <div class="detail">GHL client workflows, Zapier.</div>
-        </div>
-        <div class="period">Mar – Jul 2023</div>
-      </li>
-      <li>
-        <div style="flex:1">
-          <div class="role">Virtual Assistant — RC Digital Consultancy</div>
-          <div class="detail">ClickFunnels + GHL funnels, Facebook Ads, Zapier.</div>
-        </div>
-        <div class="period">Feb 2020 – Feb 2023</div>
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Featured Project</h2>
-
-    <div class="card">
-      <h3>Scale to Wealth Webinar Funnel</h3>
-      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel · Funnel + Workflow/Automation</div>
-      <p>A full registration-to-reminder funnel for a coaching client's weekly "Scale to Wealth: Six Figures &amp; Beyond" webinar — a free live training for credentialed tax professionals (PTIN/EFIN holders). Dark/gold-branded registration and confirmation pages feed into an escalating multi-channel (email + SMS) reminder cadence counting down to and through the live event, then loops itself for the next week.</p>
-
-      <h4>Problem</h4>
-      <p>The client runs the same webinar every Thursday and needed a hands-off reminder cadence that confirms registration immediately, builds urgency as the event approaches, keeps the internal team aware of new leads and the imminent live start, and resets itself automatically for the next week without manual rebuilding.</p>
-
-      <h4>What I Built</h4>
-      <ul>
-        <li>Recurring weekly event trigger driving every "time before event" wait step</li>
-        <li>Registration confirmation email + internal team lead-alert notification</li>
-        <li>Escalating reminder cadence at 12h, ~6h, 2h, and 15min before start — email + SMS pairs, drip-throttled (100/min → 50/min)</li>
-        <li>Live-start and 10-minutes-late-join push messages</li>
-        <li>Go-to loop that re-arms the whole sequence for next week's occurrence</li>
-        <li>Dark/gold-branded registration landing page + "You're In, CEO." confirmation page</li>
-      </ul>
-
-      <h4>Tools &amp; Skills</h4>
-      <p>GHL workflow builder (multi-branch, sequential logic) · form-submission trigger with filter conditions · recurring event/date logic · tags for segmentation · drip-mode batch throttling · multi-channel email+SMS messaging · internal team notifications · go-to loop for recurring workflows · landing/confirmation page design.</p>
-
-      <div class="gallery">
-        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-landing-page.png" alt="Registration landing page"></div><figcaption>Registration landing page</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-confirmation-page.png" alt="Confirmation page"></div><figcaption>Confirmation page — "You're In, CEO."</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-1-top.png" alt="Workflow canvas top"></div><figcaption>Workflow canvas — top</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-2-mid.png" alt="Workflow canvas middle"></div><figcaption>Workflow canvas — middle</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-3-bottom.png" alt="Workflow canvas bottom"></div><figcaption>Workflow canvas — bottom</figcaption></figure>
+  <section id="services">
+    <h2>What I can do for you</h2>
+    <div class="services">
+      <div class="svc">
+        <span class="num">01/06</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6H14a4 4 0 0 1 4 4v5.5"/></svg></div>
+        <h3>GHL Automation</h3>
+        <p class="tagline">Workflows that follow up so your team doesn't have to.</p>
+        <span class="pill">RUNS 24/7</span>
+        <ul><li>Email + SMS sequences</li><li>Stop-on-payment reminders</li><li>Team and referrer alerts</li></ul>
+      </div>
+      <div class="svc">
+        <span class="num">02/06</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></div>
+        <h3>Funnels &amp; Pages</h3>
+        <p class="tagline">Lead magnet, webinar, application and sales funnels.</p>
+        <span class="pill">BUILT TO CONVERT</span>
+        <ul><li>Registration to replay</li><li>Order forms + payments</li><li>Custom HTML sections</li></ul>
+      </div>
+      <div class="svc">
+        <span class="num">03/06</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg></div>
+        <h3>CRM Setup</h3>
+        <p class="tagline">Pipelines, tags and fields your team can actually use.</p>
+        <span class="pill">EASY TO USE</span>
+        <ul><li>Pipelines + stages</li><li>Custom values / fields</li><li>Smart lists + migrations</li></ul>
+      </div>
+      <div class="svc">
+        <span class="num">04/06</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></div>
+        <h3>Custom Code</h3>
+        <p class="tagline">JavaScript steps and HTML forms where native GHL stops.</p>
+        <span class="pill">YOU OWN THE CODE</span>
+        <ul><li>Lookup tables in one step</li><li>Code + link generators</li><li>Webhook-posting forms</li></ul>
+      </div>
+      <div class="svc">
+        <span class="num">05/06</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="5" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M7.3 11 16.7 6M7.3 13l9.4 5"/></svg></div>
+        <h3>Integrations</h3>
+        <p class="tagline">Connect GHL with the rest of your stack.</p>
+        <span class="pill">CONNECTS EVERYTHING</span>
+        <ul><li>n8n, Zapier, webhooks</li><li>Notion, Google Workspace</li><li>Stripe, Authorize.net</li></ul>
+      </div>
+      <div class="svc">
+        <span class="num">06/06</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></div>
+        <h3>AI Automation</h3>
+        <p class="tagline">AI that answers, qualifies and drafts, with a human check where it matters.</p>
+        <span class="pill">WORKS WHILE YOU SLEEP</span>
+        <ul><li>AI chat agents in GHL</li><li>AI voice agents</li><li>n8n AI flows + drafts</li></ul>
       </div>
     </div>
   </section>
 
-  <section>
-    <h2>Other Projects</h2>
+  <section id="live">
+    <h2>Live Automation</h2>
+    <p class="eyebrow">How I build a lead-to-payment flow</p>
+    <p class="big">One link. The rest runs itself.</p>
+    <p class="section-lede">A simplified version of the referral and payment system featured below. A lead signs up through a referrer's link, gets credited to the right person by one Custom Code step, and keeps getting reminders only until they pay.</p>
+    <div class="platforms"><span>GoHighLevel CRM</span><span>Custom Code (JS)</span><span>Email &amp; SMS</span><span>Payments</span></div>
+
+    <div class="window">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span>workflow · lead-to-payment</div>
+      <div class="flow-scroll">
+        <svg viewBox="0 0 970 360" role="img" aria-labelledby="lf-title lf-desc">
+          <title id="lf-title">Lead-to-payment automation</title>
+          <desc id="lf-desc">Custom sales page posts to an inbound webhook, the contact is created and tagged, a Custom Code step finds the referrer, a welcome email goes out, then the workflow waits for payment. Paid leads get onboarding and the referrer and team are notified. Unpaid leads get day 1, 2 and 3 reminders, then the team gets a follow-up alert.</desc>
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#5d7196"/></marker>
+          </defs>
+
+          <g>
+            <path id="e1" class="f-edge" d="M170 57 H215" marker-end="url(#arr)"/>
+            <path id="e2" class="f-edge" d="M365 57 H410" marker-end="url(#arr)"/>
+            <path id="e3" class="f-edge" d="M560 57 H605" marker-end="url(#arr)"/>
+            <path id="e4" class="f-edge" d="M755 57 H800" marker-end="url(#arr)"/>
+            <path id="e5" class="f-edge" d="M875 84 V128 H95 V170" marker-end="url(#arr)"/>
+            <path id="e6" class="f-edge" d="M170 197 H215" marker-end="url(#arr)"/>
+            <path id="e7" class="f-edge" d="M365 197 H410" marker-end="url(#arr)"/>
+            <path id="e8" class="f-edge" d="M560 197 H605" marker-end="url(#arr)"/>
+            <path id="e9" class="f-edge dash" d="M95 224 V290" marker-end="url(#arr)"/>
+            <path id="e10" class="f-edge dash" d="M20 317 H8 V197 H20" marker-end="url(#arr)"/>
+            <path id="e11" class="f-edge dash" d="M170 317 H215" marker-end="url(#arr)"/>
+          </g>
+
+          <g class="f-pill" transform="translate(192 186)"><rect x="-17" y="-9" width="34" height="18" rx="9"/><text text-anchor="middle" y="3.5">paid</text></g>
+          <g class="f-pill" transform="translate(95 256)"><rect x="-44" y="-9" width="88" height="18" rx="9"/><text text-anchor="middle" y="3.5">not paid yet</text></g>
+          <g class="f-pill" transform="translate(192 330)"><rect x="-26" y="-9" width="52" height="18" rx="9"/><text text-anchor="middle" y="3.5">day 3</text></g>
+
+          <g class="f-node trigger" transform="translate(20 30)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Sales page signup</text><text class="f-s" x="14" y="41">referrer link + UTM</text></g>
+          <g class="f-node trigger" transform="translate(215 30)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Inbound Webhook</text><text class="f-s" x="14" y="41">JSON payload</text></g>
+          <g class="f-node" transform="translate(410 30)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Create Contact</text><text class="f-s" x="14" y="41">fields + campaign tag</text></g>
+          <g class="f-node code" transform="translate(605 30)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Find Referrer</text><text class="f-s" x="14" y="41">Custom Code lookup</text></g>
+          <g class="f-node" transform="translate(800 30)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Welcome email</text><text class="f-s" x="14" y="41">sent once, instantly</text></g>
+
+          <g class="f-node decision" transform="translate(20 170)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Wait until paid?</text><text class="f-s" x="14" y="41">tag check, timed</text></g>
+          <g class="f-node good" transform="translate(215 170)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Payment received</text><text class="f-s" x="14" y="41">ends all reminders</text></g>
+          <g class="f-node good" transform="translate(410 170)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Onboarding email</text><text class="f-s" x="14" y="41">schedule + community</text></g>
+          <g class="f-node good" transform="translate(605 170)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Notify referrer</text><text class="f-s" x="14" y="41">+ internal team</text></g>
+
+          <g class="f-node muted" transform="translate(20 290)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Reminder</text><text class="f-s" x="14" y="41">email + SMS, day 1-3</text></g>
+          <g class="f-node muted" transform="translate(215 290)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Team follow-up</text><text class="f-s" x="14" y="41">still unpaid alert</text></g>
+
+          <g aria-hidden="true">
+            <circle class="pulse" r="4"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#e1"/></animateMotion></circle>
+            <circle class="pulse" r="4"><animateMotion dur="1s" repeatCount="indefinite" begin="-0.7s"><mpath href="#e2"/></animateMotion></circle>
+            <circle class="pulse" r="4"><animateMotion dur="1s" repeatCount="indefinite" begin="-0.4s"><mpath href="#e3"/></animateMotion></circle>
+            <circle class="pulse" r="4"><animateMotion dur="1s" repeatCount="indefinite" begin="-0.1s"><mpath href="#e4"/></animateMotion></circle>
+            <circle class="pulse" r="4"><animateMotion dur="3.2s" repeatCount="indefinite" begin="-1.2s"><mpath href="#e5"/></animateMotion></circle>
+            <circle class="pulse" r="4"><animateMotion dur="1s" repeatCount="indefinite" begin="-0.8s"><mpath href="#e6"/></animateMotion></circle>
+            <circle class="pulse" r="4"><animateMotion dur="1s" repeatCount="indefinite" begin="-0.5s"><mpath href="#e7"/></animateMotion></circle>
+            <circle class="pulse" r="4"><animateMotion dur="1s" repeatCount="indefinite" begin="-0.2s"><mpath href="#e8"/></animateMotion></circle>
+            <circle class="pulse dim" r="3.5"><animateMotion dur="1.6s" repeatCount="indefinite" begin="-1.2s"><mpath href="#e9"/></animateMotion></circle>
+            <circle class="pulse dim" r="3.5"><animateMotion dur="2.4s" repeatCount="indefinite" begin="-1s"><mpath href="#e10"/></animateMotion></circle>
+            <circle class="pulse dim" r="3.5"><animateMotion dur="1.2s" repeatCount="indefinite" begin="-1.4s"><mpath href="#e11"/></animateMotion></circle>
+          </g>
+        </svg>
+      </div>
+      <div class="legend"><span><b></b>main path</span><span><b class="dash"></b>conditional / loops back</span><span style="color:var(--accent-2)">■ Custom Code step</span><span style="color:var(--good)">■ paid path</span></div>
+    </div>
+  </section>
+
+  <section id="command-center">
+    <h2>My AI Command Center</h2>
+    <div class="cc">
+      <div class="cc-text">
+        <p class="eyebrow">How I run my work</p>
+        <p class="big" style="font-size:1.3rem">A team of AI agents, with me in charge. <span style="font:600 .7rem var(--mono);color:var(--good);vertical-align:3px">● LIVE DEMO</span></p>
+        <p class="section-lede" style="margin:0">I built my own command center to manage client work. Each specialist agent (GHL, funnels, automation, research, copy, design) gets a clear brief. I review every result before anything goes live, so delivery is faster without losing quality.</p>
+      </div>
+      <div class="window cc-box" aria-label="Live preview of my AI command center (view only)">
+        <div class="bar"><span class="dots"><i></i><i></i><i></i></span>command-center · live demo · view only</div>
+        <div class="cc-stage"><iframe src="diagrams/command-center.html" title="AI command center live demo" tabindex="-1" loading="lazy" scrolling="no"></iframe></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="diagrams">
+    <h2>System Diagrams</h2>
+    <p class="section-lede">Before building, I map the whole system so the client can see and approve the logic. These are interactive. Scroll sideways inside each diagram, or open it full screen.</p>
+
+    <div class="window diagram">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span>ghl-lead-community-flow.html<a href="diagrams/ghl-lead-community-flow.html" target="_blank" rel="noopener">open full screen ↗</a></div>
+      <iframe src="diagrams/ghl-lead-community-flow.html" title="GHL lead and community flow diagram" loading="lazy"></iframe>
+    </div>
+    <p class="diagram-note"><strong>Lead and community flow in GHL.</strong> Website forms into an Inbound Webhook, dynamic tags for interest, consent and lead source, a consent-safe import of an existing member list, and paid events sold, confirmed and reminded inside GHL with Stripe. Solid lines are the confirmed design; dashed lines still need a client decision.</p>
+
+    <div class="window diagram">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span>lead-to-revenue-concept.html<a href="diagrams/lead-to-revenue-concept.html" target="_blank" rel="noopener">open full screen ↗</a></div>
+      <iframe src="diagrams/lead-to-revenue-concept.html" title="Lead-to-revenue workflow concept diagram" loading="lazy"></iframe>
+    </div>
+    <p class="diagram-note"><strong>Lead-to-revenue workflow concept.</strong> A proposal for a consulting business: website or LinkedIn inquiry, n8n intake with duplicate and consent checks, Notion contact and opportunity, booking, discovery call, proposal, and won / maybe later / lost outcomes, plus a separate Xero to Google Sheets revenue-reporting lane. Every unconfirmed assumption is labelled "to validate with client".</p>
+  </section>
+
+  <section id="featured">
+    <h2>Featured Work</h2>
+
+    <div class="card">
+      <h3>Referral Attribution &amp; Payment Recovery System <span class="badge new">REBUILT</span></h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel · Custom Code + Multi-Workflow Automation</div>
+      <p>A referral system for a low-ticket entry offer promoted by about 50 affiliates, each with a personal link. It credits every lead to the right referrer, sends them straight to checkout, follows up with people who don't pay, and notifies the referrer and the team only when a sale actually happens.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="v">~200 → ~25</div><div class="k">workflow steps after the rebuild</div></div>
+        <div class="stat"><div class="v">50 → 1</div><div class="k">hardcoded branches replaced by one Custom Code lookup</div></div>
+        <div class="stat"><div class="v">1 line</div><div class="k">to add a new referrer (was a new branch)</div></div>
+      </div>
+
+      <h4>Problem</h4>
+      <ul>
+        <li>Moving to a custom-coded sales page broke the native form trigger and the hidden UTM field that powered attribution.</li>
+        <li>Every lead got the same "please pay" email, including people who had already paid.</li>
+        <li>Referrers and the team were notified on sign-up, not on payment.</li>
+        <li>Unknown referral codes fell into a dead end with no follow-up.</li>
+      </ul>
+
+      <h4>What I Built</h4>
+      <ul>
+        <li><strong>Custom page → Inbound Webhook:</strong> page JS reads the referral code (kept in sessionStorage), posts the lead to GHL, then redirects to a prefilled payment link.</li>
+        <li><strong>One Custom Code lookup step</strong> replaces about 50 If/Else branches: case-insensitive, outputs the referrer's name, email and phone into native Update Contact Field actions.</li>
+        <li><strong>Stop-on-payment reminders:</strong> chained "Wait until paid tag" steps send email + SMS at 15 min and day 1, 2 and 3, then alert the team. Any payment ends the sequence immediately.</li>
+        <li><strong>Separate Payment Received workflow</strong> so late payments still trigger onboarding and the referrer and team alerts.</li>
+        <li><strong>Referrer onboarding workflow:</strong> a Custom Code generator creates each new referrer's unique code, link and paste-ready lookup line, then posts it to the team's Telegram after approval.</li>
+      </ul>
+
+      <h4>Tools &amp; Skills</h4>
+      <p>GHL workflows (Inbound Webhook, Payment Received, Custom Code, Wait until condition, If/Else, internal notifications) · JavaScript (fetch, URLSearchParams, sessionStorage) · UTM / affiliate attribution · webhook payload mapping · Authorize.net · Telegram webhooks.</p>
+
+      <div class="gallery">
+        <figure class="before"><div class="screen"><img loading="lazy" src="images/ptin-referral-v1-before.webp" alt="Original workflow with about 50 hardcoded referrer branches"></div><figcaption>v1: ~50 hardcoded branches</figcaption></figure>
+        <figure class="after"><div class="screen"><img loading="lazy" src="images/ptin-referral-v2-after.png" alt="Rebuilt single-column workflow"></div><figcaption>v2: one column, ~25 steps</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-find-referrer-mapping.png" alt="Custom Code outputs mapped to contact fields"></div><figcaption>Custom Code outputs → contact fields</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-paid-trigger-v2.png" alt="Payment Received workflow"></div><figcaption>Payment Received workflow</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-onboarding-v2.png" alt="Referrer onboarding workflow"></div><figcaption>Referrer onboarding + code generator</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-1.png" alt="Referral funnel screenshot 1"></div><figcaption>Referral funnel 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ptin-2.png" alt="Referral funnel screenshot 2"></div><figcaption>Referral funnel 2</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Partner Sign-Up Funnel with Custom Pricing Form <span class="badge new">NEW</span></h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel · Custom HTML Form + 2 Workflows</div>
+      <p>A self-serve recruitment funnel for a reseller partner program. Partner companies sign up, set their own client pricing, and pay a one-time onboarding fee to activate the partnership. Built and tested end to end with a real payment.</p>
+
+      <h4>Problem</h4>
+      <p>Native GHL forms can't add pricing tiers on the fly or calculate earnings live, and the client needed unpaid sign-ups nudged automatically without the team getting alerts for people who never pay.</p>
+
+      <h4>What I Built</h4>
+      <ul>
+        <li>A self-contained HTML/CSS/JS form in a GHL Custom HTML element: 2 to 5 dynamic pricing tiers with a live earnings calculation per tier, posting to an Inbound Webhook.</li>
+        <li><strong>Capture workflow:</strong> create/update contact, pending tag, opportunity in a partner pipeline, instant welcome email + SMS with the payment link, then a self-stopping 3-day reminder chain.</li>
+        <li><strong>Payment workflow:</strong> payment received (filtered to the product) swaps tags, moves the opportunity to Active Partner, and alerts the team only on confirmed payment.</li>
+      </ul>
+
+      <h4>Tools &amp; Skills</h4>
+      <p>GHL Custom HTML element · fetch() to Inbound Webhook · "Wait until condition met" nurture logic · Authorize.net · pipelines and stage tracking · tag segmentation.</p>
+
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/team-signup-live-form.webp" alt="Live partner sign-up form"></div><figcaption>Live form (hover to scroll)</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/team-signup-capture-workflow.webp" alt="Capture workflow canvas"></div><figcaption>Capture workflow</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/team-signup-paid-workflow.webp" alt="Payment workflow canvas"></div><figcaption>Payment workflow</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Scale to Wealth Webinar Funnel</h3>
+      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel · Funnel + Workflow/Automation</div>
+      <p>A full registration-to-reminder funnel for a coaching client's weekly "Scale to Wealth: Six Figures &amp; Beyond" webinar, a free live training for credentialed tax professionals (PTIN/EFIN holders). Dark/gold-branded registration and confirmation pages feed an escalating email + SMS reminder cadence through the live event, then the workflow loops itself for the next week.</p>
+
+      <h4>Problem</h4>
+      <p>The client runs the same webinar every Thursday and needed a hands-off reminder cadence that confirms registration immediately, builds urgency as the event approaches, keeps the team aware of new leads and the live start, and resets itself for the next week without manual rebuilding.</p>
+
+      <h4>What I Built</h4>
+      <ul>
+        <li>Recurring weekly event trigger driving every "time before event" wait step</li>
+        <li>Registration confirmation email + internal team lead alert</li>
+        <li>Escalating reminders at 12h, ~6h, 2h, and 15min before start, as email + SMS pairs, drip-throttled (100/min → 50/min)</li>
+        <li>Live-start and 10-minutes-late join messages</li>
+        <li>Go-to loop that re-arms the whole sequence for next week</li>
+        <li>Dark/gold-branded registration page + "You're In, CEO." confirmation page</li>
+      </ul>
+
+      <h4>Tools &amp; Skills</h4>
+      <p>GHL workflow builder (multi-branch, sequential logic) · form-submission trigger with filters · recurring event/date logic · tags · drip-mode throttling · email + SMS · internal notifications · go-to loops · landing/confirmation page design.</p>
+
+      <div class="gallery">
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-landing-page.png" alt="Registration landing page"></div><figcaption>Registration landing page</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-confirmation-page.png" alt="Confirmation page"></div><figcaption>Confirmation page</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-1-top.png" alt="Workflow canvas top"></div><figcaption>Workflow canvas: top</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-2-mid.png" alt="Workflow canvas middle"></div><figcaption>Workflow canvas: middle</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/mwg-webinar-workflow-canvas-3-bottom.png" alt="Workflow canvas bottom"></div><figcaption>Workflow canvas: bottom</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>More Projects</h2>
+
+    <div class="card">
+      <h3>7-Page Marketing Website on GHL <span class="badge wip">LAUNCHING</span></h3>
+      <div class="meta">Australian Retail Media Consultancy · GoHighLevel Websites · HTML/CSS/JS</div>
+      <p>Rebuilt a founder-led consultancy's single JavaScript-rendered page into a 7-page marketing site hosted on GHL. Each offer (consulting, courses, community) has its own page, and every enquiry lands in the CRM tagged by interest, consent and lead source.</p>
+      <h4>What I Built</h4>
+      <ul>
+        <li>Research on 8 comparable sites turned into 12 recommendations before design started</li>
+        <li>Per-page SEO titles, structured data (JSON-LD), sitemap and share images</li>
+        <li>UTM first-touch capture (kept 90 days, sent with every form), consent-gated analytics, honeypot + time-check spam protection</li>
+        <li>A Python build script that outputs both a static preview and paste-ready GHL Custom Code blocks; fixed GHL base CSS overriding the brand</li>
+        <li>Accessible forms, subtle motion with reduced-motion support, tested from 320 to 2560px wide</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Meeting Notes → Notion → Follow-up Drafts <span class="badge wip">IN TESTING</span></h3>
+      <div class="meta">Australian Retail Media Consultancy · n8n · Gmail · Google Drive · Notion · Gemini</div>
+      <p>Two n8n workflows that collect a founder's Google Meet notes automatically, file them in a shared Drive folder, log each meeting in a Notion database, and draft a follow-up email in Gmail in her voice for review. Drafts are never sent automatically.</p>
+      <h4>What I Built</h4>
+      <ul>
+        <li><strong>Capture:</strong> Gmail trigger on the notes sender plus a scheduled backup, finished-notes filter, de-duplication with an n8n data table, copy into the shared folder</li>
+        <li><strong>Process:</strong> Drive trigger → Notion meeting page → AI reads the doc and returns JSON (attendees, summary, email subject and body) → Code node parses it → Gmail draft → Notion updated with the draft link</li>
+        <li>Fixed shared-folder permissions and a hidden-space Notion column, and cut execution costs by moving from a 15-minute schedule to instant triggers</li>
+      </ul>
+    </div>
 
     <div class="card">
       <h3>Neurodivergent Career Webinar Funnel</h3>
       <div class="meta">Career Coaching Client · GoHighLevel · Funnel + Workflow/Automation</div>
-      <p>A full registration-to-replay webinar funnel for a career coach's "Taking Action with Finding a Job for Neurodivergent People" — a free career-coaching webinar for neurodivergent job seekers. Covers the landing page, thank-you page, booking/calendar integration, multi-channel reminders, a post-event replay page with next-step CTAs, and show/no-show branching logic.</p>
+      <p>A full registration-to-replay webinar funnel for a career coach's free webinar for neurodivergent job seekers. Covers the landing page, thank-you page, booking/calendar integration, multi-channel reminders, a post-event replay page with next-step CTAs, and show/no-show branching.</p>
       <h4>What I Built</h4>
       <ul>
         <li>Landing page with event details, learning outcomes, embedded video, registration CTA</li>
-        <li>Tag-triggered drip email invite sequence (5-day, 3-day, 1-day, 16-hr, final reminder)</li>
-        <li>Form-submission → tag → opportunity → calendar booking workflow</li>
-        <li>Confirmation + 1-day/1-hour reminder workflow across email and SMS</li>
-        <li>Post-event replay landing page with three next-step CTAs</li>
-        <li>Show/no-show branching: distinct follow-up sequences by attendance, plus link-click tagging for segmentation</li>
+        <li>Tag-triggered drip invite sequence (5-day, 3-day, 1-day, 16-hr, final reminder)</li>
+        <li>Form submission → tag → opportunity → calendar booking workflow</li>
+        <li>Confirmation + 1-day/1-hour reminders across email and SMS</li>
+        <li>Post-event replay page with three next-step CTAs</li>
+        <li>Show/no-show branching with separate follow-ups, plus link-click tagging</li>
       </ul>
-      <p style="font-size:0.85rem;color:var(--muted)">Older work (event dated Oct 2025); submitted as one combined screenshot PDF.</p>
       <a class="pdf-link" href="documents/career-webinar-funnel-screenshots.pdf">View screenshot PDF →</a>
-      <!-- NOTE: source filename above still carries the client's name — harmless since it's a local link, but rename the source file/folder if this ever leaves the vault. -->
     </div>
 
     <div class="card">
       <h3>Relationship Reset Funnel</h3>
       <div class="meta">Relationship Coaching Client · GoHighLevel · Funnel (lead magnet)</div>
-      <p>Lead-magnet funnel for a couples-relationship workbook offer ("How to Restart Your Relationship").</p>
+      <p>Lead-magnet funnel for a couples-relationship workbook. A webhook creates or updates the contact, tags it, delivers the PDF by email, and sends the team an email + SMS alert.</p>
       <div class="gallery">
-        <figure><div class="screen"><img loading="lazy" src="images/healing-1.png" alt="Healing funnel screenshot 1"></div><figcaption>Healing — 1</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/healing-2.png" alt="Healing funnel screenshot 2"></div><figcaption>Healing — 2</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/healing-workflow.png" alt="Healing workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/healing-1.png" alt="Relationship funnel page 1"></div><figcaption>Funnel page 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/healing-2.png" alt="Relationship funnel page 2"></div><figcaption>Funnel page 2</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/healing-workflow.png" alt="Lead magnet workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
       </div>
     </div>
 
     <div class="card">
       <h3>ERO Help Desk Workflow</h3>
       <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
-      <p>Help desk workflow for the tax-professional (ERO) audience.</p>
+      <p>Help desk funnel and workflow for the tax-professional (ERO) audience.</p>
       <div class="gallery">
-        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-1.png" alt="ERO Help Desk screenshot 1"></div><figcaption>ERO Help Desk — 1</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-2.png" alt="ERO Help Desk screenshot 2"></div><figcaption>ERO Help Desk — 2</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-3.png" alt="ERO Help Desk screenshot 3"></div><figcaption>ERO Help Desk — 3</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-1.png" alt="ERO Help Desk screenshot 1"></div><figcaption>ERO Help Desk 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-2.png" alt="ERO Help Desk screenshot 2"></div><figcaption>ERO Help Desk 2</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-3.png" alt="ERO Help Desk screenshot 3"></div><figcaption>ERO Help Desk 3</figcaption></figure>
         <figure><div class="screen"><img loading="lazy" src="images/ero-help-desk-workflow.png" alt="ERO Help Desk workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
       </div>
     </div>
@@ -268,68 +609,191 @@
     <div class="card">
       <h3>DW Tax Solution Workflow</h3>
       <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
-      <p>Workflow build for a tax &amp; financial coaching client.</p>
+      <p>Funnel and workflow build for a tax-solutions offer.</p>
       <div class="gallery">
-        <figure><div class="screen"><img loading="lazy" src="images/dw-tax-solution.png" alt="DW Tax Solution overview"></div><figcaption>Overview</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/dw-workflow.png" alt="DW workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/dw-tax-solution.png" alt="Tax solution page"></div><figcaption>Funnel page</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/dw-workflow.png" alt="Tax solution workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
       </div>
     </div>
 
     <div class="card">
-      <h3>PTIN Referral Workflow</h3>
+      <h3>Credit Repair Funnels</h3>
       <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
-      <p>Referral workflow for the same tax-professional (PTIN/EFIN) audience as the Scale to Wealth funnel above, logged as a distinct build.</p>
+      <p>Two related credit-repair offer funnels with multiple pricing tiers and order pages.</p>
       <div class="gallery">
-        <figure><div class="screen"><img loading="lazy" src="images/ptin-1.png" alt="PTIN referral screenshot 1"></div><figcaption>PTIN — 1</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/ptin-2.png" alt="PTIN referral screenshot 2"></div><figcaption>PTIN — 2</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/ptin-referral-workflow-canvas.png" alt="PTIN referral workflow canvas"></div><figcaption>Workflow canvas</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-repair.png" alt="Bad credit repair funnel"></div><figcaption>Bad Credit Repair</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-33-1-month.png" alt="1-month tier"></div><figcaption>1-month tier</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-67-3-months.png" alt="3-month tier"></div><figcaption>3-month tier</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-1.png" alt="Credit Repair 1"></div><figcaption>Credit Repair 1</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-2.png" alt="Credit Repair 2"></div><figcaption>Credit Repair 2</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-3.png" alt="Credit Repair 3"></div><figcaption>Credit Repair 3</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-4.png" alt="Credit Repair 4"></div><figcaption>Credit Repair 4</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-49-3-months.png" alt="3-month plan"></div><figcaption>3-month plan</figcaption></figure>
+        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-99-6-months.png" alt="6-month plan"></div><figcaption>6-month plan</figcaption></figure>
       </div>
     </div>
+  </section>
 
-    <div class="card">
-      <h3>Bad Credit Repair Funnel</h3>
-      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
-      <p>Credit-repair offer funnel with $33/1-month and $67/3-month pricing tiers visible in the screenshots.</p>
-      <div class="gallery">
-        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-repair.png" alt="Bad Credit Repair overview"></div><figcaption>Overview</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-33-1-month.png" alt="Bad Credit $33 for 1 Month"></div><figcaption>$33 / 1 month</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/bad-credit-67-3-months.png" alt="Bad Credit $67 for 3 Months"></div><figcaption>$67 / 3 months</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Credit Repair Funnel</h3>
-      <div class="meta">Tax &amp; Financial Coaching Client · GoHighLevel</div>
-      <p>Credit-repair offer funnel with $49/3-month and $99/6-month pricing tiers visible in the screenshots — a related build alongside Bad Credit Repair above.</p>
-      <div class="gallery">
-        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-1.png" alt="Credit Repair screenshot 1"></div><figcaption>Credit Repair — 1</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-2.png" alt="Credit Repair screenshot 2"></div><figcaption>Credit Repair — 2</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-3.png" alt="Credit Repair screenshot 3"></div><figcaption>Credit Repair — 3</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-4.png" alt="Credit Repair screenshot 4"></div><figcaption>Credit Repair — 4</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-49-3-months.png" alt="Credit Repair $49 3 Months"></div><figcaption>$49 / 3 months</figcaption></figure>
-        <figure><div class="screen"><img loading="lazy" src="images/credit-repair-99-6-months.png" alt="Credit Repair $99 6 Months"></div><figcaption>$99 / 6 months</figcaption></figure>
-      </div>
-    </div>
-
+  <section id="history">
+    <h2>Work History</h2>
+    <ul class="history">
+      <li>
+        <div style="flex:1">
+          <div class="role">GoHighLevel Specialist / Workflow Automation VA · Azulio.ai</div>
+          <div class="detail">Real estate/mortgage CRM: lead qualification, loan &amp; appointment funnels, lead routing, pipelines, automated follow-ups, Zapier, QA.</div>
+        </div>
+        <div class="period">Jan – Mar 2026</div>
+      </li>
+      <li>
+        <div style="flex:1">
+          <div class="role">Virtual Assistant / Digital Marketing Assistant · Outsourced Doers</div>
+          <div class="detail">Trained as a digital marketing assistant with a focus on AI: AI conversation flows in GHL and AI voice agents. Built a full GHL webinar funnel for a career-coaching client.</div>
+        </div>
+        <div class="period">Aug 2025 – Jan 2026</div>
+      </li>
+      <li>
+        <div style="flex:1">
+          <div class="role">Virtual Assistant · DojoMax</div>
+          <div class="detail">GHL systems, Zapier.</div>
+        </div>
+        <div class="period">Nov 2023 – Feb 2025</div>
+      </li>
+      <li>
+        <div style="flex:1">
+          <div class="role">Virtual Assistant · White Label Ads Factory</div>
+          <div class="detail">GHL client workflows, Zapier.</div>
+        </div>
+        <div class="period">Mar – Jul 2023</div>
+      </li>
+      <li>
+        <div style="flex:1">
+          <div class="role">Virtual Assistant · RC Digital Consultancy</div>
+          <div class="detail">ClickFunnels + GHL funnels, Facebook Ads, Zapier.</div>
+        </div>
+        <div class="period">Feb 2020 – Feb 2023</div>
+      </li>
+    </ul>
   </section>
 
   <footer>
-    Henry Jake Balbiran · updated 2026-09-09
+    Henry Jake Balbiran · <a href="https://wa.me/639185379969" style="color:var(--accent)">WhatsApp</a> · updated 2026-10-03
   </footer>
 
 </div>
 
-<div id="lightbox"><img id="lightbox-img" src=""></div>
+<div id="lightbox" role="dialog" aria-label="Screenshot preview"><div class="lb-bg"></div><img id="lightbox-img" src="" alt=""></div>
 <script>
   const lb = document.getElementById('lightbox');
   const lbImg = document.getElementById('lightbox-img');
-  document.querySelectorAll('.gallery img').forEach(img => {
-    img.addEventListener('click', () => {
-      lbImg.src = img.src;
-      lb.classList.add('open');
+  const lbBg = lb.querySelector('.lb-bg');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const canAnimate = 'animate' in Element.prototype;
+  const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
+  let lbFrom = null, lbAnim = null;
+
+  // FLIP: the transform that puts the full-size image exactly over the thumbnail's visible box
+  function thumbTransform(from) {
+    const a = from.getBoundingClientRect(), b = lbImg.getBoundingClientRect();
+    const sc = Math.min(a.width / b.width, a.height / b.height);
+    const dx = (a.left + a.width / 2) - (b.left + b.width / 2), dy = (a.top + a.height / 2) - (b.top + b.height / 2);
+    return `translate(${dx}px, ${dy}px) scale(${sc})`;
+  }
+  async function openLb(img) {
+    lbFrom = img.closest('.screen') || img;
+    lbImg.src = img.src; lbImg.alt = img.alt;
+    lb.classList.add('open');
+    if (!canAnimate) return;
+    try { await lbImg.decode(); } catch (e) {}
+    if (lbAnim) lbAnim.cancel();
+    lbBg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease-out' });
+    lbAnim = reduce.matches
+      ? lbImg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease-out' })
+      : lbImg.animate([{ transform: thumbTransform(lbFrom), opacity: .6 }, { transform: 'none', opacity: 1 }], { duration: 320, easing: EASE_OUT });
+  }
+  function closeLb() {
+    if (!lb.classList.contains('open')) return;
+    if (!canAnimate || !lbFrom) { lb.classList.remove('open'); return; }
+    if (lbAnim) lbAnim.cancel();
+    lbBg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-out', fill: 'forwards' });
+    lbAnim = reduce.matches
+      ? lbImg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out', fill: 'forwards' })
+      : lbImg.animate([{ transform: 'none', opacity: 1 }, { transform: thumbTransform(lbFrom), opacity: .4 }], { duration: 240, easing: EASE_OUT, fill: 'forwards' });
+    lbAnim.onfinish = () => { lb.classList.remove('open'); lb.getAnimations({ subtree: true }).forEach(a => a.cancel()); lbAnim = null; };
+  }
+  document.querySelectorAll('.gallery img').forEach(img => img.addEventListener('click', () => openLb(img)));
+  lb.addEventListener('click', closeLb);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+  // 2. scroll reveal: blocks rise in once; items inside a group are staggered 60ms apart
+  if ('IntersectionObserver' in window) {
+    const groups = ['.services', '.gallery', '.history', '.stats'];
+    document.querySelectorAll('section > h2, .section-lede, .eyebrow, .big, .platforms, .marquee, .svc, .window, .diagram-note, .card, .gallery figure, .history li, .stat, footer').forEach(el => {
+      const g = groups.find(q => el.parentElement && el.parentElement.matches(q));
+      if (g) el.style.setProperty('--d', Math.min([...el.parentElement.children].indexOf(el), 6) * 60 + 'ms');
+      el.classList.add('rv');
     });
-  });
-  lb.addEventListener('click', () => lb.classList.remove('open'));
+    const io = new IntersectionObserver(entries => entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target; io.unobserve(el); el.classList.add('in');
+      // hand transform back to the element's own hover/press transitions once revealed
+      setTimeout(() => { el.classList.remove('rv', 'in'); el.style.removeProperty('--d'); }, 900);
+    }), { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+    document.querySelectorAll('.rv').forEach(el => io.observe(el));
+  }
+
+  // 3. count-up: every number inside a stat counts up once it's on screen
+  if ('IntersectionObserver' in window && !reduce.matches) {
+    const easeOut = t => 1 - Math.pow(1 - t, 3);
+    const cio = new IntersectionObserver(entries => entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target; cio.unobserve(el);
+      const tpl = el.textContent, nums = tpl.match(/\d+/g).map(Number), t0 = performance.now(), dur = 900;
+      const frame = now => {
+        const k = easeOut(Math.min(1, (now - t0) / dur)); let n = 0;
+        el.textContent = tpl.replace(/\d+/g, () => Math.round(nums[n++] * k));
+        if (k < 1) requestAnimationFrame(frame); else el.textContent = tpl;
+      };
+      requestAnimationFrame(frame);
+    }), { threshold: .6 });
+    document.querySelectorAll('.stat .v').forEach(el => { if (/\d/.test(el.textContent)) cio.observe(el); });
+  }
+
+  // 6. nav: highlight the section being read and slide the indicator under its link
+  const nav = document.querySelector('nav.jump');
+  if (nav) {
+    const ind = document.createElement('span'); ind.className = 'jump-ind'; nav.appendChild(ind);
+    const links = [...nav.querySelectorAll('a')];
+    const secs = links.map(a => document.querySelector(a.getAttribute('href')));
+    let current = null, ticking = false;
+    const place = a => {
+      ind.style.setProperty('--x', a.offsetLeft + 'px');
+      ind.style.setProperty('--w', a.offsetWidth / 100);
+      ind.classList.add('on');
+    };
+    const update = () => {
+      ticking = false;
+      const line = innerHeight * .35;
+      let idx = -1;
+      secs.forEach((sec, i) => { if (sec && sec.getBoundingClientRect().top <= line) idx = i; });
+      const a = idx >= 0 ? links[idx] : null;
+      if (a === current) return;
+      if (current) current.classList.remove('active');
+      current = a;
+      if (!a) { ind.classList.remove('on'); return; }
+      a.classList.add('active'); place(a);
+      if (nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: a.offsetLeft - 24, behavior: reduce.matches ? 'auto' : 'smooth' });
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', () => current && place(current));
+    update();
+  }
+  // scale the 1440px-wide command center demo to fit its box
+  const ccStage = document.querySelector('.cc-stage');
+  if (ccStage) {
+    const fit = () => ccStage.style.setProperty('--cc-s', ccStage.clientWidth / 1440);
+    fit();
+    if ('ResizeObserver' in window) new ResizeObserver(fit).observe(ccStage); else addEventListener('resize', fit);
+  }
 </script>
 </body>
 </html>
