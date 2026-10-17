@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clearwell Dental · Appointment request demo</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Portfolio demo by Henry Jake Balbiran: an appointment request page for a fictional dental clinic. Requests stay in your browser; nothing is booked.">
+<style>
+  :root{
+    --ivory:#fbfaf6; --white:#ffffff; --teal:#0f5c5c; --teal-d:#0a4444; --teal-soft:#e6f1ef; --mint:#d7e6e3;
+    --ink:#123a3a; --ink-2:#4b6463; --err:#a3261b;
+    --ease:cubic-bezier(.32,.72,0,1);
+    --sans:"Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--ivory); color:var(--ink); font:17px/1.6 var(--sans)}
+  a{color:var(--teal)}
+  :focus-visible{outline:3px solid #2a9d8f; outline-offset:3px; border-radius:8px}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 16px}
+  @media (min-width:768px){ .wrap{padding:0 32px} }
+  .notice{margin:0; background:var(--teal-soft); color:var(--ink); border-bottom:1px solid var(--mint); font-size:.88rem; padding:8px 16px; text-align:center}
+  .notice a{font-weight:700; margin-left:8px; display:inline-flex; align-items:center; min-height:44px}
+  header{background:var(--white); border-bottom:1px solid var(--mint)}
+  header .wrap{display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:68px}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.1rem; color:var(--teal)}
+  .logo svg{width:30px; height:30px}
+  .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 24px; border-radius:999px; border:2px solid var(--teal); background:var(--teal); color:#fff; font:600 1rem var(--sans); text-decoration:none; cursor:pointer; transition:background-color .15s ease, transform .12s var(--ease)}
+  .btn:hover{background:var(--teal-d); border-color:var(--teal-d)}
+  .btn:active{transform:scale(.97)}
+  .btn.ghost{background:transparent; color:var(--teal)}
+  .btn.ghost:hover{background:var(--teal-soft)}
+  h1{font-size:clamp(2.1rem,4.6vw,3.3rem); line-height:1.1; letter-spacing:-.02em; margin:0 0 16px; font-weight:700}
+  h2{font-size:clamp(1.5rem,3vw,2.1rem); line-height:1.2; letter-spacing:-.015em; margin:0 0 12px; font-weight:700}
+  h3{margin:0 0 6px; font-size:1.08rem}
+  .lede{font-size:1.1rem; color:var(--ink-2); max-width:54ch; margin:0 0 24px}
+  section{padding:64px 0}
+  .hero{padding:56px 0}
+  .hero-grid{display:grid; gap:40px; align-items:start}
+  @media (min-width:960px){ .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,460px)} }
+  .pills{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 24px; padding:0; list-style:none}
+  .pills li{background:var(--white); border:1px solid var(--mint); border-radius:999px; padding:6px 14px; font-size:.9rem; color:var(--ink-2)}
+  .smile{width:100%; max-width:360px; height:auto; display:block; margin-top:8px}
+  .card{background:var(--white); border:1px solid var(--mint); border-radius:24px; padding:26px; box-shadow:0 24px 50px -30px rgba(15,92,92,.35)}
+  .card h2{font-size:1.4rem}
+  .card .hint{margin:0 0 18px; color:var(--ink-2); font-size:.92rem}
+  .privacy{display:flex; gap:10px; align-items:flex-start; background:#fff8e6; border:1px solid #f1dfa9; border-radius:12px; padding:10px 12px; font-size:.88rem; margin:0 0 18px; color:#5b4a14}
+  .privacy svg{width:20px; height:20px; flex-shrink:0; margin-top:1px}
+  fieldset{border:0; margin:0 0 18px; padding:0; min-width:0}
+  legend,label.lbl{display:block; font-weight:600; font-size:.95rem; margin:0 0 8px; padding:0}
+  .choice{display:flex; flex-wrap:wrap; gap:8px}
+  .choice label{position:relative; display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border:1.5px solid var(--mint); border-radius:999px; background:var(--white); cursor:pointer; font-weight:600; font-size:.94rem; color:var(--ink); transition:background-color .15s ease, border-color .15s ease, color .15s ease}
+  .choice input{position:absolute; opacity:0; width:1px; height:1px}
+  .choice label:has(input:checked){background:var(--teal); border-color:var(--teal); color:#fff}
+  .choice label:has(input:focus-visible){outline:3px solid #2a9d8f; outline-offset:2px}
+  .choice.visit{display:grid; grid-template-columns:minmax(0,1fr)}
+  .choice.visit label{border-radius:14px; min-height:52px; justify-content:space-between}
+  .choice.visit small{font-weight:400; color:inherit; opacity:.8}
+  .err{display:block; margin:6px 0 0; color:var(--err); font-size:.88rem; font-weight:600}
+  .err:empty{display:none}
+  .field{margin:0 0 16px}
+  .field input{width:100%; min-height:52px; padding:12px 14px; border:1.5px solid #b9cfcb; border-radius:10px; background:#fff; color:var(--ink); font:1rem var(--sans)}
+  .field input:focus-visible{outline:3px solid #2a9d8f; outline-offset:1px; border-color:var(--teal)}
+  [aria-invalid="true"]{border-color:var(--err)!important}
+  .confirm{display:none}
+  .card.done form{display:none}
+  .card.done .confirm{display:block; animation:in .3s var(--ease) both}
+  @keyframes in{from{opacity:0; transform:translateY(8px)}}
+  .summary{border:1px solid var(--mint); border-radius:16px; overflow:hidden; margin:16px 0}
+  .summary div{display:flex; justify-content:space-between; gap:12px; padding:12px 16px; border-bottom:1px solid var(--mint)}
+  .summary div:last-child{border-bottom:0}
+  .summary span{color:var(--ink-2)}
+  .summary b{text-align:right}
+  .note{font-size:.9rem; color:var(--ink-2); margin:0 0 16px}
+  .tag-req{display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--teal); background:var(--teal-soft); border-radius:999px; padding:4px 10px; margin:0 0 8px}
+  .alt{background:var(--white); border-top:1px solid var(--mint); border-bottom:1px solid var(--mint)}
+  .grid4{display:grid; gap:14px}
+  @media (min-width:640px){ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (min-width:1000px){ .grid4{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  .svc{border:1px solid var(--mint); border-radius:18px; padding:20px; background:var(--ivory)}
+  .svc p{margin:0; color:var(--ink-2); font-size:.94rem}
+  .svc svg{width:34px; height:34px; color:var(--teal); margin-bottom:8px}
+  .steps{list-style:none; margin:20px 0 0; padding:0; display:grid; gap:14px}
+  @media (min-width:800px){ .steps{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  .steps li{border-left:3px solid var(--teal); padding:4px 0 4px 16px}
+  .steps p{margin:0; color:var(--ink-2)}
+  .journey{border:2px dashed #b9cfcb; border-radius:22px; padding:24px; background:var(--ivory)}
+  .journey .badge{display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; background:var(--white); border:1px solid var(--mint); border-radius:999px; padding:4px 10px; margin-bottom:12px}
+  .tl{list-style:none; margin:18px 0 0; padding:0; position:relative}
+  .tl li{position:relative; padding:0 0 18px 34px}
+  .tl li::before{content:""; position:absolute; left:8px; top:6px; width:12px; height:12px; border-radius:50%; background:var(--white); border:3px solid var(--teal)}
+  .tl li::after{content:""; position:absolute; left:13px; top:22px; bottom:0; width:2px; background:var(--mint)}
+  .tl li:last-child::after{display:none}
+  .tl b{display:block}
+  .tl span{color:var(--ink-2); font-size:.94rem}
+  .faq{max-width:760px}
+  details{border-bottom:1px solid var(--mint)}
+  summary{cursor:pointer; min-height:56px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; font-weight:600; list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:""; width:10px; height:10px; border-right:2px solid var(--teal); border-bottom:2px solid var(--teal); transform:rotate(45deg); transition:transform .2s var(--ease); flex-shrink:0}
+  details[open] summary::after{transform:rotate(-135deg)}
+  details p{margin:0 0 16px; color:var(--ink-2)}
+  .end{text-align:center}
+  .end .lede{margin-left:auto; margin-right:auto}
+  footer{padding:28px 0 44px; font-size:.9rem; color:var(--ink-2); border-top:1px solid var(--mint)}
+  footer a{font-weight:700}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} }
+</style>
+</head>
+<body>
+<p class="notice" role="note"><b>Demo only:</b> Clearwell Dental is a fictional clinic. Requests stay in your browser; nothing is sent and no appointment is booked. <a href="../index.html#work">← Back to portfolio</a></p>
+
+<header>
+  <div class="wrap">
+    <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="none" stroke="#0f5c5c" stroke-width="2.5"/><path d="M9.5 12.5c0-3 2.5-4.3 5.5-3.2 3-1.1 5.5.2 5.5 3.2 0 4.5-1.8 9-3 9-.9 0-1.2-3.6-2.5-3.6s-1.6 3.6-2.5 3.6c-1.2 0-3-4.5-3-9z" fill="#0f5c5c"/></svg>Clearwell Dental</div>
+    <a class="btn" href="#request">Request a time</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Gentle, unhurried dental care. Ask for a time that suits you.</h1>
+        <p class="lede">Choose the visit you need and the days that work for you. Our front desk calls to confirm an exact time, so you're never booked into a slot you can't make.</p>
+        <ul class="pills" aria-label="What to expect">
+          <li>New patients welcome</li><li>Early and Saturday sessions</li><li>Children's check-ups</li>
+        </ul>
+        <svg class="smile" viewBox="0 0 360 160" aria-hidden="true"><rect x="0" y="0" width="360" height="160" rx="28" fill="#e6f1ef"/><circle cx="292" cy="44" r="22" fill="#fff"/><path d="M40 92c40 34 100 44 150 30" fill="none" stroke="#0f5c5c" stroke-width="6" stroke-linecap="round"/><circle cx="70" cy="60" r="7" fill="#0f5c5c"/><circle cx="160" cy="60" r="7" fill="#0f5c5c"/><path d="M228 102h90M228 120h60" stroke="#b9cfcb" stroke-width="8" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="card" id="request">
+        <form id="dform" novalidate>
+          <p class="tag-req">Appointment request</p>
+          <h2>When would you like to come in?</h2>
+          <p class="hint">Three quick choices. Use an example first name: this is a demo.</p>
+          <p class="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>Please don't type any health details here. Our team asks about those on the phone.</p>
+          <fieldset id="visitSet" aria-describedby="visitErr">
+            <legend>Type of visit</legend>
+            <div class="choice visit">
+              <label><input type="radio" name="visit" value="Check-up and clean">Check-up and clean <small>about 45 min</small></label>
+              <label><input type="radio" name="visit" value="New patient visit">New patient visit <small>about 60 min</small></label>
+              <label><input type="radio" name="visit" value="Children's check-up">Children's check-up <small>about 30 min</small></label>
+              <label><input type="radio" name="visit" value="Whitening consultation">Whitening consultation <small>about 30 min</small></label>
+            </div>
+            <span class="err" id="visitErr"></span>
+          </fieldset>
+          <fieldset id="daySet" aria-describedby="dayErr">
+            <legend>Preferred days <span style="font-weight:400">(choose one or more)</span></legend>
+            <div class="choice">
+              <label><input type="checkbox" name="day" value="Mon">Mon</label>
+              <label><input type="checkbox" name="day" value="Tue">Tue</label>
+              <label><input type="checkbox" name="day" value="Wed">Wed</label>
+              <label><input type="checkbox" name="day" value="Thu">Thu</label>
+              <label><input type="checkbox" name="day" value="Fri">Fri</label>
+              <label><input type="checkbox" name="day" value="Sat">Sat</label>
+            </div>
+            <span class="err" id="dayErr"></span>
+          </fieldset>
+          <fieldset id="timeSet" aria-describedby="timeErr">
+            <legend>Time of day</legend>
+            <div class="choice">
+              <label><input type="radio" name="time" value="Morning">Morning</label>
+              <label><input type="radio" name="time" value="Afternoon">Afternoon</label>
+              <label><input type="radio" name="time" value="Any time">Any time</label>
+            </div>
+            <span class="err" id="timeErr"></span>
+          </fieldset>
+          <div class="field">
+            <label class="lbl" for="fname">First name</label>
+            <input id="fname" name="fname" type="text" autocomplete="off" placeholder="e.g. Alex" maxlength="40" aria-describedby="fnameErr">
+            <span class="err" id="fnameErr"></span>
+          </div>
+          <button class="btn" type="submit" style="width:100%">Send request</button>
+        </form>
+        <div class="confirm" role="status" aria-live="polite">
+          <p class="tag-req">Request summary · not booked</p>
+          <h2 tabindex="-1" id="confirmH">Thanks, <span id="cname"></span>.</h2>
+          <div class="summary" id="summary"></div>
+          <p class="note"><b>Demo:</b> nothing was sent or saved, and no appointment exists. In a real clinic, the front desk would call to confirm an exact time.</p>
+          <button class="btn ghost" type="button" id="again">Change my request</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="svc-h">
+    <div class="wrap">
+      <h2 id="svc-h">Visits you can request online</h2>
+      <p class="lede">Anything urgent or painful? Please call the clinic instead of using this form.</p>
+      <div class="grid4">
+        <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M7 4c-2 0-3 2-3 4 0 5 2 12 4 12 1.5 0 1.5-5 4-5s2.5 5 4 5c2 0 4-7 4-12 0-2-1-4-3-4-2 0-3 1-5 1S9 4 7 4z"/></svg><h3>Check-up and clean</h3><p>A routine check and a professional clean.</p></div>
+        <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><h3>New patient visit</h3><p>Meet the team and talk about what you'd like.</p></div>
+        <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="9" r="3"/><path d="M7 21a5 5 0 0 1 10 0"/></svg><h3>Children's check-up</h3><p>Short, friendly visits for younger patients.</p></div>
+        <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><h3>Whitening consultation</h3><p>Options explained, with no pressure to go ahead.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="how-h">
+    <div class="wrap">
+      <h2 id="how-h">How requests work</h2>
+      <ol class="steps">
+        <li><h3>Send a request</h3><p>Visit type, the days that suit you, and morning or afternoon.</p></li>
+        <li><h3>We call to confirm</h3><p>Our front desk offers an exact time on one of your days.</p></li>
+        <li><h3>You get reminders</h3><p>A reminder before your visit, with an easy way to reschedule.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="j-h">
+    <div class="wrap">
+      <div class="journey">
+        <span class="badge">Illustration · proposed reminder journey, not running</span>
+        <h2 id="j-h">The follow-up I'd propose for a clinic</h2>
+        <p class="lede" style="margin:0">How a request like this could flow through a CRM such as GoHighLevel. Nothing here is connected: no messages are sent from this demo.</p>
+        <ol class="tl">
+          <li><b>Request received</b><span>Saved with the visit type and preferred days; the front desk gets a call task.</span></li>
+          <li><b>Time confirmed</b><span>Once staff book a slot in the calendar, the patient gets a confirmation.</span></li>
+          <li><b>Reminder two days before</b><span>A short message with the time and a reschedule link.</span></li>
+          <li><b>Reminder on the morning</b><span>A final nudge to cut no-shows.</span></li>
+          <li><b>After the visit</b><span>A thank-you, and a recall reminder when the next check-up is due.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="faq-h">
+    <div class="wrap faq">
+      <h2 id="faq-h">Common questions</h2>
+      <details><summary>Is this a confirmed booking?</summary><p>No. It's a request. The front desk calls you to agree an exact time before anything is booked.</p></details>
+      <details><summary>Can I request for my child?</summary><p>Yes. Choose "Children's check-up" and mention it when we call.</p></details>
+      <details><summary>What if none of my days are free?</summary><p>We'll offer the closest times we have and you decide.</p></details>
+    </div>
+  </section>
+
+  <section class="end" style="padding-top:0">
+    <div class="wrap">
+      <h2>Ready when you are</h2>
+      <p class="lede">Pick a visit and a few days. We'll do the rest.</p>
+      <a class="btn" href="#request">Request a time</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Clearwell Dental is a fictional clinic created for a portfolio demo by Henry Jake Balbiran. No requests are sent or stored. <a href="../index.html#work">Back to portfolio</a></div>
+</footer>
+
+<script>
+(function(){
+  // Demo form: validates locally and shows a request summary. No network request, no storage.
+  var form = document.getElementById('dform'), card = form.closest('.card');
+  function setErr(el, id, msg){ document.getElementById(id).textContent = msg || ''; el.setAttribute('aria-invalid', msg ? 'true' : 'false'); }
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var visit = form.querySelector('input[name=visit]:checked');
+    var days = [].slice.call(form.querySelectorAll('input[name=day]:checked')).map(function(d){ return d.value; });
+    var time = form.querySelector('input[name=time]:checked');
+    var fname = document.getElementById('fname'), name = fname.value.trim(), first = null;
+    setErr(document.getElementById('visitSet'), 'visitErr', visit ? '' : 'Choose a type of visit.'); if (!visit) first = form.querySelector('input[name=visit]');
+    setErr(document.getElementById('daySet'), 'dayErr', days.length ? '' : 'Choose at least one day.'); if (!days.length) first = first || form.querySelector('input[name=day]');
+    setErr(document.getElementById('timeSet'), 'timeErr', time ? '' : 'Choose a time of day.'); if (!time) first = first || form.querySelector('input[name=time]');
+    var ok = /^[A-Za-zÀ-ÿ' -]{2,40}$/.test(name);
+    setErr(fname, 'fnameErr', ok ? '' : (name ? 'Use letters only, at least 2.' : 'Enter a first name (an example is fine).')); if (!ok) first = first || fname;
+    if (first) { first.focus(); return; }
+    var s = document.getElementById('summary'); s.textContent = '';
+    [['Visit', visit.value], ['Preferred days', days.join(', ')], ['Time of day', time.value], ['Status', 'Request only, not booked']].forEach(function(r){
+      var row = document.createElement('div'), a = document.createElement('span'), b = document.createElement('b'); a.textContent = r[0]; b.textContent = r[1]; row.append(a, b); s.append(row);
+    });
+    document.getElementById('cname').textContent = name;
+    card.classList.add('done'); document.getElementById('confirmH').focus();
+  });
+  ['visit','day','time'].forEach(function(n){ form.querySelectorAll('input[name=' + n + ']').forEach(function(i){ i.addEventListener('change', function(){ setErr(document.getElementById(n + 'Set'), n + 'Err', ''); }); }); });
+  document.getElementById('again').addEventListener('click', function(){ card.classList.remove('done'); form.querySelector('input[name=visit]').focus(); });
+})();
+</script>
+</body>
+</html>

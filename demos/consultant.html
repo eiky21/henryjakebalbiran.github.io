@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northline Advisory · Discovery call demo</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Portfolio demo by Henry Jake Balbiran: a discovery-call qualification page for a fictional consultancy. Answers stay in your browser; nothing is booked.">
+<style>
+  :root{
+    --cream:#f3efe6; --paper:#fbf9f4; --ink:#1d1d1b; --ink-2:#55534c; --rule:#cfc7b6; --olive:#5c5c2e; --olive-soft:#e6e3cf; --err:#9b2c1f;
+    --ease:cubic-bezier(.23,1,.32,1);
+    --serif:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;
+    --sans:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--cream); color:var(--ink); font:17px/1.65 var(--sans)}
+  a{color:var(--olive)}
+  :focus-visible{outline:2px solid var(--ink); outline-offset:3px}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 16px}
+  @media (min-width:768px){ .wrap{padding:0 32px} }
+  .notice{margin:0; background:var(--ink); color:var(--cream); font-size:.86rem; padding:8px 16px; text-align:center}
+  .notice a{color:var(--cream); font-weight:700; margin-left:8px; display:inline-flex; align-items:center; min-height:44px}
+  header .wrap{display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:72px; border-bottom:1px solid var(--ink)}
+  .logo{font:italic 1.3rem var(--serif); letter-spacing:.01em}
+  .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 24px; border:1px solid var(--ink); background:var(--ink); color:var(--cream); font:600 .95rem var(--sans); letter-spacing:.02em; text-decoration:none; cursor:pointer; transition:background-color .15s ease, color .15s ease, transform .12s var(--ease)}
+  .btn:hover{background:var(--olive); border-color:var(--olive)}
+  .btn:active{transform:scale(.97)}
+  .btn.ghost{background:transparent; color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink); color:var(--cream)}
+  h1,h2{font-family:var(--serif); font-weight:400; letter-spacing:-.01em}
+  h1{font-size:clamp(2.4rem,5.6vw,4.1rem); line-height:1.06; margin:0 0 20px}
+  h1 em,h2 em{color:var(--olive)}
+  h2{font-size:clamp(1.7rem,3.4vw,2.5rem); line-height:1.15; margin:0 0 14px}
+  h3{margin:0 0 6px; font:700 1.05rem var(--sans)}
+  .kicker{font:600 .78rem var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--olive); margin:0 0 16px}
+  .lede{font-size:1.12rem; color:var(--ink-2); max-width:54ch; margin:0 0 26px}
+  section{padding:72px 0}
+  .hero{padding:64px 0 56px}
+  .hero-grid{display:grid; gap:44px; align-items:start}
+  @media (min-width:960px){ .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,440px)} }
+  .pull{border-left:3px solid var(--olive); padding:4px 0 4px 18px; font:italic 1.15rem/1.5 var(--serif); color:var(--ink-2); max-width:44ch; margin:0}
+  .panel{background:var(--paper); border:1px solid var(--ink); padding:26px}
+  .panel h2{font-size:1.6rem}
+  .panel .hint{margin:0 0 18px; color:var(--ink-2); font-size:.92rem}
+  fieldset{border:0; margin:0 0 20px; padding:0; min-width:0}
+  legend,label.lbl{display:block; font-weight:600; font-size:.95rem; margin:0 0 10px; padding:0}
+  .opts{display:grid; gap:8px}
+  .opts label{position:relative; display:flex; align-items:center; gap:12px; min-height:52px; padding:10px 14px; border:1px solid var(--rule); background:#fff; cursor:pointer; font-size:.98rem; transition:border-color .15s ease, background-color .15s ease}
+  .opts input{position:absolute; opacity:0; width:1px; height:1px}
+  .opts .dot{width:18px; height:18px; border-radius:50%; border:1.5px solid var(--ink); flex-shrink:0; display:grid; place-items:center}
+  .opts label:has(input:checked){border-color:var(--ink); background:var(--olive-soft)}
+  .opts label:has(input:checked) .dot::after{content:""; width:10px; height:10px; border-radius:50%; background:var(--olive)}
+  .opts label:has(input:focus-visible){outline:2px solid var(--ink); outline-offset:2px}
+  .field{margin:0 0 18px}
+  .field :where(input:not([type=radio]),select){width:100%; min-height:52px; padding:12px 14px; border:1px solid #a9a191; background:#fff; color:var(--ink); font:1rem var(--sans); border-radius:4px}
+  .field :where(input,select):focus-visible{outline:2px solid var(--ink); outline-offset:1px}
+  [aria-invalid="true"]{border-color:var(--err)!important}
+  .err{display:block; margin:6px 0 0; color:var(--err); font-size:.88rem; font-weight:600}
+  .err:empty{display:none}
+  .confirm{display:none}
+  .panel.done form{display:none}
+  .panel.done .confirm{display:block; animation:in .3s var(--ease) both}
+  @keyframes in{from{opacity:0; transform:translateY(8px)}}
+  .rec{border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); padding:14px 0; margin:14px 0}
+  .rec p{margin:0}
+  .rec .call{font:1.35rem var(--serif); margin:2px 0 6px}
+  .rec ul{margin:8px 0 0; padding-left:20px; color:var(--ink-2)}
+  .demo-note{font-size:.88rem; color:var(--ink-2); margin:0 0 16px}
+  .cols{display:grid; gap:0; border-top:1px solid var(--ink)}
+  @media (min-width:800px){ .cols{grid-template-columns:repeat(3,minmax(0,1fr))} .cols > div + div{border-left:1px solid var(--rule)} }
+  .cols > div{padding:22px 22px 22px 0}
+  @media (min-width:800px){ .cols > div + div{padding-left:22px} }
+  .cols .n{font:italic 2rem var(--serif); color:var(--olive); display:block; margin-bottom:4px}
+  .cols p{margin:0; color:var(--ink-2)}
+  .dark{background:var(--ink); color:var(--cream)}
+  .dark .lede,.dark p{color:#d9d3c5}
+  .dark h2 em{color:#c9c98f}
+  .follow{border:1px dashed #8a8473; padding:24px}
+  .follow .badge{display:inline-block; font:600 .74rem var(--sans); letter-spacing:.14em; text-transform:uppercase; border:1px solid #8a8473; padding:4px 10px; margin-bottom:14px}
+  .follow ol{margin:18px 0 0; padding:0; list-style:none; display:grid; gap:12px}
+  @media (min-width:900px){ .follow ol{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  .follow li{border-top:1px solid #8a8473; padding-top:10px}
+  .follow b{display:block; color:var(--cream)}
+  .faq{max-width:760px}
+  details{border-bottom:1px solid var(--rule)}
+  summary{cursor:pointer; min-height:56px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; font:1.12rem var(--serif); list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+"; font:1.4rem var(--sans); color:var(--olive)}
+  details[open] summary::after{content:"–"}
+  details p{margin:0 0 18px; color:var(--ink-2)}
+  .closing{text-align:center; border-top:1px solid var(--ink)}
+  .closing .lede{margin:0 auto 24px}
+  footer{padding:28px 0 44px; font-size:.88rem; color:var(--ink-2)}
+  footer a{font-weight:700}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} }
+</style>
+</head>
+<body>
+<p class="notice" role="note"><b>Demo only:</b> Northline Advisory is a fictional consultancy. Your answers stay in your browser; nothing is sent and no call is booked. <a href="../index.html#work">← Back to portfolio</a></p>
+
+<header><div class="wrap"><span class="logo">Northline Advisory</span><a class="btn" href="#fit">Check my fit</a></div></header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="kicker">Operations advice for small service firms</p>
+        <h1>Clarity on what to fix <em>first.</em></h1>
+        <p class="lede">A 30-minute discovery call to look at how work moves through your business today, and which one change would free up the most time.</p>
+        <p class="pull">Two quick questions first, so the call starts with your real priorities rather than a sales script.</p>
+      </div>
+
+      <div class="panel" id="fit">
+        <form id="cform" novalidate>
+          <h2>Is a discovery call right for you?</h2>
+          <p class="hint">Two questions and a first name. An example name is fine: this is a demo.</p>
+          <fieldset id="goalSet" aria-describedby="goalErr">
+            <legend>What matters most this quarter?</legend>
+            <div class="opts">
+              <label><input type="radio" name="goal" value="leads"><span class="dot" aria-hidden="true"></span>Win more of the right leads</label>
+              <label><input type="radio" name="goal" value="convert"><span class="dot" aria-hidden="true"></span>Turn more enquiries into clients</label>
+              <label><input type="radio" name="goal" value="admin"><span class="dot" aria-hidden="true"></span>Spend less time on admin</label>
+              <label><input type="radio" name="goal" value="scale"><span class="dot" aria-hidden="true"></span>Deliver more without hiring</label>
+            </div>
+            <span class="err" id="goalErr"></span>
+          </fieldset>
+          <div class="field">
+            <label class="lbl" for="stage">Where is the business today?</label>
+            <select id="stage" aria-describedby="stageErr">
+              <option value="">Choose one</option>
+              <option value="solo">Just me, getting started</option>
+              <option value="small">A team of 2 to 5</option>
+              <option value="mid">A team of 6 to 20</option>
+              <option value="large">More than 20 people</option>
+            </select>
+            <span class="err" id="stageErr"></span>
+          </div>
+          <div class="field">
+            <label class="lbl" for="fname">First name</label>
+            <input id="fname" type="text" autocomplete="off" placeholder="e.g. Jordan" maxlength="40" aria-describedby="fnameErr">
+            <span class="err" id="fnameErr"></span>
+          </div>
+          <button class="btn" type="submit" style="width:100%">See my recommendation</button>
+        </form>
+        <div class="confirm" role="status" aria-live="polite">
+          <h2 tabindex="-1" id="confirmH">Thank you, <span id="cname"></span>.</h2>
+          <div class="rec">
+            <p class="kicker" style="margin:0">Recommended next step</p>
+            <p class="call" id="rcall"></p>
+            <p id="rwhy"></p>
+            <ul id="ragenda"></ul>
+          </div>
+          <p class="demo-note"><b>Demo:</b> nothing was sent or saved and no call is booked. In a real build, this is where a calendar would open.</p>
+          <button class="btn ghost" type="button" id="again">Change my answers</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="w-h">
+    <div class="wrap">
+      <h2 id="w-h">Where we usually <em>help</em></h2>
+      <div class="cols">
+        <div><span class="n">i.</span><h3>Lead handling</h3><p>Enquiries answered quickly and routed to the right person.</p></div>
+        <div><span class="n">ii.</span><h3>Client onboarding</h3><p>One clear path from "yes" to the first piece of work.</p></div>
+        <div><span class="n">iii.</span><h3>Team workload</h3><p>Fewer handoffs, fewer status emails, clearer ownership.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="p-h" style="padding-top:0">
+    <div class="wrap">
+      <h2 id="p-h">How the first call <em>works</em></h2>
+      <div class="cols">
+        <div><span class="n">01</span><h3>Answer two questions</h3><p>Your goal and stage shape the agenda.</p></div>
+        <div><span class="n">02</span><h3>Thirty focused minutes</h3><p>We map one process and find the biggest bottleneck.</p></div>
+        <div><span class="n">03</span><h3>A short written summary</h3><p>Three suggested changes, whether or not we work together.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark" aria-labelledby="f-h">
+    <div class="wrap">
+      <div class="follow">
+        <span class="badge">Illustration · proposed follow-up, not running</span>
+        <h2 id="f-h">The consultation follow-up <em>I'd propose</em></h2>
+        <p class="lede" style="margin:0">How these answers could drive a CRM such as GoHighLevel for a real consultant. Nothing is connected in this demo, and no messages are sent.</p>
+        <ol>
+          <li><b>Answers scored</b><span>Goal and stage set the call type and pipeline stage.</span></li>
+          <li><b>Call confirmed</b><span>A booking confirmation with a two-question prep note.</span></li>
+          <li><b>Reminder</b><span>A short reminder the day before, with a reschedule link.</span></li>
+          <li><b>After the call</b><span>The summary goes out; follow-up stops if they book or decline.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="q-h">
+    <div class="wrap faq">
+      <h2 id="q-h">Questions</h2>
+      <details><summary>Is the discovery call a sales pitch?</summary><p>No. It's a working session on one process. If there's a fit, we talk about next steps at the end.</p></details>
+      <details><summary>What should I prepare?</summary><p>Nothing formal. Have one recent example of work that took longer than it should.</p></details>
+      <details><summary>What if I'm not ready to change anything yet?</summary><p>That's fine. The written summary is yours to use whenever you're ready.</p></details>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="wrap">
+      <h2>Start with <em>two questions.</em></h2>
+      <p class="lede">See which kind of call fits before you commit to anything.</p>
+      <a class="btn" href="#fit">Check my fit</a>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Northline Advisory is a fictional consultancy created for a portfolio demo by Henry Jake Balbiran. No answers are sent or stored. <a href="../index.html#work">Back to portfolio</a></div></footer>
+
+<script>
+(function(){
+  // Demo qualifier: decides a call type locally. No network request, no storage.
+  var form = document.getElementById('cform'), panel = form.closest('.panel');
+  var GOALS = { leads:'winning more of the right leads', convert:'turning more enquiries into clients', admin:'spending less time on admin', scale:'delivering more without hiring' };
+  var AGENDA = {
+    leads:['Where your best leads come from today','How fast each enquiry gets a reply'],
+    convert:['What happens between enquiry and proposal','Where interested prospects go quiet'],
+    admin:['The weekly tasks that repeat by hand','Which ones a simple automation could take over'],
+    scale:['How work is handed between people','Where delivery waits on one person']
+  };
+  function setErr(el, id, msg){ document.getElementById(id).textContent = msg || ''; el.setAttribute('aria-invalid', msg ? 'true' : 'false'); }
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var goal = form.querySelector('input[name=goal]:checked'), stage = document.getElementById('stage');
+    var fname = document.getElementById('fname'), name = fname.value.trim(), first = null;
+    setErr(document.getElementById('goalSet'), 'goalErr', goal ? '' : 'Choose what matters most.'); if (!goal) first = form.querySelector('input[name=goal]');
+    setErr(stage, 'stageErr', stage.value ? '' : 'Choose where the business is today.'); if (!stage.value) first = first || stage;
+    var ok = /^[A-Za-zÀ-ÿ' -]{2,40}$/.test(name);
+    setErr(fname, 'fnameErr', ok ? '' : (name ? 'Use letters only, at least 2.' : 'Enter a first name (an example is fine).')); if (!ok) first = first || fname;
+    if (first) { first.focus(); return; }
+    var call, why;
+    if (stage.value === 'solo') { call = 'A 30-minute starter call'; why = 'At your stage the quickest win is usually one simple, repeatable process.'; }
+    else if (stage.value === 'large') { call = 'A 45-minute team workshop call'; why = 'With a larger team, it helps to bring the person who owns the process.'; }
+    else { call = 'A 30-minute discovery call'; why = 'A focused call on one process is usually enough to find the first change.'; }
+    document.getElementById('cname').textContent = name;
+    document.getElementById('rcall').textContent = call;
+    document.getElementById('rwhy').textContent = why + ' Focus: ' + GOALS[goal.value] + '.';
+    var ul = document.getElementById('ragenda'); ul.textContent = '';
+    AGENDA[goal.value].forEach(function(t){ var li = document.createElement('li'); li.textContent = t; ul.append(li); });
+    panel.classList.add('done'); document.getElementById('confirmH').focus();
+  });
+  form.querySelectorAll('input[name=goal]').forEach(function(i){ i.addEventListener('change', function(){ setErr(document.getElementById('goalSet'), 'goalErr', ''); }); });
+  document.getElementById('again').addEventListener('click', function(){ panel.classList.remove('done'); form.querySelector('input[name=goal]').focus(); });
+})();
+</script>
+</body>
+</html>

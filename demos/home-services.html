@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbor Home Care · Quote request demo</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Portfolio demo by Henry Jake Balbiran: a home-services quote request funnel for a fictional company. The form runs locally; nothing is sent.">
+<style>
+  :root{
+    --cream:#f6efe4; --paper:#fffdf9; --char:#2b2a28; --char-2:#55524c; --line:#e2d8c9; --line-2:#cbbfae;
+    --orange:#c94f1c; --orange-2:#e4612a; --orange-soft:#fbe7dc; --ok:#1f6b45; --err:#a3261b;
+    --ease:cubic-bezier(.23,1,.32,1);
+    --sans:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-padding-top:16px}
+  body{margin:0; background:var(--cream); color:var(--char); font:17px/1.6 var(--sans)}
+  a{color:var(--orange)}
+  :focus-visible{outline:3px solid var(--orange); outline-offset:3px; border-radius:6px}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 16px}
+  @media (min-width:768px){ .wrap{padding:0 32px} }
+  .notice{margin:0; background:var(--char); color:#fff; font-size:.88rem; padding:10px 16px; text-align:center}
+  .notice b{color:#ffc9ad}
+  .notice a{color:#fff; font-weight:700; margin-left:8px; display:inline-flex; align-items:center; min-height:44px}
+  header{background:var(--paper); border-bottom:1px solid var(--line)}
+  header .wrap{display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:68px}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.1rem; letter-spacing:-.01em}
+  .logo svg{width:32px; height:32px}
+  .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 22px; border-radius:10px; border:2px solid var(--orange); background:var(--orange); color:#fff; font:700 1rem var(--sans); text-decoration:none; cursor:pointer; transition:background-color .15s ease, transform .12s var(--ease)}
+  .btn:hover{background:#a8410f; border-color:#a8410f}
+  .btn:active{transform:scale(.97)}
+  .btn.ghost{background:transparent; color:var(--char); border-color:var(--char)}
+  .btn.ghost:hover{background:var(--char); color:#fff}
+  .hero{padding:56px 0 48px}
+  .hero-grid{display:grid; gap:40px; align-items:start}
+  @media (min-width:960px){ .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,440px)} }
+  .eyebrow{display:inline-block; margin:0 0 14px; font-weight:700; font-size:.85rem; color:var(--orange); background:var(--orange-soft); padding:4px 12px; border-radius:999px}
+  h1{font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.08; letter-spacing:-.025em; margin:0 0 18px}
+  h2{font-size:clamp(1.6rem,3.2vw,2.3rem); line-height:1.15; letter-spacing:-.02em; margin:0 0 12px}
+  h3{margin:0 0 6px; font-size:1.1rem}
+  .lede{font-size:1.1rem; color:var(--char-2); max-width:52ch; margin:0 0 24px}
+  .checks{list-style:none; margin:0 0 28px; padding:0; display:grid; gap:10px}
+  .checks li{display:flex; gap:10px; align-items:flex-start}
+  .checks svg{width:22px; height:22px; flex-shrink:0; margin-top:2px}
+  section{padding:64px 0}
+  .alt{background:var(--paper); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+  /* form card */
+  .card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px; box-shadow:0 18px 40px -24px rgba(43,42,40,.35)}
+  .card h2{font-size:1.4rem}
+  .card .hint{margin:0 0 18px; color:var(--char-2); font-size:.92rem}
+  fieldset{border:0; margin:0 0 18px; padding:0; min-width:0}
+  legend,label.lbl{display:block; font-weight:600; font-size:.95rem; margin:0 0 8px; padding:0}
+  .opt{font-weight:400; color:var(--char-2)}
+  .svc-opts{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
+  .svc-opts label{position:relative; display:flex; align-items:center; gap:10px; min-height:56px; padding:10px 12px; border:2px solid var(--line); border-radius:10px; background:#fff; cursor:pointer; font-weight:600; font-size:.95rem; transition:border-color .15s ease, background-color .15s ease}
+  .svc-opts input{position:absolute; opacity:0; width:1px; height:1px}
+  .svc-opts svg{width:24px; height:24px; flex-shrink:0; color:var(--char-2)}
+  .svc-opts label:has(input:checked){border-color:var(--orange); background:var(--orange-soft)}
+  .svc-opts label:has(input:checked) svg{color:var(--orange)}
+  .svc-opts label:has(input:focus-visible){outline:3px solid var(--orange); outline-offset:2px}
+  .field{margin:0 0 16px}
+  .field :where(input:not([type=checkbox],[type=radio]),select){width:100%; min-height:52px; padding:12px 14px; border:1.5px solid var(--line-2); border-radius:8px; background:#fff; color:var(--char); font:1rem var(--sans)}
+  .field :where(input,select):focus-visible{outline:3px solid var(--orange); outline-offset:1px; border-color:var(--orange)}
+  [aria-invalid="true"]{border-color:var(--err)!important}
+  .err{display:block; margin:6px 0 0; color:var(--err); font-size:.88rem; font-weight:600}
+  .err:empty{display:none}
+  fieldset[aria-invalid="true"] .svc-opts label{border-color:#e7b4ad}
+  .demo-tag{margin:14px 0 0; font-size:.82rem; color:var(--char-2)}
+  .confirm{display:none}
+  .card.done form{display:none}
+  .card.done .confirm{display:block; animation:pop .32s var(--ease) both}
+  @keyframes pop{from{opacity:0; transform:translateY(8px)}}
+  .confirm h2{display:flex; align-items:center; gap:10px}
+  .confirm h2 svg{width:28px; height:28px; color:var(--ok)}
+  .confirm dl{display:grid; grid-template-columns:auto 1fr; gap:6px 16px; margin:16px 0; padding:16px; background:var(--cream); border-radius:10px}
+  .confirm dt{font-weight:600; color:var(--char-2)}
+  .confirm dd{margin:0; font-weight:700}
+  .confirm .warn{font-size:.9rem; color:var(--char-2); margin:0 0 16px}
+  /* services + process */
+  .grid3{display:grid; gap:16px}
+  @media (min-width:720px){ .grid3{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  .tile{background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px}
+  .tile svg{width:36px; height:36px; color:var(--orange); margin-bottom:8px}
+  .tile p{margin:0; color:var(--char-2); font-size:.95rem}
+  .steps{list-style:none; margin:24px 0 0; padding:0; display:grid; gap:16px; counter-reset:s}
+  @media (min-width:720px){ .steps{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  .steps li{position:relative; padding:20px 20px 20px 64px; background:#fff; border:1px solid var(--line); border-radius:14px}
+  .steps li::before{counter-increment:s; content:counter(s); position:absolute; left:18px; top:18px; width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:var(--char); color:#fff; font-weight:800}
+  .steps p{margin:0; color:var(--char-2); font-size:.95rem}
+  /* illustrative follow-up */
+  .flowbox{border:2px dashed var(--line-2); border-radius:16px; padding:24px; background:var(--cream)}
+  .flowbox .badge{display:inline-block; font-size:.78rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--char); background:#fff; border:1px solid var(--line-2); border-radius:999px; padding:4px 10px; margin-bottom:12px}
+  .flow{list-style:none; margin:16px 0 0; padding:0; display:grid; gap:10px}
+  @media (min-width:900px){ .flow{grid-template-columns:repeat(5,minmax(0,1fr))} }
+  .flow li{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; font-size:.92rem}
+  .flow b{display:block; margin-bottom:4px}
+  .flow span{color:var(--char-2)}
+  /* faq */
+  .faq{max-width:760px}
+  details{background:#fff; border:1px solid var(--line); border-radius:12px; margin:0 0 10px}
+  summary{cursor:pointer; min-height:56px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 18px; font-weight:700; list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+"; font-size:1.4rem; color:var(--orange); line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{margin:0; padding:0 18px 16px; color:var(--char-2)}
+  .cta-band{background:var(--char); color:#fff; border-radius:18px; padding:32px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px}
+  .cta-band h2{margin:0}
+  .cta-band p{margin:6px 0 0; color:#d8d2c8}
+  footer{padding:32px 0 48px; font-size:.9rem; color:var(--char-2)}
+  footer a{font-weight:700}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} }
+</style>
+</head>
+<body>
+<p class="notice" role="note"><b>Demo only:</b> Harbor Home Care is a fictional brand. This form runs in your browser; no request is sent and no appointment is booked. <a href="../index.html#work">← Back to portfolio</a></p>
+
+<header>
+  <div class="wrap">
+    <div class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 15 16 5l12 10v12a1 1 0 0 1-1 1h-7v-8h-8v8H5a1 1 0 0 1-1-1z" fill="#2b2a28"/><circle cx="24" cy="9" r="4" fill="#e4612a"/></svg>Harbor Home Care</div>
+    <a class="btn" href="#quote">Get a free quote</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Repairs, installs and maintenance</p>
+        <h1>Tell us the job. We'll call back with a clear quote.</h1>
+        <p class="lede">Pick a service, answer three quick questions, and a local tradesperson calls you to talk through the job and the price before anyone visits.</p>
+        <ul class="checks">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fbe7dc"/><path d="m7 12.5 3.2 3L17 9" fill="none" stroke="#c94f1c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Free quote, no obligation</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fbe7dc"/><path d="m7 12.5 3.2 3L17 9" fill="none" stroke="#c94f1c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>You choose a time that suits you</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fbe7dc"/><path d="m7 12.5 3.2 3L17 9" fill="none" stroke="#c94f1c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Price agreed before work starts</li>
+        </ul>
+        <a class="btn ghost" href="#how">How it works</a>
+      </div>
+
+      <div class="card" id="quote">
+        <form id="qform" novalidate>
+          <h2>Request a quote</h2>
+          <p class="hint">Takes about a minute. Use an example name: this is a demo.</p>
+          <fieldset id="svcSet" aria-describedby="svcErr">
+            <legend>What do you need help with?</legend>
+            <div class="svc-opts">
+              <label><input type="radio" name="service" value="Plumbing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h9a3 3 0 0 1 3 3v7"/><path d="M13 5v6M18 18h-4"/></svg>Plumbing</label>
+              <label><input type="radio" name="service" value="Electrical"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></svg>Electrical</label>
+              <label><input type="radio" name="service" value="Roofing and gutters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 12 12 5l9 7"/><path d="M6 10v9h12v-9"/></svg>Roofing &amp; gutters</label>
+              <label><input type="radio" name="service" value="Handyman jobs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M14 6a4 4 0 0 0 5 5L10 20l-5-5 9-9z"/></svg>Handyman jobs</label>
+            </div>
+            <span class="err" id="svcErr"></span>
+          </fieldset>
+          <div class="field">
+            <label class="lbl" for="size">How big is the job?</label>
+            <select id="size" name="size" aria-describedby="sizeErr">
+              <option value="">Choose one</option>
+              <option>A quick fix (under 2 hours)</option>
+              <option>Half a day to a day</option>
+              <option>Bigger project (several days)</option>
+              <option>Not sure yet</option>
+            </select>
+            <span class="err" id="sizeErr"></span>
+          </div>
+          <div class="field">
+            <label class="lbl" for="when">When would you like it done?</label>
+            <select id="when" name="when" aria-describedby="whenErr">
+              <option value="">Choose one</option>
+              <option>As soon as possible</option>
+              <option>Within two weeks</option>
+              <option>This month</option>
+              <option>Just planning for now</option>
+            </select>
+            <span class="err" id="whenErr"></span>
+          </div>
+          <div class="field">
+            <label class="lbl" for="fname">First name</label>
+            <input id="fname" name="fname" type="text" autocomplete="off" placeholder="e.g. Sam" maxlength="40" aria-describedby="fnameErr">
+            <span class="err" id="fnameErr"></span>
+          </div>
+          <button class="btn" type="submit" style="width:100%">Send my quote request</button>
+          <p class="demo-tag">In a real build this form would also ask for a phone number. The demo leaves it out so nothing personal is typed here.</p>
+        </form>
+        <div class="confirm" id="confirm" role="status" aria-live="polite">
+          <h2 tabindex="-1" id="confirmH"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg><span id="confirmTitle">Request ready</span></h2>
+          <p>Here's what a real visitor would send:</p>
+          <dl id="summary"></dl>
+          <p class="warn"><b>Demo:</b> nothing was sent or saved. In a real build, the team would get this request with the job type already tagged and call back.</p>
+          <button class="btn ghost" type="button" id="again">Start again</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="svc-h">
+    <div class="wrap">
+      <h2 id="svc-h">Jobs we quote for</h2>
+      <p class="lede">From a dripping tap to a new set of gutters. Not sure which one fits? Pick the closest; we'll sort it out on the call.</p>
+      <div class="grid3">
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h9a3 3 0 0 1 3 3v7"/><path d="M13 5v6M18 18h-4"/></svg><h3>Plumbing</h3><p>Leaks, taps, toilets, hot water and blocked drains.</p></div>
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></svg><h3>Electrical</h3><p>Lights, power points, safety switches and fault finding.</p></div>
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 12 12 5l9 7"/><path d="M6 10v9h12v-9"/></svg><h3>Roofing &amp; gutters</h3><p>Repairs, cleaning, guards and storm damage checks.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <h2 id="how-h">How it works</h2>
+      <ol class="steps">
+        <li><h3>Tell us the job</h3><p>Choose the service, the size and when you'd like it done.</p></li>
+        <li><h3>We call you back</h3><p>A tradesperson talks it through and gives you a clear quote.</p></li>
+        <li><h3>Book a time</h3><p>Pick a visit that suits you. The price is agreed first.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="flow-h">
+    <div class="wrap">
+      <div class="flowbox">
+        <span class="badge">Illustration · proposed follow-up, not running</span>
+        <h2 id="flow-h">What I'd set up behind this form</h2>
+        <p class="lede" style="margin:0">A lead-to-booking handoff I would propose for a real home-services business, in a CRM such as GoHighLevel. None of it is connected in this demo.</p>
+        <ol class="flow">
+          <li><b>1 · Request saved</b><span>Contact created with the service tagged and the lead source kept.</span></li>
+          <li><b>2 · Team alerted</b><span>The right tradesperson gets a task to call back.</span></li>
+          <li><b>3 · Customer reassured</b><span>A short text confirms the request and says who will call.</span></li>
+          <li><b>4 · Quote and booking</b><span>The job moves through quote, booked and done stages.</span></li>
+          <li><b>5 · Gentle follow-up</b><span>If no time is booked, a reminder goes out, then stops once booked.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="faq-h">
+    <div class="wrap faq">
+      <h2 id="faq-h">Questions</h2>
+      <details><summary>Is the quote really free?</summary><p>Yes. The call and the quote cost nothing, and you decide afterwards whether to book.</p></details>
+      <details><summary>Do you need to visit before quoting?</summary><p>For small jobs a phone call is usually enough. Bigger jobs may need a short visit, which we'll arrange with you.</p></details>
+      <details><summary>What if my job isn't listed?</summary><p>Pick the closest service and mention it on the call. If it's not something we do, we'll tell you straight away.</p></details>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-band">
+        <div><h2>Ready for a clear quote?</h2><p>Three questions, then we call you back.</p></div>
+        <a class="btn" href="#quote">Get a free quote</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Harbor Home Care is a fictional brand created for a portfolio demo by Henry Jake Balbiran. No requests are sent or stored. <a href="../index.html#work">Back to portfolio</a></div>
+</footer>
+
+<script>
+(function(){
+  // Demo form: validates locally and shows a summary. No network request, no storage.
+  var form = document.getElementById('qform'), card = form.closest('.card');
+  var svcSet = document.getElementById('svcSet');
+  function setErr(el, errId, msg){ var e = document.getElementById(errId); e.textContent = msg || ''; el.setAttribute('aria-invalid', msg ? 'true' : 'false'); }
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var svc = form.querySelector('input[name=service]:checked');
+    var size = document.getElementById('size'), when = document.getElementById('when'), fname = document.getElementById('fname');
+    var name = fname.value.trim(), first = null;
+    setErr(svcSet, 'svcErr', svc ? '' : 'Choose the service you need.'); if (!svc) first = first || form.querySelector('input[name=service]');
+    setErr(size, 'sizeErr', size.value ? '' : 'Choose how big the job is.'); if (!size.value) first = first || size;
+    setErr(when, 'whenErr', when.value ? '' : 'Choose when you would like it done.'); if (!when.value) first = first || when;
+    var nameOk = /^[A-Za-zÀ-ÿ' -]{2,40}$/.test(name);
+    setErr(fname, 'fnameErr', nameOk ? '' : (name ? 'Use letters only, at least 2.' : 'Enter a first name (an example is fine).')); if (!nameOk) first = first || fname;
+    if (first) { first.focus(); return; }
+    var dl = document.getElementById('summary'); dl.textContent = '';
+    [['Service', svc.value], ['Job size', size.value], ['Timing', when.value], ['Name', name]].forEach(function(r){
+      var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; dl.append(dt, dd);
+    });
+    document.getElementById('confirmTitle').textContent = 'Thanks, ' + name + '. Request ready.';
+    card.classList.add('done');
+    document.getElementById('confirmH').focus();
+  });
+  form.querySelectorAll('input[name=service]').forEach(function(r){ r.addEventListener('change', function(){ setErr(svcSet, 'svcErr', ''); }); });
+  document.getElementById('again').addEventListener('click', function(){ form.reset(); card.classList.remove('done'); form.querySelector('input[name=service]').focus(); });
+})();
+</script>
+</body>
+</html>
