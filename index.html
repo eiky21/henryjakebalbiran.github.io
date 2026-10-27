@@ -106,9 +106,15 @@
   .btn.solid:hover{background:#67e8f9; border-color:#67e8f9}
   .btn .ico{width:16px; height:16px}
 
-  /* fail-safe reveal (motion library: scroll-triggered). Content is visible by default; only below-the-fold blocks get .pending */
-  .rv{transition:opacity .6s var(--ease-out) var(--d,0ms), transform .6s var(--ease-out) var(--d,0ms)}
-  .rv.pending{opacity:0; transform:translateY(16px)}
+  /* fail-safe scroll reveal (motion library: scroll-triggered + scroll-stagger-list, adapted).
+     Content is visible by default; only below-the-fold blocks get .pending. The rise uses the independent
+     `translate` property so card hover transforms never fight it. Each batch cascades 70ms apart, max 6 steps. */
+  :root{--rv-y:36px; --rv-dur:.75s}
+  @media (max-width:640px){ :root{--rv-y:24px} }
+  .rv{transition:opacity .6s var(--ease-out) var(--d,0ms), translate var(--rv-dur) var(--ease-out) var(--d,0ms)}
+  .rv.pending{opacity:0; translate:0 var(--rv-y)}
+  .rv .rv.pending{translate:0 calc(var(--rv-y) * .5)}
+  .rv.rising{will-change:opacity,translate}
 
   /* ---------- hero (motion library: hero-split-reveal) ---------- */
   .hero{padding:64px 0 48px}
@@ -208,7 +214,7 @@
   .detail h4{margin:10px 0 2px; color:var(--ink); font-size:.86rem}
   .detail p{margin:0}
   @media (hover:hover) and (pointer:fine){
-    .pc{transition:transform .3s var(--ease-out), border-color .3s ease, opacity .6s var(--ease-out) var(--d,0ms)}
+    .pc{transition:transform .3s var(--ease-out), border-color .3s ease, opacity .6s var(--ease-out) var(--d,0ms), translate var(--rv-dur) var(--ease-out) var(--d,0ms)}
     .pc:hover{transform:translateY(-4px); border-color:rgba(59,158,255,.35)}
     .pc:hover .shots .main img{transform:scale(1.03)}
   }
@@ -248,6 +254,97 @@
   .pd-foot{display:flex; flex-wrap:wrap; gap:10px; padding:14px 24px 20px; border-top:1px solid var(--line)}
   .pd-foot .btn{min-height:46px; font-size:.7rem}
   .pd-note{flex-basis:100%; margin:0; font:.72rem var(--mono); color:var(--muted)}
+  .shotbox p a{margin-left:10px; white-space:nowrap}
+
+  /* project dialog, demo mode: scoped wider modifier, added and removed on every open/close */
+  .pd.pd-wide{width:min(1240px, calc(100vw - 24px)); max-height:min(94vh, 1000px)}
+  .pd.pd-wide .pd-body{padding:14px 20px 18px}
+  .pair{display:grid; gap:18px; grid-template-columns:minmax(0,1fr); align-items:start; margin:0 0 6px}
+  .pair.side{grid-template-columns:minmax(0,1fr) auto}
+  .vp{margin:0; min-width:0}
+  .pair:not(.side) .vp.phone{justify-self:center}
+  .vp-head{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 12px; margin:0 0 6px; font:600 .7rem var(--mono); letter-spacing:.06em; color:var(--muted)}
+  .vp-head b{color:var(--ink); letter-spacing:.1em; text-transform:uppercase}
+  .vp-cue{display:inline-flex; align-items:center; gap:6px; color:var(--accent-2)}
+  .vp-frame{position:relative; overflow:hidden; border:1px solid rgba(148,178,255,.3); border-radius:12px; background:#fff}
+  /* phone view: silver 3D handset (after the Motion Library "Phone mockup" card) around the live, scrollable page */
+  .vp-stage{position:relative; perspective:1300px; padding:4px 0 26px}
+  .vp-stage::after{content:""; position:absolute; left:12%; right:12%; bottom:4px; height:22px; border-radius:50%; pointer-events:none;
+    background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent); transform:scaleX(var(--sh,1)); opacity:calc(.5 + var(--sh,1) * .3)}
+  .vp-shell{position:relative; padding:10px; border-radius:36px; transform-style:preserve-3d;
+    background:linear-gradient(115deg,#aeb5c1 0%,#eef1f5 18%,#c3c9d3 38%,#f5f7fa 55%,#b4bbc6 78%,#dde1e7 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.75), inset 0 -3px 6px rgba(40,48,64,.35), 0 30px 50px -28px rgba(0,0,0,.85);
+    transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px))}
+  .vp-shell::before,.vp-shell::after{content:""; position:absolute; width:3px; border-radius:2px; background:linear-gradient(90deg,#9aa2af,#e3e7ec)}
+  .vp-shell::before{right:-3px; top:24%; height:13%}
+  .vp-shell::after{left:-3px; top:18%; height:7%; box-shadow:0 46px 0 #c4cad3}
+  .vp.phone .vp-frame{border:0; border-radius:27px; box-shadow:0 0 0 3px #0a0e16, 0 0 0 4px rgba(255,255,255,.35)}
+  .vp-island{position:absolute; left:50%; top:7px; z-index:2; width:31%; max-width:96px; height:19px; transform:translateX(-50%); border-radius:12px; background:#05070b; pointer-events:none}
+  @media (prefers-reduced-motion: reduce){ .vp-shell{transform:none} }
+  .vp-frame iframe{position:absolute; left:0; top:0; border:0; background:#fff; transform-origin:0 0}
+  .vp-frame:focus-within{outline:2px solid var(--accent); outline-offset:3px}
+  .vp-bar{position:absolute; right:3px; top:6px; bottom:6px; width:5px; border-radius:5px; background:rgba(5,10,23,.16); pointer-events:none}
+  .vp-bar i{display:block; height:24%; border-radius:5px; background:var(--accent); transform:translateY(calc(var(--p,0) * 316.6%))}
+  .pair-note{margin:4px 0 14px; font:.74rem/1.5 var(--mono); color:var(--muted)}
+
+  /* in-dialog screenshot gallery (backend project): selected image + caption + thumbnail switcher */
+  .pg{margin:14px 0 4px}
+  .pg-stage{margin:0}
+  .pg-main{display:block; width:100%; padding:0; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#eef1f6; cursor:zoom-in}
+  /* fixed 16:9 stage so mixed screenshot sizes never shift the thumbnails; desktop screenshots simply scale down on phones */
+  .pg-main img{display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:contain}
+  .pg-stage figcaption{margin:8px 0 0; font:.76rem/1.5 var(--mono); color:#c5d0e0}
+  .pg-thumbs{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:12px 0 0}
+  .pg-thumbs button{display:grid; align-content:start; gap:5px; min-width:0; min-height:44px; padding:4px 4px 7px; border-radius:10px; border:1px solid var(--line); background:rgba(5,10,23,.6); color:var(--muted); font:600 .66rem/1.25 var(--mono); text-align:left; cursor:pointer; transition:border-color .15s ease, color .15s ease}
+  .pg-thumbs img{display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; object-position:center; border-radius:6px; background:#eef1f6}
+  .pg-thumbs .st{justify-self:start; padding:1px 6px; border-radius:999px; border:1px solid; font:700 .56rem/1.4 var(--mono); letter-spacing:.06em; text-transform:uppercase}
+  .st.live{color:var(--good); border-color:rgba(52,211,153,.45)}
+  .st.test{color:var(--accent); border-color:rgba(59,158,255,.45)}
+  .st.park{color:#f5c26b; border-color:rgba(245,194,107,.45)}
+  .st.old{color:var(--muted); border-color:var(--line)}
+.st.draft{color:var(--accent-2); border-color:rgba(147,180,255,.45)}
+  .pg-note{margin:10px 0 0 !important; font:.72rem/1.5 var(--mono); color:var(--muted) !important}
+  .chip.test{color:var(--accent); border-color:rgba(59,158,255,.4); background:var(--accent-soft)}
+  /* plain-English explainer blocks inside the project dialog */
+  .pd-body .flow{list-style:none; counter-reset:f; margin:8px 0 0; padding:0; display:grid; gap:8px}
+  .pd-body .flow li{counter-increment:f; position:relative; padding:9px 12px 9px 46px; border:1px solid var(--line); border-radius:12px; background:rgba(5,10,23,.45); color:#c5d0e0; font-size:.9rem; line-height:1.5}
+  .pd-body .flow li::before{content:counter(f); position:absolute; left:12px; top:10px; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font:700 .7rem var(--mono); color:#04101f; background:var(--accent)}
+  .pd-body .flow li:last-child::before{background:var(--good)}
+  .pd-body .flow b{display:block; color:var(--ink)}
+  .pd-body .flow-side{margin:8px 0 0}
+  .pd-body .flow-side b{color:var(--ink)}
+  .pd-body .stats{list-style:none; margin:8px 0 0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
+  .pd-body .stats li{min-width:0; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:rgba(5,10,23,.45); font-size:.8rem; line-height:1.45; color:#c5d0e0}
+  .pd-body .stats b{display:block; margin:0 0 2px; font:800 1.15rem/1.2 var(--sans); color:var(--ink); overflow-wrap:anywhere}
+  .pd-body .how{margin:6px 0 0; padding:0 0 0 18px; display:grid; gap:4px; color:#c5d0e0; font-size:.9rem}
+  .pd-body .how b{color:var(--ink)}
+  .pg-thumbs button:hover{color:var(--ink)}
+  .pg-thumbs button[aria-pressed="true"]{border-color:var(--accent); color:var(--ink); background:rgba(59,158,255,.18)}
+  @media (max-width:520px){ .pg-thumbs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+  /* ---------- tutorials strip (secondary to projects; not part of the project filters/counts) ---------- */
+  #tutorials{padding-top:0}
+  .tut-h{font-size:clamp(1.4rem,2.6vw,1.9rem); line-height:1.15; letter-spacing:-.01em; font-weight:300; margin:0 0 10px}
+  .tut-h b{font-weight:800}
+  .tuts{list-style:none; margin:0; padding:0; display:grid; gap:16px; grid-template-columns:minmax(0,1fr)}
+  @media (min-width:720px){ .tuts{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (min-width:1180px){ .tuts{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  .tut{display:flex; flex-direction:column; min-width:0; border:1px solid var(--line); border-radius:16px; overflow:hidden; background:rgba(10,20,39,.9)}
+  .tut-media{position:relative; aspect-ratio:16/9; background:#05080f; border-bottom:1px solid var(--line); overflow:hidden}
+  .tut-media img,.tut-media video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block}
+  .tut-media video{opacity:0; transition:opacity .2s ease}
+  .tut.started .tut-media video{opacity:1}
+  .tut-btn{position:absolute; left:10px; bottom:10px; z-index:2; display:inline-flex; align-items:center; gap:8px; min-width:44px; min-height:44px; padding:0 16px 0 13px; border-radius:999px; border:1px solid rgba(230,238,252,.55); background:rgba(5,10,23,.84); color:var(--ink); font:700 .72rem var(--mono); letter-spacing:.06em; cursor:pointer; transition:border-color .15s ease, transform .16s var(--ease-out)}
+  .tut-btn:hover{border-color:var(--accent)}
+  .tut-btn:active{transform:scale(.97)}
+  .tut-btn svg{width:13px; height:13px; fill:currentColor}
+  .tut-btn[disabled]{opacity:.5; cursor:default}
+  .tut-err{position:absolute; left:10px; right:10px; top:10px; z-index:2; margin:0; padding:6px 10px; border-radius:8px; background:rgba(5,10,23,.9); font:.72rem/1.4 var(--mono); color:#f5c26b}
+  .tut-body{display:flex; flex-direction:column; flex:1; padding:14px 16px 16px}
+  .tut-body h3{margin:0 0 6px; font-size:1.02rem; line-height:1.3}
+  .tut-body > p{margin:0 0 12px; color:var(--muted); font-size:.9rem}
+  .tut-meta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin-top:auto; font:600 .68rem var(--mono); color:var(--muted)}
+  .tut-note{margin:14px 0 0; font:.72rem var(--mono); color:var(--muted)}
 
   /* ---------- process ---------- */
   .steps{list-style:none; margin:0 0 28px; padding:0; display:grid; gap:14px; counter-reset:m}
@@ -298,7 +395,8 @@
   .svcs{display:grid; gap:16px}
   @media (min-width:680px){ .svcs{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (min-width:1080px){ .svcs{grid-template-columns:repeat(3,minmax(0,1fr))} }
-  .svc{position:relative; border:1px solid var(--line); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:12px; background:var(--metal)}
+  .svc,.abp{position:relative; border:1px solid var(--line); border-radius:20px; background:var(--metal)}
+  .svc{padding:24px; display:flex; flex-direction:column; gap:12px}
   .svc .top-row{display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 10px; font:600 .66rem var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
   .svc .top-row .n{color:var(--accent)}
   .svc .grp{color:var(--accent-2)}
@@ -328,6 +426,7 @@
 
   /* ---------- about ---------- */
   .about{display:grid; gap:44px}
+  .abp{padding:clamp(20px,2.4vw,32px)}
   @media (min-width:1080px){ .about{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)} }
   .about p{color:var(--muted); max-width:58ch; margin:0 0 16px}
   .about p strong{color:var(--ink)}
@@ -353,9 +452,9 @@
   footer{position:relative; z-index:1; padding:28px 0 40px; font:.74rem var(--mono); color:var(--muted)}
 
   /* ---------- protected: metallic edge + rotating border-beam lights ---------- */
-  .pc::before,.svc::before,.idc::before{content:""; position:absolute; left:12%; right:12%; top:0; height:1px; background:var(--edge); pointer-events:none; z-index:3}
+  .pc::before,.svc::before,.abp::before,.idc::before{content:""; position:absolute; left:12%; right:12%; top:0; height:1px; background:var(--edge); pointer-events:none; z-index:3}
   @property --beam{syntax:"<angle>"; inherits:false; initial-value:0deg}
-  .pc::after,.window::after,.step::after,.svc::after,.idc::after,.plate::after{content:""; position:absolute; inset:0; border-radius:inherit; padding:2px; pointer-events:none; z-index:4;
+  .pc::after,.window::after,.step::after,.svc::after,.abp::after,.idc::after,.plate::after{content:""; position:absolute; inset:0; border-radius:inherit; padding:2px; pointer-events:none; z-index:4;
     background:conic-gradient(from var(--beam), transparent 0 18%, rgba(59,158,255,.15) 24%, #3b9eff 31%, #e8f4ff 33.5%, transparent 34% 68%, rgba(59,158,255,.15) 74%, #3b9eff 81%, #e8f4ff 83.5%, transparent 84%);
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor;
     mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
@@ -373,13 +472,13 @@
 
   @media (prefers-reduced-motion: reduce){
     .js .hero h1 .ln > span,.js .hero .after{animation:none}
-    .rv,.rv.pending{opacity:1; transform:none; transition:none}
+    .rv,.rv.pending,.rv .rv.pending{opacity:1; translate:none; transition:none}
     .marquee{-webkit-mask-image:none; mask-image:none}
     .marquee-track{animation:none; flex-wrap:wrap; width:auto; gap:10px 0}
     .logo.dup,.tools .pill-btn,.bar .pill-btn{display:none}
     .pulse{display:none}
-    .pc,.btn,.pd,.pd::backdrop,.shots .main img{transition:none}
-    .pc::after,.window::after,.step::after,.svc::after,.idc::after,.plate::after{animation:none; --beam:200deg; opacity:.6}
+    .pc,.btn,.pd,.pd::backdrop,.shots .main img,.tut-media video,.tut-btn,.pg-thumbs button{transition:none}
+    .pc::after,.window::after,.step::after,.svc::after,.abp::after,.idc::after,.plate::after{animation:none; --beam:200deg; opacity:.6}
   }
 </style>
 </head>
@@ -392,6 +491,8 @@
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9.5 8.5c-.4 3 2.6 6.4 6 6"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></symbol>
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
@@ -437,7 +538,7 @@
             <span class="ln" aria-hidden="true"><span style="--i:2"><em>leads and follow-up.</em></span></span>
           </h1>
           <div class="after">
-            <p class="sub">Workflows, CRM pipelines, funnels and Custom Code, plus AI-built websites and n8n automations. Try a working demo, then look through anonymised builds from real client work.</p>
+            <p class="sub">Workflows, CRM pipelines, funnels and Custom Code, plus n8n automations, Notion workspaces with AI agents, and custom tools I build with AI-assisted coding ("vibe coding"). Try a working demo, then look through anonymised builds from real client work.</p>
             <div class="acts">
               <a class="btn solid" href="#work">Explore projects <svg class="ico"><use href="#i-down"/></svg></a>
               <a class="btn" href="#contact">Contact me <svg class="ico"><use href="#i-arrow"/></svg></a>
@@ -451,7 +552,8 @@
           </div>
           <ul>
             <li><span><b>5+ years</b> in GoHighLevel: workflows, pipelines, funnels</span></li>
-            <li><span><b>AI automation</b>: n8n, Claude Code, AI-built websites</span></li>
+            <li><span><b>AI automation</b>: n8n, Notion agents, Claude</span></li>
+            <li><span><b>Custom tools</b> built with AI-assisted coding</span></li>
             <li><span>Available for <b>remote projects</b></span></li>
             <li><span>Davao City, PH · <b>works US / AU hours</b></span></li>
             <li><span>Local time <b class="clock">--:--</b></span></li>
@@ -475,13 +577,13 @@
       <p class="label rv">Projects</p>
       <h2 class="h2 rv" id="wk-h">Try a demo, then <b>see the real builds.</b></h2>
       <p class="lede rv">Three working demos with fictional brands come first. After them are builds from real client work, with names, logos and photos blurred. No results are claimed unless they're verified.</p>
-      <div class="filters" role="group" aria-label="Filter projects by category">
-        <button type="button" class="fbtn" data-filter="all" aria-pressed="true">All <span class="n">18</span></button>
+      <div class="filters rv" role="group" aria-label="Filter projects by category">
+        <button type="button" class="fbtn" data-filter="all" aria-pressed="true">All <span class="n">24</span></button>
         <button type="button" class="fbtn" data-filter="websites" aria-pressed="false">Websites &amp; funnels <span class="n">9</span></button>
-        <button type="button" class="fbtn" data-filter="automations" aria-pressed="false">Automations <span class="n">10</span></button>
-        <button type="button" class="fbtn" data-filter="apps" aria-pressed="false">Tools &amp; apps <span class="n">2</span></button>
+        <button type="button" class="fbtn" data-filter="automations" aria-pressed="false">Automations <span class="n">14</span></button>
+        <button type="button" class="fbtn" data-filter="apps" aria-pressed="false">Tools &amp; apps <span class="n">4</span></button>
       </div>
-      <p class="count" id="count" role="status">Showing all 18 projects</p>
+      <p class="count rv" id="count" role="status">Showing all 24 projects</p>
       <div class="grid" id="grid">
 
         <article class="pc demo rv" data-cat="websites">
@@ -516,7 +618,7 @@
               <h4>Status</h4><p>Original demo with a fictional brand. It runs only in your browser: nothing is sent, stored or booked.</p>
               <h4>Next action</h4><p>Open the demo and try the form.</p>
             </div>
-            <div class="acts-row"><a class="go solid" data-primary href="demos/home-services.html">Open demo <svg class="ico"><use href="#i-arrow"/></svg></a><button type="button" class="go" data-detail>Overview</button></div>
+            <div class="acts-row"><a class="go solid" data-primary href="demos/home-services.html">Open demo <svg class="ico"><use href="#i-arrow"/></svg></a><button type="button" class="go" data-detail data-demo="demos/home-services.html">Desktop + phone preview</button></div>
           </div>
         </article>
 
@@ -557,7 +659,7 @@
               <h4>Status</h4><p>Original demo with a fictional brand. It runs only in your browser: nothing is sent, stored or booked.</p>
               <h4>Next action</h4><p>Open the demo and try a request.</p>
             </div>
-            <div class="acts-row"><a class="go solid" data-primary href="demos/dental-clinic.html">Open demo <svg class="ico"><use href="#i-arrow"/></svg></a><button type="button" class="go" data-detail>Overview</button></div>
+            <div class="acts-row"><a class="go solid" data-primary href="demos/dental-clinic.html">Open demo <svg class="ico"><use href="#i-arrow"/></svg></a><button type="button" class="go" data-detail data-demo="demos/dental-clinic.html">Desktop + phone preview</button></div>
           </div>
         </article>
 
@@ -593,7 +695,324 @@
               <h4>Status</h4><p>Original demo with a fictional brand. It runs only in your browser: nothing is sent, stored or booked.</p>
               <h4>Next action</h4><p>Open the demo and answer the two questions.</p>
             </div>
-            <div class="acts-row"><a class="go solid" data-primary href="demos/consultant.html">Open demo <svg class="ico"><use href="#i-arrow"/></svg></a><button type="button" class="go" data-detail>Overview</button></div>
+            <div class="acts-row"><a class="go solid" data-primary href="demos/consultant.html">Open demo <svg class="ico"><use href="#i-arrow"/></svg></a><button type="button" class="go" data-detail data-demo="demos/consultant.html">Desktop + phone preview</button></div>
+          </div>
+        </article>
+
+        <article class="pc wide rv" id="website-intake" data-cat="automations" data-note="Client work, anonymised: the client name, people's names and email content are blurred or left out. No lead numbers are claimed.">
+          <div class="mcol">
+            <div class="media shots" data-shots>
+              <button type="button" class="main contain" aria-label="View screenshot full size"><img src="work/website-intake/1-intake-overview-960.webp" alt="GHL intake workflow zoomed out: webhook trigger, contact and tags, a four-way interest router, and reply, alert and task steps on each branch" loading="lazy" width="960" height="549"></button>
+            </div>
+            <div class="thumbs" role="group" aria-label="Screenshots">
+              <button type="button" aria-pressed="true" data-src="work/website-intake/1-intake-overview-960.webp" data-full="work/website-intake/1-intake-overview.webp" data-alt="GHL intake workflow zoomed out: webhook trigger, contact and tags, a four-way interest router, and reply, alert and task steps on each branch" data-fit="contain">Intake workflow</button>
+              <button type="button" aria-pressed="false" data-src="work/website-intake/2-intake-top-960.webp" data-full="work/website-intake/2-intake-top.webp" data-alt="Top of the intake workflow: inbound webhook trigger, create contact, add source tags, which-interest router" data-fit="contain">Trigger + tags</button>
+              <button type="button" aria-pressed="false" data-src="work/website-intake/3-reply-email-960.webp" data-full="work/website-intake/3-reply-email.webp" data-alt="A branded reply email received by a test contact, with the brand, body text and footer blurred" data-fit="contain">Reply email</button>
+              <button type="button" aria-pressed="false" data-src="work/website-intake/4-advisory-pipeline-960.webp" data-full="work/website-intake/4-advisory-pipeline.webp" data-alt="Advisory sales pipeline stages with probabilities: scoped 40, proposal sent 60, negotiating 80, won 100, lost 0" data-fit="contain">Sales pipeline</button>
+            </div>
+          </div>
+          <div class="body">
+            <p class="kind">Automation · GHL · n8n</p>
+            <h3>Website enquiry intake with consent and routing</h3>
+            <p>For an Australian retail-media consultancy: every website enquiry now becomes a tagged CRM contact, gets the right branded reply, and reaches the owner as an email, a Google Chat alert and a reply task.</p>
+            <ul class="how">
+              <li><b>Capture:</b> website forms post to one webhook; the contact is created or updated with source, cohort and consent tags.</li>
+              <li><b>Route:</b> collaboration, courses, community and not-sure enquiries each get their own branch.</li>
+              <li><b>Reply:</b> four branded reply templates; community members get one welcome, only with consent.</li>
+              <li><b>Beyond the form:</b> a survey response workflow, advisory sales and community pipelines, and a booking-to-deal flow.</li>
+            </ul>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span><span class="chip live">INTAKE · SURVEY · PIPELINE LIVE</span><span class="chip test">BOOKING FLOW BUILT · AWAITING GO-LIVE</span></div>
+            <div class="tags"><span class="tag">GoHighLevel</span><span class="tag">Inbound webhook</span><span class="tag">n8n</span><span class="tag">Google Chat</span><span class="tag">Email templates</span><span class="tag">Pipelines</span></div>
+            <div class="detail">
+              <h4>Problem</h4><p>Enquiries from the website arrived as plain emails. Nothing recorded where a lead came from or whether they agreed to marketing, and every enquiry got the same reply.</p>
+              <h4>What I built</h4>
+              <ol class="flow">
+                <li><b>Form sent</b>Every form on the site posts to one inbound webhook in GoHighLevel.</li>
+                <li><b>Contact and tags</b>The contact is created or updated with company, how they heard and the consent date, then tagged by source, cohort and consent.</li>
+                <li><b>Interest router</b>Collaboration, courses, community and not-sure enquiries each follow their own branch.</li>
+                <li><b>Reply and alerts</b>The enquirer gets the matching branded reply; the owner gets an email, a Google Chat alert (relayed through n8n) and, where a reply is needed, a task.</li>
+                <li><b>After the first contact</b>Survey responses are tagged and thanked, qualified deals move through an advisory sales pipeline, and a booked discovery call will open a deal with reminders.</li>
+              </ol>
+              <p class="flow-side"><b>Clean account first:</b> before building, 31 unused snapshot and test objects were removed, after a full account backup and a backup of each object.</p>
+              <h4>Results</h4>
+              <ul class="stats">
+                <li><b>4</b>interest branches, each with its own reply, alert and task</li>
+                <li><b>4</b>branded reply templates the client can edit without touching the workflow</li>
+                <li><b>6</b>pipeline stages from Scoping booked to Won or Lost</li>
+                <li><b>31</b>unused objects removed, each backed up first</li>
+              </ul>
+              <h4>Screenshots</h4>
+              <div class="pg" data-pg>
+                <figure class="pg-stage"><button type="button" class="pg-main" aria-label="View screenshot full size"><img alt="" width="1600" height="900"></button><figcaption></figcaption></figure>
+                <div class="pg-thumbs" role="group" aria-label="Choose a screenshot"><button type="button" aria-pressed="true" data-src="work/website-intake/1-intake-overview-960.webp" data-full="work/website-intake/1-intake-overview.webp" data-alt="GHL intake workflow zoomed out: webhook trigger, contact and tags, a four-way interest router, and reply, alert and task steps on each branch" data-cap="LIVE · The website intake workflow, zoomed out: one inbound webhook, contact and tags, then a router with a branch per interest. Each branch sends the owner an email and a Google Chat alert, creates a reply task where needed and sends the enquirer a branded reply."><img data-src="work/website-intake/1-intake-overview-960.webp" alt="" width="960" height="549">Intake workflow<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/website-intake/2-intake-top-960.webp" data-full="work/website-intake/2-intake-top.webp" data-alt="Top of the intake workflow: inbound webhook trigger, create contact, add source tags, which-interest router" data-cap="LIVE · The top of the same workflow: every website form posts to one inbound webhook; the contact is created or updated with company, how they heard and consent date, then tagged by source, cohort and consent before the interest router."><img data-src="work/website-intake/2-intake-top-960.webp" alt="" width="960" height="570">Trigger + tags<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/website-intake/3-reply-email-960.webp" data-full="work/website-intake/3-reply-email.webp" data-alt="A branded reply email received by a test contact, with the brand, body text and footer blurred" data-cap="LIVE · One of the four branded replies, as a test contact received it. The templates sync into the workflow, so the client edits the wording without touching the automation. Brand, body text and footer are blurred."><img data-src="work/website-intake/3-reply-email-960.webp" alt="" width="960" height="549">Reply email<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/website-intake/4-advisory-pipeline-960.webp" data-full="work/website-intake/4-advisory-pipeline.webp" data-alt="Advisory sales pipeline stages with probabilities: scoped 40, proposal sent 60, negotiating 80, won 100, lost 0" data-cap="LIVE · The advisory sales pipeline: six stages from Scoping booked to Won or Lost, each with a win probability. Lost is kept out of the funnel report."><img data-src="work/website-intake/4-advisory-pipeline-960.webp" alt="" width="960" height="456">Sales pipeline<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/website-intake/5-survey-workflow-960.webp" data-full="work/website-intake/5-survey-workflow.webp" data-alt="Survey response workflow: tag the response, notify the team, check for an email" data-cap="LIVE · Survey responses from an AI Studio survey: tag the response, alert the team and, when the person left an email, send a thank-you. Tested end to end on 27 Oct 2026."><img data-src="work/website-intake/5-survey-workflow-960.webp" alt="" width="960" height="570">Survey workflow<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/website-intake/6-booking-to-deal-draft-960.webp" data-full="work/website-intake/6-booking-to-deal-draft.webp" data-alt="Two draft workflows: a confirmed discovery call creates a deal and sends confirmation and reminder emails; no-show or cancelled bookings create follow-up tasks" data-cap="BUILT, AWAITING GO-LIVE · Booking to deal: a confirmed discovery call tags the contact, opens a deal at Scoping booked and sends a confirmation plus 1-day and 2-hour reminders. A second workflow handles no-shows and cancellations with tasks."><img data-src="work/website-intake/6-booking-to-deal-draft-960.webp" alt="" width="960" height="956">Booking to deal<span class="st draft">Built</span></button></div>
+                <p class="pg-note">Real GoHighLevel screens. The client name, brand, people's names and email text are blurred; the reply shown went to a test contact.</p>
+              </div>
+              <h4>Design choices</h4>
+              <ul class="how">
+                <li><b>One webhook for every form:</b> one place to change, one place to check.</li>
+                <li><b>Templates in sync:</b> the client edits a template and the workflow sends the new version.</li>
+                <li><b>Consent decides:</b> the welcome only goes to people who ticked the consent box, and only once.</li>
+                <li><b>Backups before clean-up:</b> nothing was removed without a restorable copy.</li>
+              </ul>
+              <h4>Tools</h4><p>GoHighLevel (inbound webhook, workflows, if/else routing, tags, custom fields, email templates, tasks, pipelines, AI Studio survey), n8n for the Google Chat relay, Google Chat.</p>
+              <h4>Status</h4><p>Client work, anonymised. Live: the website intake workflow (sending replies since 23 October 2026), the reply templates, the survey response workflow (tested end to end on 27 October), the advisory sales pipeline and a community pipeline (both still empty). Built and awaiting the client's go-live: the booking-to-deal workflows (Draft), and native GHL forms that were tested on staging pages only. No lead numbers are claimed.</p>
+              <h4>Next action</h4><p>Full walkthrough available on request.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+
+        <article class="pc wide rv" id="ops-backend" data-cat="automations" data-note="Client work, anonymised: the client name, other people's names and keys are left out. Costs shown are measured in testing.">
+          <div class="mcol">
+            <div class="media shots" data-shots>
+              <button type="button" class="main" data-full="work/operating-backend/03-priorities-and-review-v1.webp" aria-label="View screenshot full size"><img src="work/operating-backend/cover-v1.webp" alt="Notion workspace with urgency views and a Needs review list of AI-suggested tasks; client branding and task titles hidden" loading="lazy" width="1280" height="720"></button>
+            </div>
+          </div>
+          <div class="body">
+            <p class="kind">AI automation · n8n · Notion · Claude API</p>
+            <h3>Meeting-to-task operating backend</h3>
+            <p>For an Australian retail-media consultancy: calendar events, meeting notes and flagged emails now turn into Notion pages, Claude follow-up drafts and tasks for a person to review, on a company hub that updates itself, with failure alerts and a spend watch around it.</p>
+            <ul class="how">
+              <li><b>Capture:</b> calendar events become meeting pages; the Gemini notes land on the same page after the call.</li>
+              <li><b>Claude:</b> a follow-up draft per meeting and at most 5 real commitments, created as "Needs review".</li>
+              <li><b>Hub:</b> flagged emails become tasks, status boxes update three times a weekday, and a Notion agent writes a Friday review.</li>
+              <li><b>Safety net:</b> any failure becomes a task and an email; a weekday spend watch emails at $10 and $20.</li>
+            </ul>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span><span class="chip live">10 N8N WORKFLOWS LIVE</span><span class="chip concept">HANDOVER PACK · 8 RUNBOOKS</span></div>
+            <div class="tags"><span class="tag">n8n</span><span class="tag">Notion</span><span class="tag">Claude API</span><span class="tag">Google Drive</span><span class="tag">Gmail</span><span class="tag">GHL</span><span class="tag">Notion agents</span><span class="tag">Human review</span></div>
+            <div class="detail">
+              <h4>Problem</h4><p>Meetings produced notes, but nobody turned them into tasks, so actions were forgotten. The first AI setup ran on Notion AI credits, and the 300 credits a month ran out in 5 days.</p>
+              <h4>What I built</h4>
+              <ol class="flow">
+                <li><b>Meeting booked</b>An hourly check on the calendar creates the Notion meeting page before the call (meetings with a Meet link and another attendee only).</li>
+                <li><b>Notes captured</b>n8n spots the new notes file (Gmail trigger plus a 30-minute check), skips anything already captured and copies it to a Meetings folder in Drive.</li>
+                <li><b>Notion meeting page</b>A second workflow finds that page (or creates it), writes the notes in and marks it Summarised.</li>
+                <li><b>Claude follow-up and Claude tasks</b>Claude writes a follow-up draft into the page, or marks it Not needed. Claude also suggests at most 5 real commitments, checked against open tasks.</li>
+                <li><b>Human review</b>New tasks arrive as "Needs review" and only count once a person approves them. The follow-up stays a draft.</li>
+              </ol>
+              <p class="flow-side"><b>Around it:</b> emails labelled for Notion become review tasks within 30 minutes, the Hub's "What needs attention" boxes rewrite themselves three times each weekday, a Notion agent writes the Friday review, new GHL leads post an alert to Google Chat, any failed workflow creates a Notion task, and a spend watch logs every Claude call. A handover pack (8 runbooks, an access list, and key-swap and ownership guides) lets the client run it without me.</p>
+              <h4>Results</h4>
+              <ul class="stats">
+                <li><b>10</b>live n8n workflows, each with a plain-English runbook</li>
+                <li><b>US$0.0044</b>measured Claude cost per meeting for task suggestions, about half a cent</li>
+                <li><b>Max 5</b>tasks suggested per meeting, deduplicated and held for review</li>
+                <li><b>$10 / $20</b>month-to-date spend alerts by email (live since 27 October), plus a weekly total</li>
+              </ul>
+              <h4>Screenshots</h4>
+              <div class="pg" data-pg>
+                <figure class="pg-stage"><button type="button" class="pg-main" aria-label="View screenshot full size"><img alt="" width="1600" height="900"></button><figcaption></figcaption></figure>
+                <div class="pg-thumbs" role="group" aria-label="Choose a screenshot"><button type="button" aria-pressed="true" data-src="work/operating-backend/01-company-hub-v1-960.webp" data-full="work/operating-backend/01-company-hub-v1.webp" data-alt="Notion company hub with a card for each business function and live urgency views below; client branding removed" data-cap="Notion company hub: one front door to every business function, with live urgency views (high priority, overdue, due this week, waiting) below."><img data-src="work/operating-backend/01-company-hub-v1-960.webp" alt="" width="960" height="444">Notion hub</button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-01-capture-notes-960.webp" data-full="work/operating-backend/n8n-01-capture-notes.webp" data-alt="n8n workflow 01: Gmail triggers and a 30-minute schedule feed a Drive search, two filters, a dedupe check, a file copy and a log row" data-cap="LIVE · 01 Capture meeting notes: Gmail triggers plus a 30-minute schedule find new Gemini notes in Drive, skip the workflow's own copies and unfinished notes, check a dedupe table, then copy the file to the Meetings folder and log it."><img data-src="work/operating-backend/n8n-01-capture-notes-960.webp" alt="" width="960" height="540">01 Capture<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-02-meeting-page-run-960.webp" data-full="work/operating-backend/n8n-02-meeting-page-run.webp" data-alt="n8n workflow 02 run with every step green: Drive trigger, notes check, duplicate lookup, Notion page, notes written, marked Summarised" data-cap="LIVE · 02 Meeting page: a real run with every step green. It checks for a Gemini notes file, skips meetings already in Notion, creates the meeting page, writes the notes in and marks it Summarised."><img data-src="work/operating-backend/n8n-02-meeting-page-run-960.webp" alt="" width="960" height="540">02 Notion page<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-07-follow-up-run-960.webp" data-full="work/operating-backend/n8n-07-follow-up-run.webp" data-alt="n8n workflow 07 run: Notion trigger, meeting notes read, Claude writes the follow-up, a box is added to the meeting page and it is marked Drafted" data-cap="LIVE · 07 Follow-up draft: Claude reads the meeting notes and writes a follow-up. Meetings with outside attendees get a follow-up box on the Notion page and are marked Drafted; internal meetings are marked Not needed."><img data-src="work/operating-backend/n8n-07-follow-up-run-960.webp" alt="" width="960" height="540">07 Follow-up<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/v21-n8n-11-calendar-run-960.webp" data-full="work/operating-backend/v21-n8n-11-calendar-run.webp" data-alt="n8n workflow 11 run with every step green: hourly schedule, find calendar rows in Notion, get calendar events, plan Notion changes, write to Notion; sticky note and a name blurred" data-cap="LIVE SINCE 22 OCT · 11 Calendar to meetings: every hour on weekdays it reads the calendar and keeps one Notion meeting row per upcoming call, so the notes have a page to land on. The sticky note and a person's name are blurred."><img data-src="work/operating-backend/v21-n8n-11-calendar-run-960.webp" alt="" width="960" height="570">11 Calendar<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/v21-n8n-12-hub-status-960.webp" data-full="work/operating-backend/v21-n8n-12-hub-status.webp" data-alt="n8n workflow 12: three-times-a-weekday schedule, find open tasks and meetings, build the two status boxes, write only changed boxes to Notion, read back what was saved" data-cap="LIVE SINCE 22 OCT · 12 Hub status: three times each weekday it rewrites the two status boxes at the top of the Notion hub (what needs attention, next step), writes only when the text changed and reads it back to confirm. Rule-based, no AI."><img data-src="work/operating-backend/v21-n8n-12-hub-status-960.webp" alt="" width="960" height="570">12 Hub status<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/v21-notion-friday-review-agent-960.webp" data-full="work/operating-backend/v21-notion-friday-review-agent.webp" data-alt="Notion agent settings: weekly Friday 3 PM trigger, read-only instructions with accuracy rules" data-cap="SCHEDULED · The Friday Review Notion agent: every Friday at 3 pm it writes a plain-English review of the week. It only reads, never changes tasks or messages anyone, and copies owners exactly. Client name and people's names blurred."><img data-src="work/operating-backend/v21-notion-friday-review-agent-960.webp" alt="" width="960" height="640">Friday Review<span class="st live">Weekly</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/v21-notion-how-to-page-960.webp" data-full="work/operating-backend/v21-notion-how-to-page.webp" data-alt="How to use the Hub page: what fills itself in, and how to add a meeting by hand" data-cap="GUIDE · A how-to page inside the hub, written for the client: what fills itself in, and what to do by hand when something does not arrive. Sidebar and names blurred."><img data-src="work/operating-backend/v21-notion-how-to-page-960.webp" alt="" width="960" height="667">How-to page<span class="st test">Guide</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-09-meeting-to-tasks-960.webp" data-full="work/operating-backend/n8n-09-meeting-to-tasks.webp" data-alt="n8n workflow 09: Notion webhook and a 3-hourly schedule, meeting checks, a loop, Claude suggests tasks, tasks created in Notion, meeting remembered and token use logged" data-cap="LIVE SINCE 21 OCT · 09 Meeting to tasks: starts when Notion says a meeting is summarised, with a 3-hourly safety check on weekdays. Claude suggests at most 5 real commitments, checked against open tasks, and sets a priority only when the notes say so. Each task is created as Needs review, the meeting is remembered so reruns never double-create, and token use is logged."><img data-src="work/operating-backend/n8n-09-meeting-to-tasks-960.webp" alt="" width="960" height="445">09 Tasks<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-09-test-run-960.webp" data-full="work/operating-backend/n8n-09-test-run.webp" data-alt="n8n workflow 09 test run: the green path runs from the trigger through Claude to the Notion task step" data-cap="TESTED 21 OCT · 09 test run: the green path shows a meeting going through Claude and its tasks being created in Notion. Measured Claude cost: US$0.0044 per meeting."><img data-src="work/operating-backend/n8n-09-test-run-960.webp" alt="" width="960" height="445">09 Test run<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/notion-09-test-tasks-960.webp" data-full="work/operating-backend/notion-09-test-tasks.webp" data-alt="Notion test meeting page after workflow 09: status Summarised, follow-up Not needed, three linked tasks and 3 to review" data-cap="TESTED 21 OCT · The test meeting in Notion after workflow 09: three tasks linked to the meeting, all 3 waiting for review."><img data-src="work/operating-backend/notion-09-test-tasks-960.webp" alt="" width="960" height="445">09 In Notion<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/03-priorities-and-review-v1-960.webp" data-full="work/operating-backend/03-priorities-and-review-v1.webp" data-alt="Notion urgency views above a Needs review list of AI-suggested tasks, task titles hidden" data-cap="Priorities and the Needs review list, where AI-suggested tasks wait until a person approves them. Client task titles are hidden."><img data-src="work/operating-backend/03-priorities-and-review-v1-960.webp" alt="" width="960" height="444">Review queue</button><button type="button" aria-pressed="false" data-src="work/operating-backend/v21-n8n-10-spend-watch-live-960.webp" data-full="work/operating-backend/v21-n8n-10-spend-watch-live.webp" data-alt="n8n workflow 10, published: weekdays 8am schedule, usage and alert tables read, spend worked out, email only when a new threshold is crossed" data-cap="LIVE SINCE 27 OCT · 10 Claude spend watch: every Claude call is logged with its tokens and cost. Each weekday morning this workflow works out month-to-date spend and emails only when a new threshold ($10, then $20) is crossed, then remembers that alert. It also sends a weekly total."><img data-src="work/operating-backend/v21-n8n-10-spend-watch-live-960.webp" alt="" width="960" height="570">10 Spend watch<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-10-spend-watch-run-960.webp" data-full="work/operating-backend/n8n-10-spend-watch-run.webp" data-alt="n8n workflow 10 test run: all checks green and the email step skipped because spend was under the threshold" data-cap="TESTED 21 OCT · 10 test run: spend was under the threshold, so the email step was skipped, as designed."><img data-src="work/operating-backend/n8n-10-spend-watch-run-960.webp" alt="" width="960" height="540">10 Test run<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-00-failure-alert-960.webp" data-full="work/operating-backend/n8n-00-failure-alert.webp" data-alt="n8n workflow 00: when a workflow fails, build a task and create it in the Notion task list" data-cap="LIVE · 00 Failure alert: the error workflow behind every other workflow. If any step fails, it builds a task in the Notion task list and emails me the failed step and error."><img data-src="work/operating-backend/n8n-00-failure-alert-960.webp" alt="" width="960" height="540">00 Failure alert<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-ghl-lead-alerts-960.webp" data-full="work/operating-backend/n8n-ghl-lead-alerts.webp" data-alt="n8n lead-alert workflow: GHL lead webhook, build the alert line, post to Google Chat; the Chat URL is blurred" data-cap="LIVE · GHL lead alerts: a GoHighLevel workflow sends each new lead to a webhook, and n8n posts a one-line alert (name and interest) to the team's Google Chat space. The Chat URL and key are blurred."><img data-src="work/operating-backend/n8n-ghl-lead-alerts-960.webp" alt="" width="960" height="540">Lead alerts<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-06-expense-to-xero-960.webp" data-full="work/operating-backend/n8n-06-expense-to-xero.webp" data-alt="n8n workflow 06 with notes: Notion expenses read, test rows skipped, Xero checked for an existing bill or contact, draft bill and receipt created, result written back" data-cap="PARKED · 06 Expense to Xero: reads unsent expense rows from Notion, skips test rows, checks Xero for an existing bill or contact and creates a draft bill with the receipt. Built, and waiting on the Xero app connection."><img data-src="work/operating-backend/n8n-06-expense-to-xero-960.webp" alt="" width="960" height="540">06 Xero bills<span class="st park">Parked</span></button><button type="button" aria-pressed="false" data-src="work/operating-backend/n8n-03-gemini-tasks-replaced-960.webp" data-full="work/operating-backend/n8n-03-gemini-tasks-replaced.webp" data-alt="n8n workflow 03, replaced: Notion trigger, meeting notes read, Gemini extracts actions, tasks created in Notion" data-cap="REPLACED · 03 Tasks from meetings: the earlier version, where Gemini pulled out the action items. Replaced by 09 and kept unpublished."><img data-src="work/operating-backend/n8n-03-gemini-tasks-replaced-960.webp" alt="" width="960" height="540">03 Gemini tasks<span class="st old">Replaced</span></button></div>
+                <p class="pg-note">Real n8n and Notion screens. The client name, other people's names, sticky notes and keys are blurred; the tasks shown come from a test meeting.</p>
+              </div>
+              <h4>Design choices</h4>
+              <ul class="how">
+                <li><b>One AI vendor:</b> follow-ups and tasks both run on Claude.</li>
+                <li><b>Human review first:</b> AI tasks stay "Needs review" until a person approves them.</li>
+                <li><b>No double-ups:</b> dedupe tables mean a rerun never creates the same meeting or task twice.</li>
+                <li><b>Loud failures:</b> every workflow uses the error workflow, so a failure becomes a task.</li>
+                <li><b>Predictable cost:</b> moved off Notion AI credits to the Claude API at about half a cent per meeting, with a spend watch.</li>
+              </ul>
+              <h4>Tools</h4><p>n8n Cloud (Gmail and Drive triggers, Google Docs, Notion API, Code nodes, data tables, an error workflow), Notion, Google Drive and Gmail, the Claude API, GoHighLevel webhooks and Google Chat.</p>
+              <h4>Status</h4><p>Client work, anonymised. Live in n8n: failure alert, notes capture, Notion meeting pages, calendar to meetings, Claude follow-up drafts, meeting to tasks with Claude (since 21 October 2026), email to task, Hub status boxes, the Claude spend watch (since 27 October 2026) and GHL lead alerts. The Friday Review Notion agent is scheduled weekly; the earlier Notion agents (morning brief, meeting actioner) were switched off on 21 October, and meeting-to-task now runs in n8n with the Claude API. Built but parked: expense to Xero draft bills, waiting on the Xero app. Replaced: the earlier Gemini task workflow. Handover pack written: a runbook per automation (what starts it, how to see it ran, what to do if it breaks, how to pause it). No time savings are claimed.</p>
+              <h4>Next action</h4><p>Full walkthrough available on request.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+
+        <article class="pc rv" id="lost-leads" data-cat="automations" data-note="Client work, anonymised: the company name and contact data are left out. Nothing has been sent to real contacts yet.">
+          <div class="media shots" data-shots>
+            <button type="button" class="main contain" aria-label="View screenshot full size"><img src="work/gps-lost-leads/1-campaign-overview-960.webp" alt="Lost-leads workflow zoomed out: tag trigger, drip mode, a nine-way router and seven tracks of four emails with waits" loading="lazy" width="960" height="570"></button>
+          </div>
+          <div class="thumbs" role="group" aria-label="Screenshots">
+            <button type="button" aria-pressed="true" data-src="work/gps-lost-leads/1-campaign-overview-960.webp" data-full="work/gps-lost-leads/1-campaign-overview.webp" data-alt="Lost-leads workflow zoomed out: tag trigger, drip mode, a nine-way router and seven tracks of four emails with waits" data-fit="contain">Campaign</button>
+              <button type="button" aria-pressed="false" data-src="work/gps-lost-leads/2-trigger-and-router-960.webp" data-full="work/gps-lost-leads/2-trigger-and-router.webp" data-alt="Top of the campaign: contact tag trigger, drip mode, re-engagement router with industry branches" data-fit="contain">Trigger + router</button>
+              <button type="button" aria-pressed="false" data-src="work/gps-lost-leads/3-reply-routing-960.webp" data-full="work/gps-lost-leads/3-reply-routing.webp" data-alt="Form-submitted workflow: remove from the campaign, then route talk now, keep me updated, not right now and remove me" data-fit="contain">Reply routing</button>
+              <button type="button" aria-pressed="false" data-src="work/gps-lost-leads/4-update-details-form-960.webp" data-full="work/gps-lost-leads/4-update-details-form.webp" data-alt="Update your details form: name, email, organisation, industry, what they need, team size, mobile, preferred contact method" data-fit="contain">Update page form</button>
+          </div>
+          <div class="body">
+            <p class="kind">Automation · GHL · Voice AI</p>
+            <h3>Lost-leads re-engagement campaign</h3>
+            <p>For an Australian GPS-tracking / safety-tech company: lost leads get a four-email track that fits their industry and a page to update their details, and each answer is routed to the right next step. A second phase adds an outbound AI caller.</p>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span><span class="chip test">BUILT AND TESTED · AWAITING GO-LIVE</span></div>
+            <div class="tags"><span class="tag">Workflows</span><span class="tag">Smart lists</span><span class="tag">Drip mode</span><span class="tag">Forms</span><span class="tag">Voice AI</span></div>
+            <div class="detail">
+              <h4>Problem</h4><p>About 30 lost opportunities had no follow-up at all, and a trigger on the Lost status would have clashed with workflows that already run when a deal is lost.</p>
+              <h4>What I built</h4>
+              <ol class="flow">
+                <li><b>Safe entry</b>A tag added from a smart list starts the campaign, so the existing Lost workflows are untouched.</li>
+                <li><b>Industry tracks</b>A nine-way router: two exits (do not contact, personal-safety cases) and seven industry tracks of four emails each.</li>
+                <li><b>Update your details</b>Every email links to a short form on the company's site: industry, what they need now, team size, how to reach them.</li>
+                <li><b>Answer routing</b>Talk now: warm opportunity and a call task. Keep me updated or not now: long-term follow-up. Remove me: email switched off.</li>
+                <li><b>Phase 2: AI caller</b>No answer after the emails: an outbound-only Voice AI call in business hours, with a guard that skips clients, booked or replied contacts and anyone unsubscribed, and an outcome router.</li>
+              </ol>
+              <h4>Results</h4>
+              <ul class="stats">
+                <li><b>28</b>emails: 7 industry tracks of 4</li>
+                <li><b>9</b>router branches, including 2 safety exits</li>
+                <li><b>4</b>answer routes from the update page</li>
+                <li><b>2</b>test contacts run end to end before go-live</li>
+              </ul>
+              <h4>Screenshots</h4>
+              <div class="pg" data-pg>
+                <figure class="pg-stage"><button type="button" class="pg-main" aria-label="View screenshot full size"><img alt="" width="1600" height="900"></button><figcaption></figcaption></figure>
+                <div class="pg-thumbs" role="group" aria-label="Choose a screenshot"><button type="button" aria-pressed="true" data-src="work/gps-lost-leads/1-campaign-overview-960.webp" data-full="work/gps-lost-leads/1-campaign-overview.webp" data-alt="Lost-leads workflow zoomed out: tag trigger, drip mode, a nine-way router and seven tracks of four emails with waits" data-cap="BUILT AND TESTED · The whole campaign: a tag trigger, drip mode, then a nine-way router into seven industry tracks of four emails each, with waits in between and a no-response tag at the end."><img data-src="work/gps-lost-leads/1-campaign-overview-960.webp" alt="" width="960" height="570">Campaign<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/gps-lost-leads/2-trigger-and-router-960.webp" data-full="work/gps-lost-leads/2-trigger-and-router.webp" data-alt="Top of the campaign: contact tag trigger, drip mode, re-engagement router with industry branches" data-cap="BUILT AND TESTED · Entry is a tag added from a smart list, not a Lost status trigger, so it cannot race the workflows that already run on Lost. Drip mode spaces the sends."><img data-src="work/gps-lost-leads/2-trigger-and-router-960.webp" alt="" width="960" height="570">Trigger + router<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/gps-lost-leads/3-reply-routing-960.webp" data-full="work/gps-lost-leads/3-reply-routing.webp" data-alt="Form-submitted workflow: remove from the campaign, then route talk now, keep me updated, not right now and remove me" data-cap="BUILT AND TESTED · When someone answers on the update page they leave the campaign, then: talk now opens a warm opportunity with a call task; keep me updated or not now go to long-term follow-up; remove me switches off email."><img data-src="work/gps-lost-leads/3-reply-routing-960.webp" alt="" width="960" height="570">Reply routing<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/gps-lost-leads/4-update-details-form-960.webp" data-full="work/gps-lost-leads/4-update-details-form.webp" data-alt="Update your details form: name, email, organisation, industry, what they need, team size, mobile, preferred contact method" data-cap="BUILT · The update-your-details form behind every email's button: industry, what they need right now, team size and how they want to be contacted."><img data-src="work/gps-lost-leads/4-update-details-form-960.webp" alt="" width="960" height="570">Update page form<span class="st test">Built</span></button></div>
+                <p class="pg-note">Real GoHighLevel screens, built with GHL's Build using AI and checked by hand. The workflows still carry their Draft labels until go-live.</p>
+              </div>
+              <h4>Tools</h4><p>GoHighLevel workflows (Build using AI, drip mode, if/else router, email), smart lists, a GHL form on a website page, custom fields, Voice AI (outbound).</p>
+              <h4>Status</h4><p>Client work, anonymised. Built and tested on test contacts (sends, links, unsubscribe and every answer route); awaiting the client's go-live. The AI caller is built and tested up to the call step. Nothing has been sent to real contacts.</p>
+              <h4>Next action</h4><p>Switch on with the client, then report replies per track.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+
+        <article class="pc rv" id="chatbot-routing" data-cat="automations" data-note="Client work, anonymised: the company name is blurred; the conversation shown is my own test, not a customer chat.">
+          <div class="media shots" data-shots>
+            <button type="button" class="main contain" aria-label="View screenshot full size"><img src="work/gps-chatbot/1-bot-goals-960.webp" alt="Chatbot goals: collect name, email and phone, and classify the inquiry type into the Reason for Inquiry field" loading="lazy" width="960" height="468"></button>
+          </div>
+          <div class="thumbs" role="group" aria-label="Screenshots">
+            <button type="button" aria-pressed="true" data-src="work/gps-chatbot/1-bot-goals-960.webp" data-full="work/gps-chatbot/1-bot-goals.webp" data-alt="Chatbot goals: collect name, email and phone, and classify the inquiry type into the Reason for Inquiry field" data-fit="contain">Bot goals</button>
+              <button type="button" aria-pressed="false" data-src="work/gps-chatbot/4-bot-test-960.webp" data-full="work/gps-chatbot/4-bot-test.webp" data-alt="Bot tester: the bot confirms a lone-worker need and offers a demo or a call back" data-fit="contain">Bot test</button>
+              <button type="button" aria-pressed="false" data-src="work/gps-chatbot/2-routing-map-960.webp" data-full="work/gps-chatbot/2-routing-map.webp" data-alt="Routing workflow zoomed out: one router with a branch per industry or personal category, each setting the routing fields" data-fit="contain">Routing map</button>
+              <button type="button" aria-pressed="false" data-src="work/gps-chatbot/3-routing-guards-960.webp" data-full="work/gps-chatbot/3-routing-guards.webp" data-alt="Top of the routing workflow: contact changed trigger, test guard, form answers present check" data-fit="contain">Guards</button>
+          </div>
+          <div class="body">
+            <p class="kind">AI chatbot · GHL</p>
+            <h3>Website chatbot with CRM routing</h3>
+            <p>For the same safety-tech company: I rebuilt the website chatbot's knowledge base and prompt and tested it on safety-critical questions. Then I built a workflow that turns the visitor's free-text reason into the routing fields the CRM already uses.</p>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span><span class="chip live">CHATBOT LIVE</span><span class="chip test">ROUTING BUILT, TESTED · ON HOLD</span></div>
+            <div class="tags"><span class="tag">Conversation AI</span><span class="tag">Knowledge base</span><span class="tag">Workflows</span><span class="tag">Keyword routing</span></div>
+            <div class="detail">
+              <h4>Problem</h4><p>Chat leads arrived with a reason typed in their own words, so none of the CRM's industry routing or welcome emails could act on them.</p>
+              <h4>What I built</h4>
+              <ul class="how">
+                <li><b>Chatbot:</b> knowledge base rebuilt (7 documents, 43 FAQs, plus the site crawl) and a new prompt, tested on 23 prompts including emergency and personal-safety questions, with no critical failures.</li>
+                <li><b>Routing:</b> 19 keyword branches (389 phrases) map the reason to type of use and industry. A first branch skips emergencies, support requests and auto-replies.</li>
+                <li><b>Guards:</b> form answers always win, and a lead never gets the welcome emails twice.</li>
+              </ul>
+              <h4>Results</h4>
+              <ul class="stats">
+                <li><b>68/68</b>simulated reasons routed correctly</li>
+                <li><b>38/40</b>on a blind test set of new phrasings</li>
+                <li><b>19</b>branches, 389 keyword phrases</li>
+                <li><b>0</b>critical failures in the chatbot tests</li>
+              </ul>
+              <h4>Screenshots</h4>
+              <div class="pg" data-pg>
+                <figure class="pg-stage"><button type="button" class="pg-main" aria-label="View screenshot full size"><img alt="" width="1600" height="900"></button><figcaption></figcaption></figure>
+                <div class="pg-thumbs" role="group" aria-label="Choose a screenshot"><button type="button" aria-pressed="true" data-src="work/gps-chatbot/1-bot-goals-960.webp" data-full="work/gps-chatbot/1-bot-goals.webp" data-alt="Chatbot goals: collect name, email and phone, and classify the inquiry type into the Reason for Inquiry field" data-cap="LIVE · The chatbot's goals: collect name, email and phone, and save the visitor's reason for the enquiry to a CRM field."><img data-src="work/gps-chatbot/1-bot-goals-960.webp" alt="" width="960" height="468">Bot goals<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/gps-chatbot/4-bot-test-960.webp" data-full="work/gps-chatbot/4-bot-test.webp" data-alt="Bot tester: the bot confirms a lone-worker need and offers a demo or a call back" data-cap="TESTED · One of the test conversations before go-live (my own test message): the bot picks up a lone-worker need and offers a demo or a specialist call."><img data-src="work/gps-chatbot/4-bot-test-960.webp" alt="" width="518" height="560">Bot test<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/gps-chatbot/2-routing-map-960.webp" data-full="work/gps-chatbot/2-routing-map.webp" data-alt="Routing workflow zoomed out: one router with a branch per industry or personal category, each setting the routing fields" data-cap="TESTED · The routing workflow, zoomed out: when the chat saves a reason, one router picks the branch and fills the type-of-use and industry fields the rest of the CRM already routes on."><img data-src="work/gps-chatbot/2-routing-map-960.webp" alt="" width="960" height="540">Routing map<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/gps-chatbot/3-routing-guards-960.webp" data-full="work/gps-chatbot/3-routing-guards.webp" data-alt="Top of the routing workflow: contact changed trigger, test guard, form answers present check" data-cap="TESTED · The guards at the top: a test-only filter during testing, and form answers always win, so a chat never overwrites what the person typed in a form."><img data-src="work/gps-chatbot/3-routing-guards-960.webp" alt="" width="960" height="570">Guards<span class="st test">Tested</span></button></div>
+                <p class="pg-note">Real GoHighLevel screens. The company name is blurred; the chat is my own test message.</p>
+              </div>
+              <h4>Tools</h4><p>GoHighLevel Conversation AI (knowledge base, web crawler, bot goals), workflows built with Build using AI, custom fields.</p>
+              <h4>Status</h4><p>Client work, anonymised. The chatbot with the new knowledge base is live (since 22 October 2026). The routing workflow is built, tested (T1–T10 in GHL test runs, then the simulation and blind sets above) and on hold awaiting client sign-off.</p>
+              <h4>Next action</h4><p>Switch on the routing after the client signs off.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+
+        <article class="pc wide rv" data-cat="automations">
+          <div class="media" aria-hidden="true">
+            <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet">
+              <rect width="640" height="360" fill="#07101f"/>
+              <g font-family="Consolas,monospace" font-size="11" fill="#8ea3c6">
+                <rect x="40" y="50" width="170" height="260" rx="12" fill="#0e1a30" stroke="rgba(148,178,255,.3)"/><text x="56" y="76" fill="#3b9eff" font-weight="700">INVENTORY</text>
+                <rect x="56" y="92" width="138" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="110" width="118" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="128" width="130" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="146" width="100" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="164" width="124" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="182" width="110" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="200" width="134" height="8" rx="4" fill="#1d2b47"/>
+                <rect x="235" y="50" width="170" height="260" rx="12" fill="#0e1a30" stroke="rgba(147,180,255,.6)"/><text x="251" y="76" fill="#93b4ff" font-weight="700">LEAD-FLOW MAP</text>
+                <circle cx="275" cy="120" r="10" fill="none" stroke="#3b9eff" stroke-width="2"/><circle cx="365" cy="170" r="10" fill="none" stroke="#3b9eff" stroke-width="2"/><circle cx="285" cy="235" r="10" fill="none" stroke="#34d399" stroke-width="2"/><path d="M283 126 357 164M359 179 293 229" stroke="#3a4a6b" stroke-width="1.6"/><path d="M275 130V225" stroke="#3a4a6b" stroke-width="1.6" stroke-dasharray="4 4"/>
+                <rect x="430" y="50" width="170" height="260" rx="12" fill="#0e1a30" stroke="rgba(52,211,153,.5)"/><text x="446" y="76" fill="#34d399" font-weight="700">FINDINGS</text>
+                <rect x="446" y="94" width="18" height="18" rx="5" fill="rgba(245,194,107,.25)" stroke="#f5c26b"/><rect x="472" y="99" width="100" height="8" rx="4" fill="#1d2b47"/>
+                <rect x="446" y="126" width="18" height="18" rx="5" fill="rgba(245,194,107,.25)" stroke="#f5c26b"/><rect x="472" y="131" width="90" height="8" rx="4" fill="#1d2b47"/>
+                <rect x="446" y="158" width="18" height="18" rx="5" fill="rgba(245,194,107,.25)" stroke="#f5c26b"/><rect x="472" y="163" width="110" height="8" rx="4" fill="#1d2b47"/>
+              </g>
+            </svg>
+            <span class="cap">AUDIT FIRST · CLEAN-UP WITH BACKUPS</span>
+          </div>
+          <div class="body">
+            <p class="kind">Audit + clean-up · GHL</p>
+            <h3>Inherited account audit and clean-up</h3>
+            <p>A read-only audit of an inherited GHL account with no handover notes: a full workflow inventory, a lead-flow map with evidence for each stage, and an animated system diagram separating verified paths from assumptions. It surfaced a failing backup action, overlapping lead-form triggers and a malformed DMARC record before anything was changed. Then the clean-up: 43 unused workflows archived and 160 custom fields sorted, with a restore point for every change and nothing deleted.</p>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span><span class="chip live">CLEAN-UP LIVE · NOTHING DELETED</span></div>
+            <div class="tags"><span class="tag">Audit</span><span class="tag">System diagram</span><span class="tag">Email deliverability</span><span class="tag">Clean-up</span></div>
+            <div class="detail">
+              <h4>Problem</h4><p>An inherited GHL account with no handover notes, where nobody could say which workflows were safe to change.</p>
+              <h4>What the work shows</h4><p>An inventory of all 94 workflows, a lead-flow map with evidence for each stage, and an animated system diagram that separates verified paths from assumptions. It surfaced a failing backup action, overlapping lead-form triggers and a malformed DMARC record.</p>
+              <h4>The clean-up (after the owner's OK)</h4>
+              <ul class="stats">
+                <li><b>114</b>workflows triaged: archive, keep or check</li>
+                <li><b>43</b>unused workflows moved into an archive folder (31 drafts, 12 dead published copies), each with a restore point</li>
+                <li><b>160</b>contact fields reviewed: 82 moved into 6 clear folders, 13 retired, 0 deleted</li>
+                <li><b>1</b>missed-call text-back repaired so replies come from the right number</li>
+              </ul>
+              <h4>Screenshot</h4>
+              <div class="pg" data-pg>
+                <figure class="pg-stage"><button type="button" class="pg-main" aria-label="View screenshot full size"><img alt="" width="1600" height="900"></button><figcaption></figcaption></figure>
+                <div class="pg-thumbs" role="group" aria-label="Choose a screenshot"><button type="button" aria-pressed="true" data-src="work/gps-cleanup/1-zarchive-folder-960.webp" data-full="work/gps-cleanup/1-zarchive-folder.webp" data-alt="Workflows list showing the archive folder: retired workflows as Draft, last updated on the archive day" data-cap="LIVE · The archive folder after the clean-up: retired workflows switched to Draft and moved, not deleted, so any of them can be restored. Account name blurred."><img data-src="work/gps-cleanup/1-zarchive-folder-960.webp" alt="" width="960" height="570">Archive folder<span class="st live">Live</span></button></div>
+                <p class="pg-note">Real GoHighLevel screen; the account name is blurred.</p>
+              </div>
+
+              <h4>Tools</h4><p>GoHighLevel (read-only for the audit), system diagram, email deliverability checks; for the clean-up, GHL workflow folders, custom field folders and per-item restore points.</p>
+              <h4>Status</h4><p>Client work, anonymised. The audit was read-only. The clean-up was applied live in October 2026 after the owner agreed, with a restore point for every change; nothing was deleted.</p>
+              <h4>Next action</h4><p>Full walkthrough available on request.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+
+        <article class="pc wide rv" id="application-tracking" data-cat="automations" data-note="Client work, anonymised: the company name, logo and email addresses are blurred; all records shown are test records.">
+          <div class="mcol">
+            <div class="media shots" data-shots>
+              <button type="button" class="main contain" aria-label="View screenshot full size"><img src="work/payments-tracking/1-applications-pipeline-960.webp" alt="Applications board with stages: link not opened, awaiting ID, awaiting company documents, awaiting signature, awaiting provider, approved" loading="lazy" width="960" height="444"></button>
+            </div>
+            <div class="thumbs" role="group" aria-label="Screenshots">
+              <button type="button" aria-pressed="true" data-src="work/payments-tracking/1-applications-pipeline-960.webp" data-full="work/payments-tracking/1-applications-pipeline.webp" data-alt="Applications board with stages: link not opened, awaiting ID, awaiting company documents, awaiting signature, awaiting provider, approved" data-fit="contain">Board</button>
+              <button type="button" aria-pressed="false" data-src="work/payments-tracking/2-intake-form-workflow-960.webp" data-full="work/payments-tracking/2-intake-form-workflow.webp" data-alt="Intake workflow: internal form submitted, tag added, opportunity created or updated, who owns it" data-fit="contain">Intake form flow</button>
+              <button type="button" aria-pressed="false" data-src="work/payments-tracking/3-stage-reminder-960.webp" data-full="work/payments-tracking/3-stage-reminder.webp" data-alt="Stage reminder workflow zoomed out: task and email, wait, still at this stage check, second task, wait, third task and manager email" data-fit="contain">Stage reminder</button>
+              <button type="button" aria-pressed="false" data-src="work/payments-tracking/4-expiry-alerts-960.webp" data-full="work/payments-tracking/4-expiry-alerts.webp" data-alt="Expiry alert workflow zoomed out: waits until set days after the link date, with still-open checks before each alert" data-fit="contain">Expiry alerts</button>
+            </div>
+          </div>
+          <div class="body">
+            <p class="kind">Pipeline + automation · GHL</p>
+            <h3>Application tracking for a payments reseller</h3>
+            <p>For an Australian payments reseller: every card-payment application gets its own card on a board, stage-by-stage reminders for the sales agent, expiry alerts counted from the day the link was sent, and a Monday status report.</p>
+            <ul class="how">
+              <li><b>Board:</b> one column per thing the merchant still owes, with date and status fields that match a weekly reconciliation sheet.</li>
+              <li><b>Reminders:</b> tasks for the agent, re-checked after 3 and 7 business days, then an email to the manager.</li>
+              <li><b>Expiry:</b> alerts on day 25, 30 and 38 from the link date; approved applications are tagged for commission.</li>
+              <li><b>Repairs:</b> earlier merchant follow-ups now wait for business hours and capture the merchant's state.</li>
+            </ul>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span><span class="chip test">BUILT AND TESTED · AWAITING GO-LIVE</span><span class="chip live">REPORT + FOLLOW-UP FIXES LIVE</span></div>
+            <div class="tags"><span class="tag">Pipelines</span><span class="tag">Custom fields</span><span class="tag">Wait until date</span><span class="tag">Build using AI</span><span class="tag">Scheduled reports</span><span class="tag">CSV import</span></div>
+            <div class="detail">
+              <h4>Problem</h4><p>Applications sat with the payment provider for weeks with no one chasing the missing step, links expired unnoticed, and the only status list was a weekly spreadsheet.</p>
+              <h4>What I built</h4>
+              <ol class="flow">
+                <li><b>Intake</b>An agent logs a new application on an internal form; an AI-built workflow opens the card and assigns the owner.</li>
+                <li><b>Board</b>A separate applications pipeline, so payment-terminal deals and applications never mix.</li>
+                <li><b>Stage reminders</b>Four reminder workflows, one per waiting stage, in business hours only.</li>
+                <li><b>Expiry and commission</b>Wait-until-date alerts from the link date, and a commission-ready tag once approved.</li>
+                <li><b>Weekly update</b>A reconciliation sheet turns the provider's weekly report into a CSV import, and a Monday report summarises the board.</li>
+              </ol>
+              <p class="flow-side"><b>Before this:</b> I repaired the reseller's merchant follow-ups: business-hours windows on instant texts, a state field on the merchant form and a state-tag workflow.</p>
+              <h4>Results</h4>
+              <ul class="stats">
+                <li><b>9</b>board stages, including replaced and duplicate files</li>
+                <li><b>4</b>stage reminder workflows, internal only, no texts to merchants</li>
+                <li><b>3</b>expiry alerts per application, tested with short offsets</li>
+                <li><b>1</b>Monday report, scheduled</li>
+              </ul>
+              <h4>Screenshots</h4>
+              <div class="pg" data-pg>
+                <figure class="pg-stage"><button type="button" class="pg-main" aria-label="View screenshot full size"><img alt="" width="1600" height="900"></button><figcaption></figcaption></figure>
+                <div class="pg-thumbs" role="group" aria-label="Choose a screenshot"><button type="button" aria-pressed="true" data-src="work/payments-tracking/1-applications-pipeline-960.webp" data-full="work/payments-tracking/1-applications-pipeline.webp" data-alt="Applications board with stages: link not opened, awaiting ID, awaiting company documents, awaiting signature, awaiting provider, approved" data-cap="BUILT AND TESTED · The applications board: each column is what the merchant still owes (link, ID, company documents, signature), then with the provider, then approved. Logo and account name blurred."><img data-src="work/payments-tracking/1-applications-pipeline-960.webp" alt="" width="960" height="444">Board<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/payments-tracking/2-intake-form-workflow-960.webp" data-full="work/payments-tracking/2-intake-form-workflow.webp" data-alt="Intake workflow: internal form submitted, tag added, opportunity created or updated, who owns it" data-cap="BUILT AND TESTED · Agents log a new application on an internal form. The workflow (built with Build using AI, three hand fixes) tags the contact, opens the card and assigns the owner."><img data-src="work/payments-tracking/2-intake-form-workflow-960.webp" alt="" width="960" height="600">Intake form flow<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/payments-tracking/3-stage-reminder-960.webp" data-full="work/payments-tracking/3-stage-reminder.webp" data-alt="Stage reminder workflow zoomed out: task and email, wait, still at this stage check, second task, wait, third task and manager email" data-cap="BUILT AND TESTED · One of four stage reminders: a task for the agent, a re-check after 3 and then 4 business days, and an email to the manager if the card is still stuck."><img data-src="work/payments-tracking/3-stage-reminder-960.webp" alt="" width="960" height="444">Stage reminder<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/payments-tracking/4-expiry-alerts-960.webp" data-full="work/payments-tracking/4-expiry-alerts.webp" data-alt="Expiry alert workflow zoomed out: waits until set days after the link date, with still-open checks before each alert" data-cap="BUILT AND TESTED · Expiry alerts counted from the date the application link was sent (day 25, 30 and 38), each only if the application is still open. Tested with 1, 2 and 3-day offsets."><img data-src="work/payments-tracking/4-expiry-alerts-960.webp" alt="" width="960" height="444">Expiry alerts<span class="st test">Tested</span></button><button type="button" aria-pressed="false" data-src="work/payments-tracking/5-monday-report-960.webp" data-full="work/payments-tracking/5-monday-report.webp" data-alt="Report schedule: weekly on Monday at 9:00, email addresses blurred" data-cap="LIVE (INTERNAL) · The Monday status report, scheduled weekly at 9:00. It goes to me only until the client switches the build on. Email addresses blurred."><img data-src="work/payments-tracking/5-monday-report-960.webp" alt="" width="960" height="600">Monday report<span class="st live">Live</span></button><button type="button" aria-pressed="false" data-src="work/payments-tracking/6-business-hours-wait-960.webp" data-full="work/payments-tracking/6-business-hours-wait.webp" data-alt="Wait step with an advance window: Monday to Friday, 9:00 AM to 5:00 PM" data-cap="LIVE · Earlier repair on the merchant follow-ups: instant texts now wait for a Monday-to-Friday, 9-to-5 window instead of firing at night."><img data-src="work/payments-tracking/6-business-hours-wait-960.webp" alt="" width="800" height="890">Business hours<span class="st live">Live</span></button></div>
+                <p class="pg-note">Real GoHighLevel screens. The company logo, account name and email addresses are blurred; the boards and contacts used for testing are test records.</p>
+              </div>
+              <h4>Tools</h4><p>GoHighLevel pipelines, opportunity custom fields, workflows (Build using AI plus hand fixes), Wait until date, internal forms, custom reports with a weekly schedule, CSV import, and an Excel/Google Sheets reconciliation workbook.</p>
+              <h4>Status</h4><p>Client work, anonymised. The tracking build is built as Draft and tested on test contacts, with every record checked by reading it back through the API; awaiting the client's go-live. The Monday report schedule is live and sent internally. The earlier business-hours fixes are live; the state-tag workflow is a Draft.</p>
+              <h4>Next action</h4><p>Go-live with the client: first weekly import, then switch on the reminders.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
           </div>
         </article>
 
@@ -640,18 +1059,19 @@
             <button type="button" aria-pressed="true" data-src="work/partner-page/0-desktop-phone.webp" data-alt="Partner referral page on desktop and phone, company name and logo blurred" data-fit="contain">Desktop + phone</button>
             <button type="button" aria-pressed="false" data-src="work/partner-page/1-desktop.webp" data-alt="Partner page on desktop: hero, three product cards and the Get Started form">Page</button>
             <button type="button" aria-pressed="false" data-src="work/partner-page/2-mobile.webp" data-alt="Partner page at phone width with stacked cards" data-fit="contain">Phone</button>
+            <button type="button" aria-pressed="false" data-src="work/partner-page/3-policy-page-960.webp" data-full="work/partner-page/3-policy-page.webp" data-alt="One of the new policy pages in the site's style: account deletion request with a request form; logo and contact details blurred" data-fit="contain">Policy page</button>
           </div>
           <div class="body">
             <p class="kind">Landing page · Claude · GHL</p>
             <h3>Partner referral page for a workforce-safety software company</h3>
-            <p>Spec measured from the company's live site (fonts, colours, card and button styles), then built with Claude as custom code in a GHL funnel, under my approvals. A hidden field picks up each partner's referral ID from the link, so every lead is credited to the right partner. Published on the company domain and tested end to end.</p>
+            <p>Spec measured from the company's live site (fonts, colours, card and button styles), then built with Claude as custom code in a GHL funnel, under my approvals. A hidden field picks up each partner's referral ID from the link, so every lead is credited to the right partner. Published on the company domain and tested end to end. On 27 Oct 2026 I added four policy pages in the same style (design-only until the final documents arrive) and 301 redirects for old policy addresses.</p>
             <div class="chips"><span class="chip live">LIVE</span><span class="chip hold">CLIENT WORK · ANONYMISED</span></div>
             <div class="tags"><span class="tag">Custom code</span><span class="tag">Hidden fields</span><span class="tag">Affiliate tracking</span></div>
             <div class="detail">
               <h4>Problem</h4><p>Resellers referred clients with no reliable attribution, and there was no page that kept the partner's ID with the lead.</p>
               <h4>What the build shows</h4><p>A page in the company's own style (hero, three product cards, Get Started form, call-to-action band) whose form stores the partner ID from the link in a hidden field. Leads land in a partner pipeline with a task and alert for sales.</p>
               <h4>Tools</h4><p>Claude, GHL funnel with custom code, hidden form fields, Affiliate Manager.</p>
-              <h4>Status</h4><p>Client work, anonymised. Live on the company domain since 12 Oct 2026 (test phase); no real partner leads measured yet.</p>
+              <h4>Status</h4><p>Client work, anonymised. Live on the company domain since 12 Oct 2026 (test phase); no real partner leads measured yet. Since 27 Oct 2026: four policy pages live as design-only holding pages (no legal wording until the client supplies the documents), the privacy page moved to /privacy, and two 301 redirects; all addresses checked.</p>
               <h4>Next action</h4><p>Content refresh with the client's sales material; record partner leads once real referrals arrive.</p>
             </div>
             <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
@@ -888,72 +1308,6 @@
           </div>
         </article>
 
-        <article class="pc wide rv" data-cat="automations">
-          <div class="media" aria-hidden="true">
-            <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet">
-              <rect width="640" height="360" fill="#07101f"/>
-              <g font-family="Segoe UI,Arial" font-size="13" font-weight="600" fill="#e6eefc">
-                <rect x="40" y="130" width="130" height="60" rx="12" fill="#0e1a30" stroke="#3b9eff"/><text x="105" y="157" text-anchor="middle">Meeting notes</text><text x="105" y="175" text-anchor="middle" fill="#8ea3c6" font-size="10" font-family="Consolas,monospace">captured</text>
-                <rect x="200" y="130" width="130" height="60" rx="12" fill="#0e1a30" stroke="rgba(147,180,255,.7)"/><text x="265" y="157" text-anchor="middle">AI summary</text><text x="265" y="175" text-anchor="middle" fill="#8ea3c6" font-size="10" font-family="Consolas,monospace">structured</text>
-                <rect x="360" y="70" width="130" height="60" rx="12" fill="#0e1a30" stroke="rgba(148,178,255,.3)"/><text x="425" y="97" text-anchor="middle">Notion record</text><text x="425" y="115" text-anchor="middle" fill="#8ea3c6" font-size="10" font-family="Consolas,monospace">created</text>
-                <rect x="360" y="190" width="130" height="60" rx="12" fill="#0e1a30" stroke="rgba(148,178,255,.3)"/><text x="425" y="217" text-anchor="middle">Gmail draft</text><text x="425" y="235" text-anchor="middle" fill="#8ea3c6" font-size="10" font-family="Consolas,monospace">not sent</text>
-                <rect x="520" y="190" width="100" height="60" rx="12" fill="rgba(52,211,153,.07)" stroke="#34d399"/><text x="570" y="217" text-anchor="middle">Human</text><text x="570" y="235" text-anchor="middle" fill="#8ea3c6" font-size="10" font-family="Consolas,monospace">reviews</text>
-              </g>
-              <g stroke="#3a4a6b" stroke-width="1.6" fill="none"><path d="M170 160H200M330 150L360 105M330 170L360 215M490 220H520"/></g>
-            </svg>
-            <span class="cap">DIAGRAM · SCREENSHOTS ONCE APPROVED</span>
-          </div>
-          <div class="body">
-            <p class="kind">AI automation · n8n</p>
-            <h3>AI-assisted meeting notes and follow-up drafts</h3>
-            <p>Two n8n workflows that capture meeting notes, create a Notion record and prepare a Gmail follow-up draft for human review. Built and tested; live verification pending. Nothing is sent automatically.</p>
-            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span></div>
-            <div class="tags"><span class="tag">n8n</span><span class="tag">Notion</span><span class="tag">Gmail</span><span class="tag">AI drafts</span></div>
-            <div class="detail">
-              <h4>Problem</h4><p>Writing up meeting notes and follow-up emails after every call takes time.</p>
-              <h4>What the build shows</h4><p>Two n8n workflows: one captures meeting notes and creates a Notion record, the other prepares a Gmail follow-up draft that a person reviews. Nothing is sent automatically.</p>
-              <h4>Tools</h4><p>n8n, Notion, Gmail, an AI summary step.</p>
-              <h4>Status</h4><p>Client work, anonymised. Built and tested; live verification pending.</p>
-              <h4>Next action</h4><p>Full walkthrough available on request.</p>
-            </div>
-            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
-          </div>
-        </article>
-
-        <article class="pc wide rv" data-cat="automations">
-          <div class="media" aria-hidden="true">
-            <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet">
-              <rect width="640" height="360" fill="#07101f"/>
-              <g font-family="Consolas,monospace" font-size="11" fill="#8ea3c6">
-                <rect x="40" y="50" width="170" height="260" rx="12" fill="#0e1a30" stroke="rgba(148,178,255,.3)"/><text x="56" y="76" fill="#3b9eff" font-weight="700">INVENTORY</text>
-                <rect x="56" y="92" width="138" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="110" width="118" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="128" width="130" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="146" width="100" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="164" width="124" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="182" width="110" height="8" rx="4" fill="#1d2b47"/><rect x="56" y="200" width="134" height="8" rx="4" fill="#1d2b47"/>
-                <rect x="235" y="50" width="170" height="260" rx="12" fill="#0e1a30" stroke="rgba(147,180,255,.6)"/><text x="251" y="76" fill="#93b4ff" font-weight="700">LEAD-FLOW MAP</text>
-                <circle cx="275" cy="120" r="10" fill="none" stroke="#3b9eff" stroke-width="2"/><circle cx="365" cy="170" r="10" fill="none" stroke="#3b9eff" stroke-width="2"/><circle cx="285" cy="235" r="10" fill="none" stroke="#34d399" stroke-width="2"/><path d="M283 126 357 164M359 179 293 229" stroke="#3a4a6b" stroke-width="1.6"/><path d="M275 130V225" stroke="#3a4a6b" stroke-width="1.6" stroke-dasharray="4 4"/>
-                <rect x="430" y="50" width="170" height="260" rx="12" fill="#0e1a30" stroke="rgba(52,211,153,.5)"/><text x="446" y="76" fill="#34d399" font-weight="700">FINDINGS</text>
-                <rect x="446" y="94" width="18" height="18" rx="5" fill="rgba(245,194,107,.25)" stroke="#f5c26b"/><rect x="472" y="99" width="100" height="8" rx="4" fill="#1d2b47"/>
-                <rect x="446" y="126" width="18" height="18" rx="5" fill="rgba(245,194,107,.25)" stroke="#f5c26b"/><rect x="472" y="131" width="90" height="8" rx="4" fill="#1d2b47"/>
-                <rect x="446" y="158" width="18" height="18" rx="5" fill="rgba(245,194,107,.25)" stroke="#f5c26b"/><rect x="472" y="163" width="110" height="8" rx="4" fill="#1d2b47"/>
-              </g>
-            </svg>
-            <span class="cap">READ-ONLY AUDIT · NO CHANGES MADE</span>
-          </div>
-          <div class="body">
-            <p class="kind">Audit · GHL · 94 workflows</p>
-            <h3>Inherited account audit</h3>
-            <p>A read-only audit of an inherited GHL account with no handover notes: a full workflow inventory, a lead-flow map with evidence for each stage, and an animated system diagram separating verified paths from assumptions. It surfaced a failing backup action, overlapping lead-form triggers and a malformed DMARC record before anything was changed.</p>
-            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span></div>
-            <div class="tags"><span class="tag">Audit</span><span class="tag">System diagram</span><span class="tag">Email deliverability</span></div>
-            <div class="detail">
-              <h4>Problem</h4><p>An inherited GHL account with no handover notes, where nobody could say which workflows were safe to change.</p>
-              <h4>What the work shows</h4><p>An inventory of all 94 workflows, a lead-flow map with evidence for each stage, and an animated system diagram that separates verified paths from assumptions. It surfaced a failing backup action, overlapping lead-form triggers and a malformed DMARC record.</p>
-              <h4>Tools</h4><p>GoHighLevel (read-only), system diagram, email deliverability checks.</p>
-              <h4>Status</h4><p>Client work, anonymised. Read-only: no changes were made.</p>
-              <h4>Next action</h4><p>Fixes are agreed with the owner before anything changes.</p>
-            </div>
-            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
-          </div>
-        </article>
-
         <article class="pc rv" data-cat="apps">
           <div class="media shots" data-shots>
             <button type="button" class="main" aria-label="View screenshot full size"><img src="rooms/office.jpg" alt="My own command-center page: agent desks, status counts and the build plan, with demo data" loading="lazy" width="1440" height="860"></button>
@@ -961,17 +1315,87 @@
           <div class="body">
             <p class="kind">Tools &amp; apps · Personal project</p>
             <h3>My AI command center</h3>
-            <p>The dashboard I run my work from, including the 3D deck behind this page. I describe it, AI writes it, and I check it. Shown with demo data only.</p>
+            <p>The dashboard for the AI work system I run every project through: an orchestrator agent, specialist agents, a task board where I approve or send back their work, and the 3D deck behind this page. Shown with demo data only.</p>
             <div class="chips"><span class="chip concept">PERSONAL PROJECT · DEMO DATA</span></div>
-            <div class="tags"><span class="tag">HTML/CSS/JS</span><span class="tag">three.js</span><span class="tag">Claude Code</span></div>
+            <div class="tags"><span class="tag">HTML/CSS/JS</span><span class="tag">three.js</span><span class="tag">Claude Code</span><span class="tag">AI agents</span><span class="tag">Playwright</span></div>
             <div class="detail">
               <h4>Purpose</h4><p>One place to see what my AI agents are working on, what is queued, and what is waiting for my review.</p>
               <h4>What it shows</h4><p>Agent desks with status counts and the build plan, a 3D Command Deck, and a Shared Brain of linked notes. The live view runs the real interface on demo data.</p>
-              <h4>Tools</h4><p>HTML, CSS and JavaScript, three.js, built with Claude Code.</p>
+              <h4>The system behind it</h4>
+              <ul class="how">
+                <li><b>Agents:</b> one orchestrator briefs 11 specialist agents (GHL, websites, automation, apps, research, copy, design, video, meetings, discovery, job applications) and 5 helper agents, then reviews what they return.</li>
+                <li><b>Approvals:</b> a task board where I approve or revise each piece of work; nothing goes live, costs money or deletes anything without my yes.</li>
+                <li><b>Browser automation:</b> Playwright-driven browser sessions for GHL, n8n and Notion, so builds and read-only checks happen in the real apps.</li>
+                <li><b>Records:</b> hooks that log each task and refresh the board, and a daily git snapshot of the whole knowledge vault.</li>
+                <li><b>Media:</b> a local meeting recorder, and an explainer-video pipeline narrated in my own cloned voice and rendered on my PC.</li>
+              </ul>
+              <h4>Tools</h4><p>HTML, CSS and JavaScript, three.js, Claude Code with custom agents and hooks, Playwright, Python, git.</p>
               <h4>Status</h4><p>Personal project shown with demo data. It is not a client system and not proof of a deployed AI backend.</p>
               <h4>Next action</h4><p>Open the live demo (view only), or tour the rooms in the Workspace section.</p>
             </div>
             <div class="acts-row"><a class="go solid" data-primary href="command-center-glimpse.html#command">Open live demo <svg class="ico"><use href="#i-arrow"/></svg></a><button type="button" class="go" data-detail>Overview</button></div>
+          </div>
+        </article>
+
+        <article class="pc rv" id="flowsnap" data-cat="apps">
+          <div class="media shots" data-shots>
+            <button type="button" class="main contain" aria-label="View screenshot full size"><img src="work/flowsnap/1-editor-960.webp" alt="FlowSnap editor with a captured test workflow, a box, an arrow and two numbered callouts" loading="lazy" width="960" height="600"></button>
+          </div>
+          <div class="thumbs" role="group" aria-label="Screenshots">
+            <button type="button" aria-pressed="true" data-src="work/flowsnap/1-editor-960.webp" data-full="work/flowsnap/1-editor.webp" data-alt="FlowSnap editor with a captured test workflow, a box, an arrow and two numbered callouts" data-fit="contain">Editor</button>
+            <button type="button" aria-pressed="false" data-src="work/flowsnap/2-popup-960.webp" data-full="work/flowsnap/2-popup.webp" data-alt="FlowSnap popup: visible area, select region, full page and workflow canvas capture modes with keyboard shortcuts" data-fit="contain">Popup</button>
+          </div>
+          <div class="body">
+            <p class="kind">Tools &amp; apps · Personal project</p>
+            <h3>FlowSnap: a workflow screenshot extension</h3>
+            <p>A Chrome extension I built with AI-assisted coding to capture a whole workflow canvas in one image and mark it up. It works live on GoHighLevel workflows, runs fully local, and has taken my hands-free workflow captures since 20 October 2026.</p>
+            <div class="chips"><span class="chip concept">PERSONAL PROJECT · IN USE</span></div>
+            <div class="tags"><span class="tag">Chrome MV3</span><span class="tag">JavaScript</span><span class="tag">DevTools Protocol</span><span class="tag">Playwright tests</span><span class="tag">Claude Code</span></div>
+            <div class="detail">
+              <h4>Purpose</h4><p>Clean, complete workflow screenshots for guides and handovers, without a paid tool and without sending anything to a server.</p>
+              <h4>What it does</h4>
+              <ul class="how">
+                <li><b>4 capture modes:</b> visible area, a region, the full page (scroll and stitch) and the workflow canvas, each with a keyboard shortcut.</li>
+                <li><b>Whole workflows:</b> made for GoHighLevel, n8n and Zapier builders; it zooms the builder out until every step is on the canvas, captures beyond the screen and stitches the tiles, with a fallback when the debugger is busy.</li>
+                <li><b>Markup editor:</b> arrows, boxes, numbered callouts, highlight, text, blur, pixelate, redact and crop, with undo.</li>
+                <li><b>Exports:</b> PNG, JPG, PDF, a presentation frame, and a Mermaid copy of the flow for AI tools.</li>
+              </ul>
+              <h4>Tools</h4><p>Chrome Manifest V3 extension in plain HTML, CSS and JavaScript (no build step), the Chrome DevTools Protocol, IndexedDB, and a Playwright smoke test, built with Claude Code.</p>
+              <h4>Status</h4><p>Personal project, not for sale, in use in my own Chrome. Works live on GoHighLevel workflows and has taken hands-free captures since 20 October 2026; adapters for n8n and Zapier are built but not yet tested live. An automated smoke test (88 checks) runs against local test pages. The screens here are the real popup and editor, shown with a test canvas, not client data.</p>
+              <h4>Next action</h4><p>Ask me for a walkthrough.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+
+        <article class="pc rv" id="perator" data-cat="apps">
+          <div class="media shots" data-shots>
+            <button type="button" class="main contain dark" aria-label="View screenshot full size"><img src="work/perator/1-home-review-wallets-960.webp" alt="Three phone screens in a receipt-paper style: home with balances and budgets, a draft review that asks which amount was meant, and wallets" loading="lazy" width="960" height="540"></button>
+          </div>
+          <div class="thumbs" role="group" aria-label="Screenshots">
+            <button type="button" aria-pressed="true" data-src="work/perator/1-home-review-wallets-960.webp" data-full="work/perator/1-home-review-wallets.webp" data-alt="Three phone screens in a receipt-paper style: home with balances and budgets, a draft review that asks which amount was meant, and wallets" data-fit="contain">Home · review · wallets</button>
+            <button type="button" aria-pressed="false" data-src="work/perator/2-budget-cart-checkout-960.webp" data-full="work/perator/2-budget-cart-checkout.webp" data-alt="Three phone screens: monthly budget with pace markers, a grocery cart with barcode scanning and last prices, and checkout matching the receipt total" data-fit="contain">Budget · cart · checkout</button>
+          </div>
+          <div class="body">
+            <p class="kind">Tools &amp; apps · Personal project</p>
+            <h3>Perator: an offline finance app for Android</h3>
+            <p>A private finance app for my own phone, built with AI-assisted coding: wallets, budgets and a grocery cart that remembers prices, with receipt and barcode reading and voice entry in Bisaya, English or Tagalog. Everything runs on the device.</p>
+            <div class="chips"><span class="chip concept">PERSONAL PROJECT · ON-DEVICE TESTING</span></div>
+            <div class="tags"><span class="tag">Kotlin</span><span class="tag">Jetpack Compose</span><span class="tag">Room + SQLCipher</span><span class="tag">ML Kit</span><span class="tag">Claude Code</span></div>
+            <div class="detail">
+              <h4>Purpose</h4><p>Track spending, budgets and grocery prices offline, with no subscription and no financial data leaving the phone.</p>
+              <h4>What it does</h4>
+              <ul class="how">
+                <li><b>One finance engine:</b> camera, receipt reading and voice only create drafts; nothing is saved until I confirm it.</li>
+                <li><b>On the device:</b> ML Kit text and barcode reading and Android's offline speech recognition; the app has no internet permission.</li>
+                <li><b>Encrypted:</b> an SQLCipher database with a Keystore-sealed key, and encrypted backups that restore without the original phone.</li>
+                <li><b>Tested:</b> 323 automated tests, and a receipt-paper design ("Resibo").</li>
+              </ul>
+              <h4>Tools</h4><p>Kotlin, Jetpack Compose, Room with SQLCipher, Android Keystore, ML Kit (on-device), CameraX, Android offline speech, built with Claude Code and tested on an emulator first.</p>
+              <h4>Status</h4><p>Personal project in on-device testing on my own phone (an earlier build is installed; the newest build, with voice commands, passes 323 automated tests on the emulator). The screens are from the design file and show its sample figures, not real data.</p>
+              <h4>Next action</h4><p>Ask me for a walkthrough.</p>
+            </div>
+            <div class="acts-row"><button type="button" class="go" data-detail>Overview <svg class="ico"><use href="#i-arrow"/></svg></button></div>
           </div>
         </article>
 
@@ -1032,27 +1456,90 @@
     </div>
   </section>
 
+  <section id="tutorials" aria-labelledby="tu-h">
+    <div class="wrap">
+      <p class="label rv">Tutorials &amp; walkthroughs</p>
+      <h2 class="tut-h rv" id="tu-h">I also record <b>how-to videos for the team.</b></h2>
+      <p class="lede rv">Narrated walkthroughs I produce for clients' teams; previews are silent. Each clip is sped up and plays while it's on screen; use the button to pause or play.</p>
+      <ul class="tuts" id="tuts">
+        <li class="tut rv" data-tut data-src="work/tutorial-previews/tutorial-01-lead-flow-v1.mp4" data-speed="2">
+          <div class="tut-media">
+            <img src="work/tutorial-previews/tutorial-01-lead-flow-v1-poster-sm.jpg" alt="Still from the tutorial: what happens when a website form is sent" loading="lazy" width="960" height="540">
+            <video muted playsinline loop preload="none" disablepictureinpicture width="1280" height="720" aria-hidden="true" tabindex="-1"></video>
+            <button type="button" class="tut-btn" hidden aria-pressed="false"><svg aria-hidden="true"><use href="#i-play"/></svg><span>Play</span></button>
+            <p class="tut-err" hidden>The preview couldn't load. The still above shows the step.</p>
+          </div>
+          <div class="tut-body">
+            <h3>What happens when a website form is sent</h3>
+            <p>Follows one website form submission from the visitor's thank-you message to the contact record, the owner alert and the reply task in a GoHighLevel workflow.</p>
+            <p class="tut-meta"><span class="tag">GoHighLevel</span><span class="tut-speed">Silent preview · 2×</span></p>
+          </div>
+        </li>
+        <li class="tut rv" data-tut data-src="work/tutorial-previews/tutorial-02-email-template-v1.mp4" data-speed="2">
+          <div class="tut-media">
+            <img src="work/tutorial-previews/tutorial-02-email-template-v1-poster-sm.jpg" alt="Still from the tutorial: editing a branded email template" loading="lazy" width="960" height="540">
+            <video muted playsinline loop preload="none" disablepictureinpicture width="1280" height="720" aria-hidden="true" tabindex="-1"></video>
+            <button type="button" class="tut-btn" hidden aria-pressed="false"><svg aria-hidden="true"><use href="#i-play"/></svg><span>Play</span></button>
+            <p class="tut-err" hidden>The preview couldn't load. The still above shows the step.</p>
+          </div>
+          <div class="tut-body">
+            <h3>Editing a branded email template</h3>
+            <p>Shows how to change the wording of a saved welcome email in the GoHighLevel email builder without breaking the name merge tag.</p>
+            <p class="tut-meta"><span class="tag">GoHighLevel</span><span class="tut-speed">Silent preview · 2×</span></p>
+          </div>
+        </li>
+        <li class="tut rv" data-tut data-src="work/tutorial-previews/tutorial-03-email-health-v1.mp4" data-speed="2">
+          <div class="tut-media">
+            <img src="work/tutorial-previews/tutorial-03-email-health-v1-poster-sm.jpg" alt="Still from the tutorial: weekly email health check" loading="lazy" width="960" height="540">
+            <video muted playsinline loop preload="none" disablepictureinpicture width="1280" height="720" aria-hidden="true" tabindex="-1"></video>
+            <button type="button" class="tut-btn" hidden aria-pressed="false"><svg aria-hidden="true"><use href="#i-play"/></svg><span>Play</span></button>
+            <p class="tut-err" hidden>The preview couldn't load. The still above shows the step.</p>
+          </div>
+          <div class="tut-body">
+            <h3>Weekly email health check</h3>
+            <p>Walks through GoHighLevel's email statistics, from the engagement chart to the delivered, bounced, unsubscribed and spam-complaint figures.</p>
+            <p class="tut-meta"><span class="tag">GoHighLevel</span><span class="tut-speed">Silent preview · 2×</span></p>
+          </div>
+        </li>
+        <li class="tut rv" data-tut data-src="work/tutorial-previews/tutorial-04-seat-type-v1.mp4" data-speed="2">
+          <div class="tut-media">
+            <img src="work/tutorial-previews/tutorial-04-seat-type-v1-poster-sm.jpg" alt="Still from the tutorial: the member row whose seat type will change" loading="lazy" width="960" height="540">
+            <video muted playsinline loop preload="none" disablepictureinpicture width="1280" height="720" aria-hidden="true" tabindex="-1"></video>
+            <button type="button" class="tut-btn" hidden aria-pressed="false"><svg aria-hidden="true"><use href="#i-play"/></svg><span>Play</span></button>
+            <p class="tut-err" hidden>The preview couldn't load. The still above shows the step.</p>
+          </div>
+          <div class="tut-body">
+            <h3>Changing a team member's seat type</h3>
+            <p>Shows where an admin finds the members list in a team AI workspace, confirms the right row and opens the seat-type menu, stopping before any billing decision.</p>
+            <p class="tut-meta"><span class="tag">ChatGPT Business</span><span class="tut-speed">Silent preview · 2×</span></p>
+          </div>
+        </li>
+      </ul>
+      <p class="tut-note rv">Client work, anonymised. Previews only: the full tutorials are not published here.</p>
+    </div>
+  </section>
+
   <section id="process" aria-labelledby="pr-h">
     <div class="wrap">
       <p class="label rv">Process</p>
       <h2 class="h2 rv" id="pr-h">Understand it, build it in stages, <b>hand it over.</b></h2>
       <p class="lede rv">Automation needs a process. I understand how the work really runs, build it in small steps, test every step with safe data, and hand off a system your team can run without me.</p>
-      <ol class="steps three rv">
-        <li class="step"><h3>Understand the process</h3><p>Goal, current steps, constraints and open questions, agreed before choosing tools.</p></li>
-        <li class="step"><h3>Build and test in stages</h3><p>Only the agreed systems, safe test data, and a check at every step. AI output stays reviewable.</p></li>
-        <li class="step"><h3>Document the handoff</h3><p>Decisions and status recorded, plus a guide or checklist for running the workflow.</p></li>
+      <ol class="steps three">
+        <li class="step rv"><h3>Understand the process</h3><p>Goal, current steps, constraints and open questions, agreed before choosing tools.</p></li>
+        <li class="step rv"><h3>Build and test in stages</h3><p>Only the agreed systems, safe test data, and a check at every step. AI output stays reviewable.</p><p>Test contacts first, a staged go-live, and a backup before any clean-up.</p></li>
+        <li class="step rv"><h3>Document the handoff</h3><p>Decisions and status recorded, plus a guide or checklist for running the workflow.</p></li>
       </ol>
 
-      <div class="flow-grid rv">
+      <div class="flow-grid">
         <div>
-          <p class="label">An example of what I build</p>
+          <p class="label rv">An example of what I build</p>
           <ol class="fsteps">
-            <li><span class="n">01</span><h3>Capture</h3><p>Every lead is saved with its source and consent. Nobody slips through.</p></li>
-            <li><span class="n">02</span><h3>Route</h3><p>Tags, fields and Custom Code decide who the lead is and where they go next.</p></li>
-            <li><span class="n">03</span><h3>Follow up</h3><p>Email and SMS keep going until they book or pay, then stop on their own and alert the team.</p></li>
+            <li class="rv"><span class="n">01</span><h3>Capture</h3><p>Every lead is saved with its source and consent. Nobody slips through.</p></li>
+            <li class="rv"><span class="n">02</span><h3>Route</h3><p>Tags, fields and Custom Code decide who the lead is and where they go next.</p></li>
+            <li class="rv"><span class="n">03</span><h3>Follow up</h3><p>Email and SMS keep going until they book or pay, then stop on their own and alert the team.</p></li>
           </ol>
         </div>
-        <div class="window flow" id="flow">
+        <div class="window flow rv" id="flow">
           <div class="bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>example build · lead follow-up
             <button class="pill-btn" type="button" id="motionBtn" aria-pressed="false">Pause motion</button></div>
           <div class="flow-scroll">
@@ -1100,11 +1587,11 @@
       <div class="sub-block">
         <h3 class="h3 rv">Websites and pages, built with AI</h3>
         <p class="rv">I write the brief, AI writes the code, and I check every page myself before anyone sees it. The result is a responsive page with one clear call to action and a form that drops each lead into the CRM, hosted on GoHighLevel or as a standalone site.</p>
-        <ol class="steps four rv">
-          <li class="step"><h3>Brief &amp; spec</h3><p>Goal, pages, brand and the one action each page should drive. Design details are measured from the client's own site.</p></li>
-          <li class="step"><h3>AI build</h3><p>Claude Code writes the HTML, CSS and JS from that spec. No page-builder templates.</p></li>
-          <li class="step"><h3>Hand-check</h3><p>Desktop and phone screenshots, readable headings, accessible forms and a test submission before anything goes live.</p></li>
-          <li class="step"><h3>Into the CRM</h3><p>Pasted into GHL as custom code, or kept standalone. Every form sends the lead, its source and consent to the CRM.</p></li>
+        <ol class="steps four">
+          <li class="step rv"><h3>Brief &amp; spec</h3><p>Goal, pages, brand and the one action each page should drive. Design details are measured from the client's own site.</p></li>
+          <li class="step rv"><h3>AI build</h3><p>Claude Code writes the HTML, CSS and JS from that spec. No page-builder templates.</p></li>
+          <li class="step rv"><h3>Hand-check</h3><p>Desktop and phone screenshots, readable headings, accessible forms and a test submission before anything goes live.</p></li>
+          <li class="step rv"><h3>Into the CRM</h3><p>Pasted into GHL as custom code, or kept standalone. Every form sends the lead, its source and consent to the CRM.</p></li>
         </ol>
       </div>
     </div>
@@ -1114,14 +1601,14 @@
     <div class="wrap">
       <p class="label rv">Services</p>
       <h2 class="h2 rv" id="sv-h">Pick one <b>or stack a few.</b></h2>
-      <p class="lede rv">Six services in three areas. AI-assisted work sits on top of solid GHL and CRM foundations.</p>
+      <p class="lede rv">Six services. AI-assisted work sits on top of solid GHL and CRM foundations.</p>
       <div class="svcs">
-        <article class="svc rv"><div class="top-row"><span><span class="n">01</span> · Human-reviewed</span><span class="grp">AI &amp; workflow automation</span></div><h3>AI-Assisted Workflows</h3><p>AI steps inside real workflows, with a human check before anything is sent.</p><ul><li>n8n AI flows + drafts</li><li>AI conversation flows in GHL</li><li>Structured output to Notion / Gmail</li></ul></article>
-        <article class="svc rv"><div class="top-row"><span><span class="n">02</span> · Connects everything</span><span class="grp">AI &amp; workflow automation</span></div><h3>Integrations</h3><p>Connect GHL with the rest of your stack.</p><ul><li>n8n, Zapier, webhooks</li><li>Notion, Google Workspace</li><li>Stripe, Authorize.net</li></ul></article>
-        <article class="svc rv"><div class="top-row"><span><span class="n">03</span> · Runs 24/7</span><span class="grp">GHL &amp; CRM systems</span></div><h3>GHL Automation</h3><p>Workflows that follow up so your team doesn't have to.</p><ul><li>Email + SMS sequences</li><li>Stop-on-payment reminders</li><li>Team and referrer alerts</li></ul></article>
-        <article class="svc rv"><div class="top-row"><span><span class="n">04</span> · Easy to use</span><span class="grp">GHL &amp; CRM systems</span></div><h3>CRM Setup</h3><p>Pipelines, tags and fields your team can actually use.</p><ul><li>Pipelines + stages</li><li>Custom values / fields</li><li>Smart lists + migrations</li></ul></article>
-        <article class="svc rv"><div class="top-row"><span><span class="n">05</span> · You own the code</span><span class="grp">GHL &amp; CRM systems</span></div><h3>Custom Code</h3><p>JavaScript steps and HTML forms where native GHL stops.</p><ul><li>Lookup tables in one step</li><li>Code + link generators</li><li>Webhook-posting forms</li></ul></article>
-        <article class="svc rv"><div class="top-row"><span><span class="n">06</span> · Built to convert</span><span class="grp">Funnels &amp; follow-up</span></div><h3>Funnels &amp; Pages</h3><p>Lead magnet, webinar, application and sales funnels.</p><ul><li>Registration to replay</li><li>Order forms + payments</li><li>Custom HTML sections</li><li>AI-built pages, hand-checked</li></ul></article>
+        <article class="svc rv"><div class="top-row"><span><span class="n">01</span> · Runs 24/7</span><span class="grp">GHL &amp; CRM systems</span></div><h3>GHL Automation</h3><p>Workflows that follow up so your team doesn't have to.</p><ul><li>Email + SMS sequences</li><li>Stop-on-payment reminders</li><li>Team alerts, tasks, Custom Code</li></ul></article>
+        <article class="svc rv"><div class="top-row"><span><span class="n">02</span> · Easy to use</span><span class="grp">GHL &amp; CRM systems</span></div><h3>CRM &amp; Pipelines</h3><p>Pipelines, tags and fields your team can actually use.</p><ul><li>Pipelines + stages</li><li>Custom fields + clean-ups</li><li>Smart lists + migrations</li></ul></article>
+        <article class="svc rv"><div class="top-row"><span><span class="n">03</span> · Built to convert</span><span class="grp">Funnels &amp; pages</span></div><h3>Funnels &amp; Pages (AI-built)</h3><p>Lead magnet, webinar, application and sales funnels.</p><ul><li>Registration to replay</li><li>Order forms + payments</li><li>AI-built pages, hand-checked</li></ul></article>
+        <article class="svc rv"><div class="top-row"><span><span class="n">04</span> · Connects everything</span><span class="grp">AI &amp; workflow automation</span></div><h3>n8n &amp; API Automations</h3><p>Connect GHL with the rest of your stack, with AI steps a person reviews.</p><ul><li>n8n, webhooks, APIs</li><li>Claude steps with human review</li><li>Failure alerts + spend watch</li></ul></article>
+        <article class="svc rv"><div class="top-row"><span><span class="n">05</span> · One front door</span><span class="grp">AI &amp; workflow automation</span></div><h3>Notion Workspaces &amp; AI Agents</h3><p>A company hub where meetings turn into tasks on their own.</p><ul><li>Hubs + task boards</li><li>Meeting-to-task pipelines</li><li>Notion AI agents (weekly reviews)</li></ul></article>
+        <article class="svc rv"><div class="top-row"><span><span class="n">06</span> · Built for your team</span><span class="grp">Tools &amp; training</span></div><h3>Custom Tools &amp; Walkthrough Videos</h3><p>Small tools built with AI-assisted coding, and how-to videos your team will watch.</p><ul><li>Browser extensions + internal tools</li><li>AI-assisted coding, tested</li><li>Narrated how-to videos</li></ul></article>
       </div>
     </div>
   </section>
@@ -1159,24 +1646,26 @@
   <section id="about" aria-labelledby="ab-h">
     <div class="wrap">
       <p class="label rv">About &amp; experience</p>
-      <div class="about">
+      <div class="about abp rv">
         <div>
           <h2 class="h2 rv" id="ab-h">Hi, I'm <b>Henry Jake.</b></h2>
-          <p class="rv"><strong>5+ years</strong> building GoHighLevel workflows, CRM systems and funnels for agencies, coaches, real estate and service businesses. I'm now applying that foundation to AI-enabled workflows with n8n.</p>
+          <p class="rv"><strong>5+ years</strong> building GoHighLevel workflows, CRM systems and funnels for agencies, coaches, real estate and service businesses. Since October 2026 I also run n8n automations, Notion workspaces and Claude-powered steps in live client systems, and build my own tools with AI-assisted coding.</p>
           <p class="rv">I'm also trained as a digital marketing assistant, so I build the GHL logic around the strategy (lead magnet, webinar, application or sales funnel), not just the tech spec. Builds are documented with clear naming and custom values, so your team can take them over.</p>
-          <div class="tiers rv">
-            <div class="tier core"><h3>CORE</h3><ul><li>GHL workflows</li><li>CRM &amp; pipelines</li><li>Funnels</li><li>Email/SMS follow-up</li><li>Custom Code (JS) in GHL</li><li>Workflow design &amp; QA</li><li>Zapier</li><li>Webhooks &amp; APIs</li><li>Documentation</li></ul></div>
-            <div class="tier sup"><h3>SUPPORTING</h3><ul><li>AI conversation flows in GHL</li><li>AI voice-agent work</li><li>AI-built websites &amp; landing pages (Claude Code)</li><li>AI meeting summaries &amp; drafts (human-reviewed)</li><li>Notion workspaces</li></ul></div>
-            <div class="tier exp"><h3>EXPANDING</h3><ul><li>n8n (built &amp; tested projects)</li><li>Structured AI output across Google Workspace, Notion, Gmail</li><li>Broader AI automation</li></ul></div>
+          <div class="tiers">
+            <div class="tier core rv"><h3>CORE</h3><ul><li>GHL workflows</li><li>CRM &amp; pipelines</li><li>Funnels</li><li>Email/SMS follow-up</li><li>Custom Code (JS) in GHL</li><li>Workflow design &amp; QA</li><li>n8n automations</li><li>Notion workspaces</li><li>Zapier</li><li>Webhooks &amp; APIs</li><li>Documentation</li></ul></div>
+            <div class="tier sup rv"><h3>SUPPORTING</h3><ul><li>AI conversation flows in GHL</li><li>AI voice-agent work</li><li>Notion AI agents</li><li>Claude API &amp; structured output</li><li>AI-assisted coding (Chrome extension, Android app, desktop tools, this site)</li><li>AI-built websites &amp; landing pages (Claude Code)</li><li>AI meeting summaries &amp; drafts (human-reviewed)</li><li>Explainer &amp; how-to videos</li></ul></div>
+            <div class="tier exp rv"><h3>EXPANDING</h3><ul><li>Outbound AI voice agents</li><li>Payments &amp; application tracking</li><li>Broader AI automation</li></ul></div>
           </div>
         </div>
-        <ol class="tl rv" aria-label="Work history">
-          <li><div class="p">Oct 2026 – present</div><div class="r">GHL Support · Australian digital agency</div><p class="d">Managed GHL client accounts: read-only audits, quote follow-up and partner-referral systems (including an AI-built partner page, now live), LinkedIn-to-CRM integration, sender and deliverability checks.</p></li>
-          <li><div class="p">Jan – Mar 2026</div><div class="r">GHL Specialist / Workflow Automation VA · Azulio.ai</div><p class="d">Real estate/mortgage CRM: lead qualification, funnels, routing, pipelines, follow-ups, Zapier, QA.</p></li>
-          <li><div class="p">Aug 2025 – Jan 2026</div><div class="r">VA / Digital Marketing Assistant · Outsourced Doers</div><p class="d">AI conversation flows in GHL and AI voice agents; a full GHL webinar funnel.</p></li>
-          <li><div class="p">Nov 2023 – Feb 2025</div><div class="r">Virtual Assistant · DojoMax</div><p class="d">GHL systems, Zapier.</p></li>
-          <li><div class="p">Mar – Jul 2023</div><div class="r">Virtual Assistant · White Label Ads Factory</div><p class="d">GHL client workflows, Zapier.</p></li>
-          <li><div class="p">Feb 2020 – Feb 2023</div><div class="r">Virtual Assistant · RC Digital Consultancy</div><p class="d">ClickFunnels + GHL funnels, Facebook Ads, Zapier.</p></li>
+        <ol class="tl" aria-label="Work history">
+          <li class="rv"><div class="p">Oct 2026 – present</div><div class="r">Automation Specialist (contract) · Australian retail-media consultancy</div><p class="d">Notion company hub, n8n workflows with Claude API steps, GHL website intake, pipelines and a handover pack with runbooks.</p></li>
+          <li class="rv"><div class="p">Oct 2026 – present</div><div class="r">GHL Support · Australian digital agency</div><p class="d">Managed GHL client accounts: read-only audits and account clean-ups, quote follow-up, lost-leads and chatbot-routing builds, partner-referral systems (including an AI-built partner page, now live), LinkedIn-to-CRM integration, sender and deliverability checks.</p></li>
+          <li class="rv"><div class="p">Oct 2026 – present</div><div class="r">GHL project work · Australian payments reseller</div><p class="d">Application-tracking pipeline with reminders, expiry alerts and a weekly report; merchant follow-up repairs.</p></li>
+          <li class="rv"><div class="p">Jan – Mar 2026</div><div class="r">GHL Specialist / Workflow Automation VA · Azulio.ai</div><p class="d">Real estate/mortgage CRM: lead qualification, funnels, routing, pipelines, follow-ups, Zapier, QA.</p></li>
+          <li class="rv"><div class="p">Aug 2025 – Jan 2026</div><div class="r">VA / Digital Marketing Assistant · Outsourced Doers</div><p class="d">AI conversation flows in GHL and AI voice agents; a full GHL webinar funnel.</p></li>
+          <li class="rv"><div class="p">Nov 2023 – Feb 2025</div><div class="r">Virtual Assistant · DojoMax</div><p class="d">GHL systems, Zapier.</p></li>
+          <li class="rv"><div class="p">Mar – Jul 2023</div><div class="r">Virtual Assistant · White Label Ads Factory</div><p class="d">GHL client workflows, Zapier.</p></li>
+          <li class="rv"><div class="p">Feb 2020 – Feb 2023</div><div class="r">Virtual Assistant · RC Digital Consultancy</div><p class="d">ClickFunnels + GHL funnels, Facebook Ads, Zapier.</p></li>
         </ol>
       </div>
     </div>
@@ -1185,18 +1674,18 @@
   <section id="contact" aria-labelledby="ct-h">
     <div class="wrap">
       <div class="plate rv">
-        <p class="label">Contact</p>
-        <h2 class="h2" id="ct-h">Got a process that <b>should run itself?</b></h2>
-        <p class="lede">Tell me about the process you want automated: what happens today, and what you wish happened instead. I'll reply with how I'd build it.</p>
-        <div class="acts">
+        <p class="label rv">Contact</p>
+        <h2 class="h2 rv" id="ct-h">Got a process that <b>should run itself?</b></h2>
+        <p class="lede rv">Tell me about the process you want automated: what happens today, and what you wish happened instead. I'll reply with how I'd build it.</p>
+        <div class="acts rv">
           <button type="button" class="btn solid" data-copy="hbalbiran@gmail.com" title="Click to copy"><svg class="ico"><use href="#i-mail"/></svg>hbalbiran@gmail.com</button>
           <a class="btn" href="https://api.whatsapp.com/send?phone=639185379969" target="_blank" rel="noopener"><svg class="ico"><use href="#i-chat"/></svg>WhatsApp +63 918 537 9969</a>
         </div>
-        <div class="meta"><span>Based in <b>Davao City, Philippines</b></span><span>GMT+8 · <b>works US / AU hours</b></span><span>Local time <b class="clock">--:--</b></span></div>
+        <div class="meta rv"><span>Based in <b>Davao City, Philippines</b></span><span>GMT+8 · <b>works US / AU hours</b></span><span>Local time <b class="clock">--:--</b></span></div>
       </div>
     </div>
   </section>
-  <footer><div class="wrap">Henry Jake Balbiran · GHL Technical Specialist</div></footer>
+  <footer><div class="wrap rv">Henry Jake Balbiran · GHL Technical Specialist · v2.1 · Oct 2026</div></footer>
 </main>
 
 <dialog class="pd" id="pd" aria-labelledby="pd-title">
@@ -1236,22 +1725,37 @@
   const links = $$('#nav a'), targets = links.map(a => document.querySelector(a.getAttribute('href')));
   const spy = () => { const y = innerHeight * 0.35; let cur = -1; targets.forEach((t, i) => { if (t && t.getBoundingClientRect().top <= y) cur = i; }); links.forEach((a, i) => a.setAttribute('aria-current', String(i === cur))); };
 
-  /* fail-safe reveal: only blocks below the fold start hidden; IntersectionObserver plus a plain scroll check */
+  /* fail-safe scroll reveal: only blocks below the fold start hidden. Whatever enters together cascades in
+     document order (70ms apart, max 6 steps), so a row of cards or a heading + lede + grid rises as a group.
+     IntersectionObserver does the work; the scroll check is the fallback and catches the last blocks at page end. */
   const rvs = $$('.rv');
-  const show = el => { if (!el.classList.contains('pending')) return; el.classList.remove('pending'); setTimeout(() => el.style.removeProperty('--d'), 900); };
+  const docOrder = (a, b) => (a.compareDocumentPosition(b) & 4) ? -1 : 1;
+  const show = (el, i) => {
+    if (!el.classList.contains('pending')) return;
+    el.style.setProperty('--d', Math.min(i, 5) * 70 + 'ms');
+    el.classList.add('rising'); el.classList.remove('pending');
+    setTimeout(() => { el.classList.remove('rising'); el.style.removeProperty('--d'); }, 1300);
+  };
   let pend = [];
   if (!mqReduce.matches && 'IntersectionObserver' in window) {
     pend = rvs.filter(el => el.getBoundingClientRect().top > innerHeight * 0.95);
     pend.forEach(el => el.classList.add('pending'));
-    const io = new IntersectionObserver(es => { let k = 0; es.forEach(en => { if (en.isIntersecting) { en.target.style.setProperty('--d', Math.min(k++, 4) * 70 + 'ms'); show(en.target); io.unobserve(en.target); } }); }, { rootMargin:'0px 0px -6% 0px' });
+    const io = new IntersectionObserver(es => {
+      es.filter(en => en.isIntersecting).map(en => en.target).sort(docOrder).forEach((el, i) => { show(el, i); io.unobserve(el); });
+    }, { rootMargin:'0px 0px -8% 0px' });
     pend.forEach(el => io.observe(el));
   }
-  const revealCheck = () => { if (!pend.length) return; pend = pend.filter(el => { if (!el.classList.contains('pending')) return false; const r = el.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0 || (r.width === 0 && r.height === 0)) { show(el); return false; } return true; }); };
+  const revealCheck = () => {
+    if (!pend.length) return;
+    const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 4, line = innerHeight * (atEnd ? 1 : 0.92);
+    let i = 0;
+    pend = pend.filter(el => { if (!el.classList.contains('pending')) return false; const r = el.getBoundingClientRect(); if (r.top < line && r.bottom > 0 || (r.width === 0 && r.height === 0)) { show(el, i++); return false; } return true; });
+  };
 
   /* rotating border lights: pause the ones that are off screen */
   if ('IntersectionObserver' in window) {
     const bio = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('boff', !e.isIntersecting)), { rootMargin:'200px 0px' });
-    $$('.pc,.window,.step,.svc,.idc,.plate').forEach(b => bio.observe(b));
+    $$('.pc,.window,.step,.svc,.abp,.idc,.plate').forEach(b => bio.observe(b));
   }
 
   /* projects: filters */
@@ -1271,37 +1775,157 @@
 
   /* screenshots: switch shots, open full size (separate dialog, never nested in the overview) */
   const box = document.createElement('dialog'); box.className = 'shotbox'; box.setAttribute('aria-label', 'Screenshot');
-  box.innerHTML = '<button type="button" class="x" aria-label="Close screenshot">✕</button><img alt=""><p></p>';
+  box.innerHTML = '<button type="button" class="x" aria-label="Close screenshot">✕</button><img alt=""><p><span></span><a target="_blank" rel="noopener">Open at full size ↗</a></p>';
   document.body.appendChild(box);
-  let shotTrigger = null;
+  let shotTrigger = null, shotRestore = null;
+  const openShot = (src, alt, trigger, restore) => {
+    shotTrigger = trigger; shotRestore = restore || null;
+    const bi = box.querySelector('img'); bi.src = src; bi.alt = alt;
+    box.querySelector('p span').textContent = alt; box.querySelector('p a').href = src;
+    box.showModal();
+  };
   box.querySelector('.x').addEventListener('click', () => box.close());
   box.addEventListener('click', e => { if (e.target === box) box.close(); });
-  box.addEventListener('close', () => { if (shotTrigger) shotTrigger.focus(); });
-  $$('[data-shots]').forEach(m => {
-    const card = m.closest('.pc'), main = m.querySelector('.main'), img = main.querySelector('img'), btns = [...card.querySelectorAll('.thumbs button')];
-    const showShot = b => { btns.forEach(x => x.setAttribute('aria-pressed', String(x === b))); img.src = b.dataset.src; img.alt = b.dataset.alt; main.classList.toggle('contain', b.dataset.fit === 'contain'); };
-    btns.forEach(b => b.addEventListener('click', () => showShot(b)));
-    main.addEventListener('click', () => { shotTrigger = main; const bi = box.querySelector('img'); bi.src = img.src; bi.alt = img.alt; box.querySelector('p').textContent = img.alt; box.showModal(); });
+  box.addEventListener('close', () => {
+    // a shot opened from inside the project dialog: bring that dialog back on the same image, focus its thumbnail
+    if (shotRestore) { const r = shotRestore; shotRestore = null; openDetail(r.card, r.trigger, true, r.index); return; }
+    if (shotTrigger) shotTrigger.focus();
   });
+  // card screenshots: one delegated handler (bound once) instead of per-card listeners, so any markup works
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-shots] .main, .pc .thumbs button'); if (!t) return;
+    const card = t.closest('.pc'), main = card && card.querySelector('[data-shots] .main'), img = main && main.querySelector('img');
+    if (!img) return;
+    if (t === main) { openShot(main.dataset.full || img.src, img.alt, main); return; }
+    card.querySelectorAll('.thumbs button').forEach(x => x.setAttribute('aria-pressed', String(x === t)));
+    img.src = t.dataset.src; img.alt = t.dataset.alt; main.classList.toggle('contain', t.dataset.fit === 'contain');
+    if (t.dataset.full) main.dataset.full = t.dataset.full; else delete main.dataset.full; // V2.1: open the 1600px file, not the 960px card copy
+  });
+
+  $$('.pc .thumbs button[aria-pressed="true"][data-full]').forEach(t => { const m = t.closest('.pc').querySelector('[data-shots] .main'); if (m && !m.dataset.full) m.dataset.full = t.dataset.full; });
 
   /* project overview dialog (adapted from the motion library's overlays-modal: small .97 scale from the trigger) */
   const pd = $('#pd'), pdBody = $('#pd-body'), pdFoot = $('#pd-foot');
-  let pdTrigger = null, closeTimer = 0;
-  const openDetail = (card, trigger, fromKeyboard) => {
-    pdTrigger = trigger;
+  let pdTrigger = null, pdCard = null, closeTimer = 0, pairRO = null;
+
+  /* in-dialog screenshot gallery: initialised on every (cloned) copy, clicks handled by one delegated listener */
+  const pgSelect = (pg, i, focus) => {
+    const btns = [...pg.querySelectorAll('.pg-thumbs button')], b = btns[i] || btns[0]; if (!b) return;
+    btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    const img = pg.querySelector('.pg-main img'); img.src = b.dataset.src; img.alt = b.dataset.alt;
+    pg.querySelector('.pg-stage figcaption').textContent = b.dataset.cap;
+    pg.querySelector('.pg-main').setAttribute('aria-label', 'View full size: ' + b.dataset.alt);
+    pg.dataset.i = btns.indexOf(b);
+    if (focus) b.focus();
+  };
+  const initGalleries = (root, index, focus) => root.querySelectorAll('[data-pg]').forEach(pg => {
+    if (!pg.dataset.ready) { pg.querySelectorAll('img[data-src]').forEach(im => { im.src = im.dataset.src; im.removeAttribute('data-src'); }); pg.dataset.ready = '1'; }
+    pgSelect(pg, index || 0, focus);
+  });
+  pdBody.addEventListener('click', e => {
+    const pg = e.target.closest('[data-pg]'); if (!pg) return;
+    const btns = [...pg.querySelectorAll('.pg-thumbs button')], b = e.target.closest('.pg-thumbs button');
+    if (b) { pgSelect(pg, btns.indexOf(b)); return; }
+    if (!e.target.closest('.pg-main')) return;
+    // never two modals at once: close the project dialog, show the shot, then restore the dialog on the same image
+    const i = +pg.dataset.i || 0, restore = { card: pdCard, trigger: pdTrigger, index: i };
+    pdTrigger = null; clearTimeout(closeTimer); pd.close();
+    openShot(btns[i].dataset.full, btns[i].dataset.alt, null, restore);
+  });
+
+  /* paired demo views: same page in a 1280px desktop viewport (scaled to fit) and a 390px phone viewport */
+  const DESK_W = 1280, PHONE_W = 390;
+  const setVp = (vp, w, h, iw, s) => {
+    const f = vp.querySelector('.vp-frame'), fr = vp.querySelector('iframe');
+    vp.style.width = w + 'px'; f.style.height = h + 'px';
+    fr.style.width = iw + 'px'; fr.style.height = Math.round(h / s) + 'px'; fr.style.transform = `scale(${s})`;
+  };
+  const fitPair = () => {
+    const pair = pdBody.querySelector('.pair'); if (!pair) return;
+    const cw = pair.clientWidth, side = cw >= 720; pair.classList.toggle('side', side);
+    const pw = side ? (cw >= 960 ? 300 : 260) : Math.min(cw, 320), dw = side ? cw - pw - 18 : cw;
+    const vh = Math.round(Math.min(Math.max(innerHeight * .58, 360), 640));
+    setVp(pair.querySelector('.vp.desktop'), dw, side ? vh : Math.round(dw * .66), DESK_W, dw / DESK_W);
+    const ph = (side ? vh : Math.round(Math.min(Math.max(innerHeight * .6, 380), 600))) - 50, sw = pw - 20; // 20px silver edge, 30px stage + shadow
+    setVp(pair.querySelector('.vp.phone'), pw, ph, PHONE_W, Math.min(1, sw / PHONE_W));
+  };
+  /* handset motion: slow sway + float bob, eased toward the pointer, settles flat while the visitor reads or scrolls it */
+  let phoneStop = null;
+  const startPhone = stage => {
+    const shell = stage.querySelector('.vp-shell');
+    if (mqReduce.matches) return () => {};
+    let raf = 0, t0 = performance.now(), px = 0, py = 0, rx = 0, ry = 0, ty = 0, hold = false, seen = true;
+    const onMove = e => { const r = stage.getBoundingClientRect();
+      px = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (innerWidth / 2)));
+      py = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (innerHeight / 2))); };
+    const calm = () => { hold = true; }, free = () => { hold = stage.contains(document.activeElement) && document.activeElement !== document.body; };
+    const tick = now => {
+      const s = (now - t0) / 1000;
+      const tRy = hold ? 0 : Math.sin(s * .42) * 11 + px * 7, tRx = hold ? 0 : 4 - py * 5, tTy = hold ? 0 : Math.sin(s * 1.1) * 5;
+      ry += (tRy - ry) * .06; rx += (tRx - rx) * .06; ty += (tTy - ty) * .06;
+      shell.style.setProperty('--ry', ry.toFixed(2) + 'deg'); shell.style.setProperty('--rx', rx.toFixed(2) + 'deg'); shell.style.setProperty('--ty', ty.toFixed(1) + 'px');
+      stage.style.setProperty('--sh', (1 + ty / 40).toFixed(3));
+      raf = seen && !document.hidden ? requestAnimationFrame(tick) : 0;
+    };
+    const wake = () => { if (!raf && seen && !document.hidden) raf = requestAnimationFrame(tick); };
+    const io = new IntersectionObserver(([en]) => { seen = en.isIntersecting; wake(); });
+    io.observe(stage);
+    pd.addEventListener('pointermove', onMove, { passive:true });
+    shell.addEventListener('pointerenter', calm); shell.addEventListener('pointerleave', free);
+    stage.addEventListener('focusin', calm); stage.addEventListener('focusout', free);
+    document.addEventListener('visibilitychange', wake);
+    wake();
+    return () => { cancelAnimationFrame(raf); io.disconnect(); pd.removeEventListener('pointermove', onMove); document.removeEventListener('visibilitychange', wake); };
+  };
+  const buildPair = (href, name) => {
+    const pair = document.createElement('div'); pair.className = 'pair';
+    [['desktop', 'Desktop', DESK_W], ['phone', 'Phone', PHONE_W]].forEach(([k, label, w]) => {
+      const fig = document.createElement('figure'); fig.className = 'vp ' + k;
+      const frame = `<div class="vp-frame">${k === 'phone' ? '<span class="vp-island" aria-hidden="true"></span>' : ''}<iframe></iframe><span class="vp-bar" aria-hidden="true"><i></i></span></div>`;
+      fig.innerHTML = `<figcaption class="vp-head"><span><b>${label}</b> · ${w}px wide</span><span class="vp-cue">Scrolls on its own ↓</span></figcaption>` +
+        (k === 'phone' ? `<div class="vp-stage"><div class="vp-shell">${frame}</div></div>` : frame);
+      const fr = fig.querySelector('iframe'), bar = fig.querySelector('.vp-bar'), cue = fig.querySelector('.vp-cue');
+      fr.title = `${name}: ${label.toLowerCase()} view, ${w} pixels wide (scrolls independently)`;
+      fr.addEventListener('load', () => {
+        try { // same-origin only (http preview): scroll indicator + keep the demo's back link from loading the portfolio inside the frame
+          const d = fr.contentDocument, w2 = fr.contentWindow;
+          d.querySelectorAll('a[href*="Portfolio-Redesign-Inspo-v2"]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); closeDetail(false); }));
+          // Escape pressed while focus is inside a view never reaches the parent dialog: close it from here
+          d.addEventListener('keydown', ev => { if (ev.key === 'Escape') { ev.preventDefault(); closeDetail(false); } });
+          const upd = () => { const se = d.scrollingElement, max = se.scrollHeight - se.clientHeight, p = max > 0 ? Math.min(1, se.scrollTop / max) : 1;
+            bar.style.setProperty('--p', p.toFixed(3)); cue.textContent = p > .99 ? 'End of page' : 'Scrolls on its own ↓'; };
+          w2.addEventListener('scroll', upd, { passive:true }); w2.addEventListener('resize', upd); upd();
+        } catch (err) { bar.hidden = true; }
+      });
+      fr.src = href; // created only when the dialog opens; removed again on every close
+      pair.append(fig);
+    });
+    const note = document.createElement('p'); note.className = 'pair-note';
+    note.textContent = 'Both views run the same page and scroll separately: use the mouse wheel or touch, or Tab into a view and use the arrow keys or Page Down. The form works only in your browser; nothing is sent.';
+    const frag = document.createDocumentFragment(); frag.append(pair, note); return frag;
+  };
+
+  const openDetail = (card, trigger, fromKeyboard, shotIndex) => {
+    pdTrigger = trigger; pdCard = card;
     $('#pd-kind').textContent = card.querySelector('.kind').textContent;
     $('#pd-title').textContent = card.querySelector('h3').textContent;
     $('#pd-chips').innerHTML = card.querySelector('.chips').innerHTML;
     pdBody.innerHTML = card.querySelector('.detail').innerHTML;
     pdFoot.innerHTML = '';
+    const demo = trigger && trigger.dataset.demo;
+    pd.classList.toggle('pd-wide', !!demo);
+    if (demo) { pdBody.prepend(buildPair(demo, card.querySelector('h3').textContent)); }
+    initGalleries(pdBody, shotIndex);
     const primary = card.querySelector('a[data-primary]');
-    if (primary) { const a = document.createElement('a'); a.className = 'btn solid'; a.href = primary.getAttribute('href'); a.textContent = primary.textContent.trim(); pdFoot.append(a); }
+    if (primary) { const a = document.createElement('a'); a.className = 'btn solid'; a.href = primary.getAttribute('href'); a.textContent = demo ? 'Open full demo' : primary.textContent.trim(); pdFoot.append(a); }
     const ask = document.createElement('a'); ask.className = 'btn'; ask.href = 'https://mail.google.com/mail/?view=cm&fs=1&to=hbalbiran@gmail.com&su=' + encodeURIComponent('Question about: ' + card.querySelector('h3').textContent); ask.target = '_blank'; ask.rel = 'noopener'; ask.textContent = 'Ask me about this'; pdFoot.append(ask);
-    if (card.querySelector('.chip.hold')) { const n = document.createElement('p'); n.className = 'pd-note'; n.textContent = 'Client work, anonymised: names, logos and results are left out.'; pdFoot.append(n); }
+    if (card.querySelector('.chip.hold')) { const n = document.createElement('p'); n.className = 'pd-note'; n.textContent = card.dataset.note || 'Client work, anonymised: names, logos and results are left out.'; pdFoot.append(n); }
     clearTimeout(closeTimer); pd.classList.remove('leaving');
     const animate = !mqReduce.matches && !fromKeyboard;
     if (animate) pd.classList.add('enter');
     pd.showModal(); pdBody.scrollTop = 0;
+    if (demo) { fitPair(); pairRO = new ResizeObserver(fitPair); pairRO.observe(pdBody); const st = pdBody.querySelector('.vp-stage'); if (st) phoneStop = startPhone(st); }
+    if (shotIndex !== undefined) { const tb = pdBody.querySelectorAll('[data-pg] .pg-thumbs button')[shotIndex]; if (tb) tb.focus(); }
     if (animate) {
       const r = pd.getBoundingClientRect(), t = trigger.getBoundingClientRect();
       pd.style.transformOrigin = `${t.left + t.width / 2 - r.left}px ${t.top + t.height / 2 - r.top}px`;
@@ -1314,10 +1938,82 @@
     pd.classList.add('leaving');
     closeTimer = setTimeout(() => { pd.close(); pd.classList.remove('leaving'); }, 170);
   };
-  pd.addEventListener('close', () => { pd.classList.remove('leaving', 'enter'); if (pdTrigger) pdTrigger.focus(); });
+  pd.addEventListener('close', () => {
+    pd.classList.remove('leaving', 'enter');
+    if (pd.open) return; // reopened before this queued event ran
+    // every close path (✕, backdrop, Escape, shot viewer hand-off): drop demo frames so nothing keeps running, reset the wide modifier
+    if (pairRO) { pairRO.disconnect(); pairRO = null; }
+    if (phoneStop) { phoneStop(); phoneStop = null; }
+    pdBody.replaceChildren(); pd.classList.remove('pd-wide');
+    if (pdTrigger) pdTrigger.focus();
+  });
   $('#pd-x').addEventListener('click', e => closeDetail(e.detail !== 0));
   pd.addEventListener('click', e => { if (e.target === pd) closeDetail(true); });
   $$('[data-detail]').forEach(b => b.addEventListener('click', e => openDetail(b.closest('.pc'), b, e.detail === 0)));
+
+  /* tutorial previews: poster first, video src attached near the viewport (or on explicit play), at most one plays,
+     paused offscreen / on tab hide / while any dialog is open. Reduced motion or Save-Data = poster + explicit play.
+     A visitor's Pause stops automatic playback for the whole strip until they press Play again (survives scrolling,
+     tab switches and dialogs); after a system pause the last active card resumes. Speed is baked in: playbackRate stays 1. */
+  const tuts = $$('[data-tut]');
+  if (tuts.length) {
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
+    const autoOK = () => !mqReduce.matches && !saveData;
+    const blocked = () => document.hidden || !!document.querySelector('dialog[open]');
+    const st = new Map();
+    let userPaused = false, current = null;
+    const setBtn = (t, playing) => {
+      const s = st.get(t), b = s.btn;
+      b.setAttribute('aria-pressed', String(playing));
+      b.setAttribute('aria-label', (playing ? 'Pause preview: ' : 'Play preview: ') + s.title);
+      b.querySelector('use').setAttribute('href', playing ? '#i-pause' : '#i-play');
+      b.querySelector('span').textContent = playing ? 'Pause' : 'Play';
+    };
+    const attach = t => { const s = st.get(t); if (s.v.getAttribute('src') || s.failed) return; s.v.src = t.dataset.src; };
+    const pauseAll = except => tuts.forEach(t => { if (t !== except) st.get(t).v.pause(); });
+    const play = t => {
+      const s = st.get(t); if (s.failed) return;
+      attach(t); pauseAll(t); current = t;
+      s.v.playbackRate = 1; s.v.defaultPlaybackRate = 1; s.v.muted = true;
+      const pr = s.v.play();
+      if (pr && pr.catch) pr.catch(err => { if (err && err.name === 'NotAllowedError') s.autoBlocked = true; setBtn(t, !s.v.paused); }); // autoplay refused: poster + Play button stay
+    };
+    // which visible card should run automatically: the last active one if still on screen, else the first eligible
+    const eligible = x => { const s = st.get(x); return s.visible && !s.failed && !s.autoBlocked; };
+    const resume = () => {
+      if (userPaused || !autoOK() || blocked() || tuts.some(x => !st.get(x).v.paused)) return;
+      const t = current && eligible(current) ? current : tuts.find(eligible);
+      if (t) play(t);
+    };
+    tuts.forEach(t => {
+      const v = t.querySelector('video'), btn = t.querySelector('.tut-btn'), err = t.querySelector('.tut-err');
+      st.set(t, { v, btn, err, title: t.querySelector('h3').textContent, visible:false, failed:false, autoBlocked:false });
+      const sp = t.querySelector('.tut-speed'); if (sp && t.dataset.speed) sp.textContent = `Silent preview · ${t.dataset.speed}×`;
+      btn.hidden = false; setBtn(t, false);
+      btn.addEventListener('click', () => {
+        const s = st.get(t);
+        if (!v.paused) { userPaused = true; tuts.forEach(x => x.toggleAttribute('data-user-paused', x === t)); v.pause(); }
+        else { userPaused = false; tuts.forEach(x => x.removeAttribute('data-user-paused')); s.autoBlocked = false; play(t); }
+      });
+      v.addEventListener('playing', () => { t.classList.add('started'); setBtn(t, true); });
+      v.addEventListener('pause', () => setBtn(t, false));
+      v.addEventListener('ratechange', () => { if (v.playbackRate !== 1) v.playbackRate = 1; });
+      v.addEventListener('error', () => { const s = st.get(t); s.failed = true; err.hidden = false; btn.disabled = true; t.classList.remove('started'); setBtn(t, false); });
+    });
+    if ('IntersectionObserver' in window) {
+      // 1) attach the source shortly before a card scrolls in (only when it may autoplay; otherwise wait for Play)
+      const near = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && autoOK()) { attach(e.target); near.unobserve(e.target); } }), { rootMargin:'250px 0px' });
+      // 2) play when mostly visible, pause when it leaves (a visitor's Pause is kept)
+      const vis = new IntersectionObserver(es => {
+        es.forEach(e => { const s = st.get(e.target); s.visible = e.isIntersecting; if (!e.isIntersecting) s.v.pause(); });
+        resume();
+      }, { threshold:.6 });
+      tuts.forEach(t => { near.observe(t); vis.observe(t); });
+    }
+    document.addEventListener('visibilitychange', () => document.hidden ? pauseAll() : resume());
+    new MutationObserver(() => blocked() ? pauseAll() : resume()).observe(document.body, { subtree:true, attributes:true, attributeFilter:['open'] });
+    mqReduce.addEventListener('change', () => autoOK() ? resume() : pauseAll());
+  }
 
   /* workspace rooms: tabs with arrow keys */
   const rbtns = $$('#rtabs [role="tab"]'), shots = $$('#rscreen img'), screen = $('#rscreen'), rview = $('#rview');
