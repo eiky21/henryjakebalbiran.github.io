@@ -303,6 +303,28 @@
   .st.park{color:#f5c26b; border-color:rgba(245,194,107,.45)}
   .st.old{color:var(--muted); border-color:var(--line)}
 .st.draft{color:var(--accent-2); border-color:rgba(147,180,255,.45)}
+  /* V2.2: selected work, mini case studies, contact bands, skills by depth */
+  #selected{padding-bottom:24px}
+  .sel .media img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#eef1f6; display:block}
+  .sel .chips{margin-bottom:10px}
+  .cs{display:grid; grid-template-columns:minmax(0,1fr); gap:2px 14px; margin:0 0 14px; font-size:.9rem}
+  .cs dt{font:700 .66rem var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-top:8px}
+  .cs dd{margin:0; color:var(--muted)}
+  .cs dd a{color:var(--accent-2)}
+  @media (min-width:560px){ .cs{grid-template-columns:auto minmax(0,1fr)} .cs dt{margin-top:2px; padding-top:2px} }
+  .pdf-link{display:inline-flex; align-items:center; gap:6px; min-height:44px; margin-top:6px; color:var(--accent-2); font:700 .82rem var(--mono); text-decoration:none}
+  .pdf-link:hover{text-decoration:underline}
+  .cta-band{padding:8px 0 32px}
+  .band{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 24px; border:1px solid var(--line); border-radius:20px; background:rgba(10,20,39,.92); padding:20px clamp(18px,3vw,32px)}
+  .band p{margin:0; max-width:52ch; color:var(--muted)} .band p b{color:var(--ink)}
+  .band .acts{display:flex; flex-wrap:wrap; gap:12px}
+  .build-list{list-style:none; margin:10px 0 26px; padding:0; display:grid; gap:2px}
+  .build-list li{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:2px 12px; border-bottom:1px solid var(--line); padding:8px 0}
+  .build-list a{display:inline-flex; align-items:center; min-height:44px; color:var(--ink); text-decoration:none; font-weight:600}
+  .build-list a:hover{color:var(--accent)}
+  .build-list span{font:.7rem var(--mono); color:var(--muted)}
+  .tier h3 span{color:var(--muted); font-weight:600}
+  .tut-link{margin:0 0 8px; font-size:.86rem} .tut-link a{display:inline-flex; align-items:center; gap:6px; min-height:44px; color:var(--accent-2)}
   .pg-note{margin:10px 0 0 !important; font:.72rem/1.5 var(--mono); color:var(--muted) !important}
   .chip.test{color:var(--accent); border-color:rgba(59,158,255,.4); background:var(--accent-soft)}
   /* plain-English explainer blocks inside the project dialog */
@@ -499,7 +521,7 @@
 
 <div class="bg" aria-hidden="true">
   <div class="bg-layer">
-    <img src="rooms/deck.jpg" alt="" width="1600" height="900">
+    <img src="rooms/deck.jpg" srcset="work/site/deck-960.jpg 960w, rooms/deck.jpg 1600w" sizes="100vw" alt="" width="1600" height="900" fetchpriority="low">
     <div id="bgFrameSlot"></div>
   </div>
   <div class="shade"></div>
@@ -509,7 +531,7 @@
 <header class="top" id="top-bar">
   <div class="in">
     <a class="brand" href="#top" aria-label="Henry Jake Balbiran, back to top">
-      <img src="images/jake-headshot.png" alt="" width="36" height="36">
+      <img src="work/site/jake-headshot-160.webp" alt="" width="36" height="36">
       <span><b>Henry Jake Balbiran</b><small>GHL &amp; AI AUTOMATION SPECIALIST</small></span>
     </a>
     <button class="menu-btn" type="button" id="menuBtn" aria-controls="nav" aria-expanded="false" aria-label="Open menu"><svg class="ico"><use href="#i-menu"/></svg></button>
@@ -532,22 +554,23 @@
       <div class="hero-grid">
         <div>
           <p class="kick"><i aria-hidden="true"></i>GHL &amp; AI automation specialist · 5+ years</p>
-          <h1 id="hero-h" aria-label="I build the GoHighLevel systems behind your leads and follow-up.">
-            <span class="ln" aria-hidden="true"><span style="--i:0">I build the <b>GoHighLevel</b></span></span>
-            <span class="ln" aria-hidden="true"><span style="--i:1">systems behind your</span></span>
-            <span class="ln" aria-hidden="true"><span style="--i:2"><em>leads and follow-up.</em></span></span>
+          <h1 id="hero-h" aria-label="GoHighLevel systems that keep leads moving.">
+            <span class="ln" aria-hidden="true"><span style="--i:0"><b>GoHighLevel</b> systems</span></span>
+            <span class="ln" aria-hidden="true"><span style="--i:1">that keep leads</span></span>
+            <span class="ln" aria-hidden="true"><span style="--i:2"><em>moving.</em></span></span>
           </h1>
           <div class="after">
-            <p class="sub">Workflows, CRM pipelines, funnels and Custom Code, plus n8n automations, Notion workspaces with AI agents, and custom tools I build with AI-assisted coding ("vibe coding"). Try a working demo, then look through anonymised builds from real client work.</p>
+            <p class="sub">I build and improve GHL workflows, CRM pipelines and follow-up systems for agencies and service businesses, and connect them with n8n, Notion AI agents and small tools I build with AI-assisted coding (vibe coding). Documented handoff included.</p>
             <div class="acts">
-              <a class="btn solid" href="#work">Explore projects <svg class="ico"><use href="#i-down"/></svg></a>
+              <a class="btn solid" href="#selected">View selected work <svg class="ico"><use href="#i-down"/></svg></a>
               <a class="btn" href="#contact">Contact me <svg class="ico"><use href="#i-arrow"/></svg></a>
             </div>
+            <a class="pdf-link" href="documents/henry-jake-balbiran-portfolio-summary-2026-10.pdf" target="_blank" rel="noopener">One-page summary (PDF) <svg class="ico"><use href="#i-arrow"/></svg></a>
           </div>
         </div>
         <aside class="idc after" aria-label="About Henry Jake Balbiran">
           <div class="who">
-            <div class="av"><img src="images/jake-headshot.png" alt="Henry Jake Balbiran" width="76" height="76"><span title="Available for projects"></span></div>
+            <div class="av"><img src="work/site/jake-headshot-160.webp" alt="Henry Jake Balbiran" width="76" height="76"><span title="Available for projects"></span></div>
             <div><b>Henry Jake Balbiran</b><small>GHL &amp; AI automation specialist</small></div>
           </div>
           <ul>
@@ -572,11 +595,101 @@
     </div>
   </section>
 
+  <section id="selected" aria-labelledby="sel-h">
+    <div class="wrap">
+      <p class="label rv">Selected work</p>
+      <h2 class="h2 rv" id="sel-h">Five builds, <b>start to finish.</b></h2>
+      <p class="lede rv">My strongest examples, each as a short case study: the problem, what I built, the tools, the proof, and the result where one has been measured. Client work is anonymised.</p>
+      <div class="grid sel-grid">
+        <article class="pc sel wide rv">
+          <div class="media"><img src="work/website-intake/2-intake-top-960.webp" alt="Top of the GHL intake workflow: inbound webhook, create contact, source tags, interest router" loading="lazy" width="960" height="570"></div>
+          <div class="body">
+            <p class="kind">Featured · GHL automation</p>
+            <h3>Website enquiry intake with consent and routing</h3>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span></div>
+            <dl class="cs">
+              <dt>Problem</dt><dd>Website enquiries arrived as plain emails, with no record of the source or of marketing consent, and every enquiry got the same reply.</dd>
+              <dt>What I built</dt><dd>One webhook for every site form; the contact is created with source, cohort and consent tags; a four-branch interest router sends the matching branded reply and gives the owner an email, a Google Chat alert and a reply task. Plus a survey workflow and a sales pipeline.</dd>
+              <dt>Tools</dt><dd>GoHighLevel workflows, tags, custom fields, email templates and pipelines; n8n for the Chat alert.</dd>
+              <dt>Proof</dt><dd>6 anonymised screenshots, and a <a href="#tutorials">silent walkthrough preview</a> of a form going through the flow.</dd>
+              <dt>Result</dt><dd>Live since 23 Oct 2026. Lead numbers: not measured yet.</dd>
+            </dl>
+            <div class="acts-row"><button type="button" class="go solid" data-open="website-intake">Screenshots and details <svg class="ico"><use href="#i-arrow"/></svg></button><a class="go" href="#website-intake">See it in the gallery</a></div>
+          </div>
+        </article>
+        <article class="pc sel rv">
+          <div class="media"><img src="work/operating-backend/n8n-09-meeting-to-tasks-960.webp" alt="n8n workflow: a meeting goes through Claude and its suggested tasks are created in Notion for review" loading="lazy" width="960" height="445"></div>
+          <div class="body">
+            <p class="kind">Featured · n8n + Notion + Claude</p>
+            <h3>Meeting-to-task operating backend</h3>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span></div>
+            <dl class="cs">
+              <dt>Problem</dt><dd>Meeting notes were never turned into tasks, and the first AI setup ran out of its 300 monthly Notion AI credits in 5 days.</dd>
+              <dt>What I built</dt><dd>10 live n8n workflows: calendar to meeting pages, notes capture, Claude follow-up drafts, at most 5 Claude-suggested tasks per meeting held for human review, email to task, a self-updating hub, failure alerts and a spend watch. Plus a handover pack of 8 runbooks.</dd>
+              <dt>Tools</dt><dd>n8n, Notion, the Claude API, Google Drive and Gmail.</dd>
+              <dt>Proof</dt><dd>18 anonymised n8n and Notion screenshots, with a status badge on each.</dd>
+              <dt>Result</dt><dd>Measured Claude cost: US$0.0044 per meeting for task suggestions. Time saved: not measured.</dd>
+            </dl>
+            <div class="acts-row"><button type="button" class="go solid" data-open="ops-backend">Screenshots and details <svg class="ico"><use href="#i-arrow"/></svg></button><a class="go" href="#ops-backend">See it in the gallery</a></div>
+          </div>
+        </article>
+        <article class="pc sel rv">
+          <div class="media"><img src="work/gps-lost-leads/1-campaign-overview-960.webp" alt="Lost-leads workflow zoomed out: tag trigger, a nine-way router and seven tracks of four emails" loading="lazy" width="960" height="570"></div>
+          <div class="body">
+            <p class="kind">Featured · GHL automation</p>
+            <h3>Lost-leads re-engagement campaign</h3>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span></div>
+            <dl class="cs">
+              <dt>Problem</dt><dd>About 30 lost opportunities had no follow-up, and a trigger on the Lost status would have clashed with existing workflows.</dd>
+              <dt>What I built</dt><dd>A tag-started campaign: a nine-way router into seven industry tracks of four emails, an update-your-details page whose answers route to a call task, long-term follow-up or unsubscribe, and an outbound AI caller as phase two.</dd>
+              <dt>Tools</dt><dd>GoHighLevel workflows, smart lists, forms, Voice AI.</dd>
+              <dt>Proof</dt><dd>4 anonymised screenshots; run end to end on 2 test contacts.</dd>
+              <dt>Result</dt><dd>Not measured yet: built and tested, awaiting the client's go-live.</dd>
+            </dl>
+            <div class="acts-row"><button type="button" class="go solid" data-open="lost-leads">Screenshots and details <svg class="ico"><use href="#i-arrow"/></svg></button><a class="go" href="#lost-leads">See it in the gallery</a></div>
+          </div>
+        </article>
+        <article class="pc sel rv">
+          <div class="media"><img src="work/payments-tracking/1-applications-pipeline-960.webp" alt="Applications board with one column per missing item, then with the provider, then approved" loading="lazy" width="960" height="444"></div>
+          <div class="body">
+            <p class="kind">Featured · GHL automation</p>
+            <h3>Application tracking for a payments reseller</h3>
+            <div class="chips"><span class="chip hold">CLIENT WORK · ANONYMISED</span></div>
+            <dl class="cs">
+              <dt>Problem</dt><dd>Applications sat with the payment provider for weeks with no one chasing the missing step, and links expired unnoticed.</dd>
+              <dt>What I built</dt><dd>A dedicated applications board, an AI-built intake workflow, four stage-reminder workflows in business hours, expiry alerts on day 25, 30 and 38 from the link date, commission tagging and a Monday report.</dd>
+              <dt>Tools</dt><dd>GoHighLevel pipelines, custom fields, workflows (Build using AI), Wait until date, scheduled reports, CSV import.</dd>
+              <dt>Proof</dt><dd>6 anonymised screenshots; every test record checked by reading it back through the API.</dd>
+              <dt>Result</dt><dd>Not measured yet: built and tested, awaiting go-live. The Monday report runs internally.</dd>
+            </dl>
+            <div class="acts-row"><button type="button" class="go solid" data-open="application-tracking">Screenshots and details <svg class="ico"><use href="#i-arrow"/></svg></button><a class="go" href="#application-tracking">See it in the gallery</a></div>
+          </div>
+        </article>
+        <article class="pc sel rv">
+          <div class="media"><img src="work/flowsnap/1-editor-960.webp" alt="FlowSnap editor with a captured test workflow, a box, an arrow and two numbered callouts" loading="lazy" width="960" height="600"></div>
+          <div class="body">
+            <p class="kind">Featured · Shipped tool</p>
+            <h3>FlowSnap: a workflow screenshot extension</h3>
+            <div class="chips"><span class="chip concept">PERSONAL BUILD</span></div>
+            <dl class="cs">
+              <dt>Problem</dt><dd>I needed complete, clean workflow screenshots for guides and handovers, without a paid tool or a server.</dd>
+              <dt>What I built</dt><dd>A Chrome extension with 4 capture modes, whole-canvas workflow capture, and a markup editor with blur, callouts and exports. Built with AI-assisted coding (Claude Code); I directed, tested and decided.</dd>
+              <dt>Tools</dt><dd>Chrome Manifest V3, JavaScript, the DevTools Protocol, Playwright.</dd>
+              <dt>Proof</dt><dd>An automated smoke test (88 checks), and live captures of GoHighLevel workflows.</dd>
+              <dt>Result</dt><dd>In use for my own captures, hands-free since 20 Oct 2026. Time saved: not measured.</dd>
+            </dl>
+            <div class="acts-row"><button type="button" class="go solid" data-open="flowsnap">Screenshots and details <svg class="ico"><use href="#i-arrow"/></svg></button><a class="go" href="#flowsnap">See it in the gallery</a></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section id="work" aria-labelledby="wk-h">
     <div class="wrap">
-      <p class="label rv">Projects</p>
-      <h2 class="h2 rv" id="wk-h">Try a demo, then <b>see the real builds.</b></h2>
-      <p class="lede rv">Three working demos with fictional brands come first. After them are builds from real client work, with names, logos and photos blurred. No results are claimed unless they're verified.</p>
+      <p class="label rv">All projects</p>
+      <h2 class="h2 rv" id="wk-h">Try a demo, then <b>browse every build.</b></h2>
+      <p class="lede rv">Three working demos with fictional brands come first, labelled Demo. After them are builds from real client work, with names, logos and photos blurred, and my own tools. No results are claimed unless they're recorded.</p>
       <div class="filters rv" role="group" aria-label="Filter projects by category">
         <button type="button" class="fbtn" data-filter="all" aria-pressed="true">All <span class="n">24</span></button>
         <button type="button" class="fbtn" data-filter="websites" aria-pressed="false">Websites &amp; funnels <span class="n">9</span></button>
@@ -606,10 +719,10 @@
             </svg>
           </a>
           <div class="body">
-            <p class="kind">Featured demo · Home services</p>
+            <p class="kind">Demo · Home services</p>
             <h3>Quote request funnel for a home-services company</h3>
             <p>Pick a service, answer three short questions and see the request summarised on the page, with the follow-up I'd build behind it.</p>
-            <div class="chips"><span class="chip concept">ORIGINAL DEMO · FICTIONAL BRAND</span></div>
+            <div class="chips"><span class="chip concept">DEMO · FICTIONAL BRAND</span></div>
             <div class="tags"><span class="tag">Funnel</span><span class="tag">Lead capture</span><span class="tag">HTML/CSS/JS</span></div>
             <div class="detail">
               <h4>Problem</h4><p>A home-services business needs quote requests that arrive complete, with the job type and timing already known, so someone can call back with the right person.</p>
@@ -647,10 +760,10 @@
             </svg>
           </a>
           <div class="body">
-            <p class="kind">Featured demo · Dental clinic</p>
+            <p class="kind">Demo · Dental clinic</p>
             <h3>Appointment request page for a dental clinic</h3>
             <p>Choose a visit type and a preferred day, and get a clear request summary that says it's a request, not a booking.</p>
-            <div class="chips"><span class="chip concept">ORIGINAL DEMO · FICTIONAL BRAND</span></div>
+            <div class="chips"><span class="chip concept">DEMO · FICTIONAL BRAND</span></div>
             <div class="tags"><span class="tag">Appointment requests</span><span class="tag">Reminders</span><span class="tag">HTML/CSS/JS</span></div>
             <div class="detail">
               <h4>Problem</h4><p>A clinic wants appointment requests that already say which visit and which day suits the patient, so the front desk can confirm a time in one call.</p>
@@ -683,10 +796,10 @@
             </svg>
           </a>
           <div class="body">
-            <p class="kind">Featured demo · Consultant</p>
+            <p class="kind">Demo · Consultant</p>
             <h3>Discovery-call qualification for a consultant</h3>
             <p>Two quick questions about goals and business stage decide which call fits, and the visitor sees the recommendation straight away.</p>
-            <div class="chips"><span class="chip concept">ORIGINAL DEMO · FICTIONAL BRAND</span></div>
+            <div class="chips"><span class="chip concept">DEMO · FICTIONAL BRAND</span></div>
             <div class="tags"><span class="tag">Qualification</span><span class="tag">Discovery calls</span><span class="tag">HTML/CSS/JS</span></div>
             <div class="detail">
               <h4>Problem</h4><p>A consultant wants to know a prospect's goal and stage before the first call, so each call starts with the right agenda.</p>
@@ -912,7 +1025,7 @@
           </div>
         </article>
 
-        <article class="pc wide rv" data-cat="automations">
+        <article class="pc wide rv" id="account-audit" data-cat="automations">
           <div class="media" aria-hidden="true">
             <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet">
               <rect width="640" height="360" fill="#07101f"/>
@@ -1130,7 +1243,7 @@
           </div>
         </article>
 
-        <article class="pc rv" data-cat="automations">
+        <article class="pc rv" id="referral-attribution" data-cat="automations">
           <div class="media shots" data-shots>
             <button type="button" class="main" aria-label="View screenshot full size"><img src="work/ptin-referral/1-landing-page.webp" alt="Paid program landing page with earnings calculator and checkout form" loading="lazy"></button>
           </div>
@@ -1235,7 +1348,7 @@
           </div>
         </article>
 
-        <article class="pc wide rv" data-cat="automations">
+        <article class="pc wide rv" id="partner-tracking" data-cat="automations">
           <div class="mcol">
             <div class="media shots" data-shots>
               <button type="button" class="main contain" aria-label="View screenshot full size"><img src="work/partner-referral/1-lead-attribution-workflow.webp" alt="Lead attribution workflow: repeat check, partner ID validation, partner-credited or direct opportunity, task and sales alert" loading="lazy"></button>
@@ -1308,7 +1421,7 @@
           </div>
         </article>
 
-        <article class="pc rv" data-cat="apps">
+        <article class="pc rv" id="command-center" data-cat="apps">
           <div class="media shots" data-shots>
             <button type="button" class="main" aria-label="View screenshot full size"><img src="rooms/office.jpg" alt="My own command-center page: agent desks, status counts and the build plan, with demo data" loading="lazy" width="1440" height="860"></button>
           </div>
@@ -1329,7 +1442,8 @@
                 <li><b>Records:</b> hooks that log each task and refresh the board, and a daily git snapshot of the whole knowledge vault.</li>
                 <li><b>Media:</b> a local meeting recorder, and an explainer-video pipeline narrated in my own cloned voice and rendered on my PC.</li>
               </ul>
-              <h4>Tools</h4><p>HTML, CSS and JavaScript, three.js, Claude Code with custom agents and hooks, Playwright, Python, git.</p>
+              <h4>Tools</h4><p>HTML, CSS and JavaScript, three.js, Claude Code with custom agents and hooks, Playwright, Python, git.</p><p>Built with AI-assisted coding (Claude Code): I directed the build, tested it and made the decisions.</p>
+              <h4>How it was checked</h4><p>A health-check script confirms the agents, tools and the local dashboard are working, and I use the system daily for my own work.</p>
               <h4>Status</h4><p>Personal project shown with demo data. It is not a client system and not proof of a deployed AI backend.</p>
               <h4>Next action</h4><p>Open the live demo (view only), or tour the rooms in the Workspace section.</p>
             </div>
@@ -1360,7 +1474,8 @@
                 <li><b>Markup editor:</b> arrows, boxes, numbered callouts, highlight, text, blur, pixelate, redact and crop, with undo.</li>
                 <li><b>Exports:</b> PNG, JPG, PDF, a presentation frame, and a Mermaid copy of the flow for AI tools.</li>
               </ul>
-              <h4>Tools</h4><p>Chrome Manifest V3 extension in plain HTML, CSS and JavaScript (no build step), the Chrome DevTools Protocol, IndexedDB, and a Playwright smoke test, built with Claude Code.</p>
+              <h4>Tools</h4><p>Chrome Manifest V3 extension in plain HTML, CSS and JavaScript (no build step), the Chrome DevTools Protocol, IndexedDB, and a Playwright smoke test, built with Claude Code.</p><p>Built with AI-assisted coding (Claude Code): I directed the build, tested it and made the decisions.</p>
+              <h4>How it was checked</h4><p>An automated Playwright smoke test (88 checks) against local test pages: a long page with a sticky header, an inner-scroll app and a mock workflow canvas. Then live use: whole GoHighLevel workflows captured in my own Chrome, hands-free since 20 October 2026.</p>
               <h4>Status</h4><p>Personal project, not for sale, in use in my own Chrome. Works live on GoHighLevel workflows and has taken hands-free captures since 20 October 2026; adapters for n8n and Zapier are built but not yet tested live. An automated smoke test (88 checks) runs against local test pages. The screens here are the real popup and editor, shown with a test canvas, not client data.</p>
               <h4>Next action</h4><p>Ask me for a walkthrough.</p>
             </div>
@@ -1391,7 +1506,8 @@
                 <li><b>Encrypted:</b> an SQLCipher database with a Keystore-sealed key, and encrypted backups that restore without the original phone.</li>
                 <li><b>Tested:</b> 323 automated tests, and a receipt-paper design ("Resibo").</li>
               </ul>
-              <h4>Tools</h4><p>Kotlin, Jetpack Compose, Room with SQLCipher, Android Keystore, ML Kit (on-device), CameraX, Android offline speech, built with Claude Code and tested on an emulator first.</p>
+              <h4>Tools</h4><p>Kotlin, Jetpack Compose, Room with SQLCipher, Android Keystore, ML Kit (on-device), CameraX, Android offline speech, built with Claude Code and tested on an emulator first.</p><p>Built with AI-assisted coding (Claude Code): I directed the build, tested it and made the decisions.</p>
+              <h4>How it was checked</h4><p>323 automated tests on the finance engine and the app, emulator checks before each build, and on-device testing on my own phone.</p>
               <h4>Status</h4><p>Personal project in on-device testing on my own phone (an earlier build is installed; the newest build, with voice commands, passes 323 automated tests on the emulator). The screens are from the design file and show its sample figures, not real data.</p>
               <h4>Next action</h4><p>Ask me for a walkthrough.</p>
             </div>
@@ -1441,7 +1557,8 @@
             <div class="detail">
               <h4>Purpose</h4><p>Meeting transcripts and notes without the call audio leaving my PC, filed where the rest of my work already lives.</p>
               <h4>What it does</h4><p>Records my mic and the meeting audio, transcribes it with Whisper on my own GPU, and saves the transcript straight into my knowledge vault. A Granola-style meeting detector watches for mic use in call apps and shows a Windows notification with one-click record; nothing records until I press Record. A notes box sits beside the live transcript, and a /writeup command turns a transcript into meeting notes with decisions and tasks.</p>
-              <h4>Tools</h4><p>An open-source recorder (MIT licence) that I forked and customised, faster-whisper on a local GPU, a Node.js meeting detector, and Claude Code for the write-ups, packaged as an Electron desktop app with a tray icon.</p>
+              <h4>Tools</h4><p>An open-source recorder (MIT licence) that I forked and customised, faster-whisper on a local GPU, a Node.js meeting detector, and Claude Code for the write-ups, packaged as an Electron desktop app with a tray icon.</p><p>Customised with AI-assisted coding (Claude Code): I directed the changes, tested them and made the decisions.</p>
+              <h4>How it was checked</h4><p>Daily use on my own PC for my own calls: transcripts land in my knowledge vault. No client data is shown here.</p>
               <h4>Status</h4><p>Personal project, in daily use on my PC; assistant features in progress. Nothing leaves the PC, and no client data is shown here; the preview is an illustration, not a screenshot.</p>
               <h4>Next action</h4><p>Replace this illustration with a real screenshot of the app.</p>
             </div>
@@ -1456,11 +1573,21 @@
     </div>
   </section>
 
+  <section class="cta-band" aria-label="Contact">
+    <div class="wrap">
+      <div class="band rv">
+        <p><b>Tell me about the process you want automated.</b> What happens today, and what you wish happened instead.</p>
+        <div class="acts"><button type="button" class="btn solid" data-copy="hbalbiran@gmail.com" title="Click to copy"><svg class="ico"><use href="#i-mail"/></svg>hbalbiran@gmail.com</button><a class="btn" href="https://api.whatsapp.com/send?phone=639185379969" target="_blank" rel="noopener"><svg class="ico"><use href="#i-chat"/></svg>WhatsApp</a></div>
+      </div>
+    </div>
+  </section>
+
   <section id="tutorials" aria-labelledby="tu-h">
     <div class="wrap">
       <p class="label rv">Tutorials &amp; walkthroughs</p>
-      <h2 class="tut-h rv" id="tu-h">I also record <b>how-to videos for the team.</b></h2>
+      <h2 class="tut-h rv" id="tu-h">Walkthroughs <b>for client teams.</b></h2>
       <p class="lede rv">Narrated walkthroughs I produce for clients' teams; previews are silent. Each clip is sped up and plays while it's on screen; use the button to pause or play.</p>
+      <p class="tut-note rv">Walkthroughs teach a client's team to use or check a system; the case studies above show what I built and why.</p>
       <ul class="tuts" id="tuts">
         <li class="tut rv" data-tut data-src="work/tutorial-previews/tutorial-01-lead-flow-v1.mp4" data-speed="2">
           <div class="tut-media">
@@ -1472,6 +1599,7 @@
           <div class="tut-body">
             <h3>What happens when a website form is sent</h3>
             <p>Follows one website form submission from the visitor's thank-you message to the contact record, the owner alert and the reply task in a GoHighLevel workflow.</p>
+            <p class="tut-link"><a href="#website-intake">The build behind it: website enquiry intake <svg class="ico"><use href="#i-arrow"/></svg></a></p>
             <p class="tut-meta"><span class="tag">GoHighLevel</span><span class="tut-speed">Silent preview · 2×</span></p>
           </div>
         </li>
@@ -1534,7 +1662,7 @@
         <div>
           <p class="label rv">An example of what I build</p>
           <ol class="fsteps">
-            <li class="rv"><span class="n">01</span><h3>Capture</h3><p>Every lead is saved with its source and consent. Nobody slips through.</p></li>
+            <li class="rv"><span class="n">01</span><h3>Capture</h3><p>Every lead is saved with its source and consent.</p></li>
             <li class="rv"><span class="n">02</span><h3>Route</h3><p>Tags, fields and Custom Code decide who the lead is and where they go next.</p></li>
             <li class="rv"><span class="n">03</span><h3>Follow up</h3><p>Email and SMS keep going until they book or pay, then stop on their own and alert the team.</p></li>
           </ol>
@@ -1566,7 +1694,7 @@
                 <g class="f-node" data-step="3" transform="translate(580 35)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Welcome message</text><text class="f-s" x="14" y="41">email + SMS</text></g>
                 <g class="f-node logic" data-step="3" transform="translate(580 150)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Wait for action</text><text class="f-s" x="14" y="41">booked or paid?</text></g>
                 <g class="f-node good" data-step="3" transform="translate(390 150)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Stop follow-up</text><text class="f-s" x="14" y="41">no extra messages</text></g>
-                <g class="f-node good" data-step="3" transform="translate(205 150)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Notify the team</text><text class="f-s" x="14" y="41">handoff is instant</text></g>
+                <g class="f-node good" data-step="3" transform="translate(205 150)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Notify the team</text><text class="f-s" x="14" y="41">alert + task</text></g>
                 <g class="f-node" data-step="3" transform="translate(580 240)"><rect width="150" height="54" rx="12"/><text class="f-t" x="14" y="23">Reminder</text><text class="f-s" x="14" y="41">timed, then re-check</text></g>
                 <g aria-hidden="true">
                   <circle class="pulse" r="4" data-step="1"><animateMotion dur="1s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
@@ -1605,10 +1733,19 @@
       <div class="svcs">
         <article class="svc rv"><div class="top-row"><span><span class="n">01</span> · Runs 24/7</span><span class="grp">GHL &amp; CRM systems</span></div><h3>GHL Automation</h3><p>Workflows that follow up so your team doesn't have to.</p><ul><li>Email + SMS sequences</li><li>Stop-on-payment reminders</li><li>Team alerts, tasks, Custom Code</li></ul></article>
         <article class="svc rv"><div class="top-row"><span><span class="n">02</span> · Easy to use</span><span class="grp">GHL &amp; CRM systems</span></div><h3>CRM &amp; Pipelines</h3><p>Pipelines, tags and fields your team can actually use.</p><ul><li>Pipelines + stages</li><li>Custom fields + clean-ups</li><li>Smart lists + migrations</li></ul></article>
-        <article class="svc rv"><div class="top-row"><span><span class="n">03</span> · Built to convert</span><span class="grp">Funnels &amp; pages</span></div><h3>Funnels &amp; Pages (AI-built)</h3><p>Lead magnet, webinar, application and sales funnels.</p><ul><li>Registration to replay</li><li>Order forms + payments</li><li>AI-built pages, hand-checked</li></ul></article>
+        <article class="svc rv"><div class="top-row"><span><span class="n">03</span> · One clear next step</span><span class="grp">Funnels &amp; pages</span></div><h3>Funnels &amp; Pages (AI-built)</h3><p>Lead magnet, webinar, application and sales funnels.</p><ul><li>Registration to replay</li><li>Order forms + payments</li><li>AI-built pages, hand-checked</li></ul></article>
         <article class="svc rv"><div class="top-row"><span><span class="n">04</span> · Connects everything</span><span class="grp">AI &amp; workflow automation</span></div><h3>n8n &amp; API Automations</h3><p>Connect GHL with the rest of your stack, with AI steps a person reviews.</p><ul><li>n8n, webhooks, APIs</li><li>Claude steps with human review</li><li>Failure alerts + spend watch</li></ul></article>
         <article class="svc rv"><div class="top-row"><span><span class="n">05</span> · One front door</span><span class="grp">AI &amp; workflow automation</span></div><h3>Notion Workspaces &amp; AI Agents</h3><p>A company hub where meetings turn into tasks on their own.</p><ul><li>Hubs + task boards</li><li>Meeting-to-task pipelines</li><li>Notion AI agents (weekly reviews)</li></ul></article>
         <article class="svc rv"><div class="top-row"><span><span class="n">06</span> · Built for your team</span><span class="grp">Tools &amp; training</span></div><h3>Custom Tools &amp; Walkthrough Videos</h3><p>Small tools built with AI-assisted coding, and how-to videos your team will watch.</p><ul><li>Browser extensions + internal tools</li><li>AI-assisted coding, tested</li><li>Narrated how-to videos</li></ul></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" aria-label="Contact">
+    <div class="wrap">
+      <div class="band rv">
+        <p><b>Tell me about the process you want automated.</b> What happens today, and what you wish happened instead.</p>
+        <div class="acts"><button type="button" class="btn solid" data-copy="hbalbiran@gmail.com" title="Click to copy"><svg class="ico"><use href="#i-mail"/></svg>hbalbiran@gmail.com</button><a class="btn" href="https://api.whatsapp.com/send?phone=639185379969" target="_blank" rel="noopener"><svg class="ico"><use href="#i-chat"/></svg>WhatsApp</a></div>
       </div>
     </div>
   </section>
@@ -1651,10 +1788,25 @@
           <h2 class="h2 rv" id="ab-h">Hi, I'm <b>Henry Jake.</b></h2>
           <p class="rv"><strong>5+ years</strong> building GoHighLevel workflows, CRM systems and funnels for agencies, coaches, real estate and service businesses. Since October 2026 I also run n8n automations, Notion workspaces and Claude-powered steps in live client systems, and build my own tools with AI-assisted coding.</p>
           <p class="rv">I'm also trained as a digital marketing assistant, so I build the GHL logic around the strategy (lead magnet, webinar, application or sales funnel), not just the tech spec. Builds are documented with clear naming and custom values, so your team can take them over.</p>
+          <h3 class="h3 rv">What I build</h3>
+          <ul class="build-list rv">
+            <li><a href="#website-intake">Website enquiry intake with consent tags, routing and branded replies</a><span>GHL</span></li>
+            <li><a href="#lost-leads">Re-engagement campaigns for lost leads, with an AI-call phase</a><span>GHL</span></li>
+            <li><a href="#application-tracking">Application tracking with stage reminders and expiry alerts</a><span>GHL</span></li>
+            <li><a href="#referral-attribution">Referral attribution and partner tracking</a><span>GHL · Custom Code</span></li>
+            <li><a href="#account-audit">Account audits and clean-ups with restore points</a><span>GHL</span></li>
+            <li><a href="#chatbot-routing">Website chatbots that feed CRM routing</a><span>GHL · AI</span></li>
+            <li><a href="#ops-backend">Meeting-to-task operating backends</a><span>n8n · Notion · Claude</span></li>
+            <li><a href="#flowsnap">Small tools built with AI-assisted coding</a><span>Claude Code</span></li>
+          </ul>
+          <h3 class="h3 rv">Skills by depth</h3>
           <div class="tiers">
-            <div class="tier core rv"><h3>CORE</h3><ul><li>GHL workflows</li><li>CRM &amp; pipelines</li><li>Funnels</li><li>Email/SMS follow-up</li><li>Custom Code (JS) in GHL</li><li>Workflow design &amp; QA</li><li>n8n automations</li><li>Notion workspaces</li><li>Zapier</li><li>Webhooks &amp; APIs</li><li>Documentation</li></ul></div>
-            <div class="tier sup rv"><h3>SUPPORTING</h3><ul><li>AI conversation flows in GHL</li><li>AI voice-agent work</li><li>Notion AI agents</li><li>Claude API &amp; structured output</li><li>AI-assisted coding (Chrome extension, Android app, desktop tools, this site)</li><li>AI-built websites &amp; landing pages (Claude Code)</li><li>AI meeting summaries &amp; drafts (human-reviewed)</li><li>Explainer &amp; how-to videos</li></ul></div>
-            <div class="tier exp rv"><h3>EXPANDING</h3><ul><li>Outbound AI voice agents</li><li>Payments &amp; application tracking</li><li>Broader AI automation</li></ul></div>
+            <div class="tier core rv"><h3>GOHIGHLEVEL AUTOMATION <span>· CORE</span></h3><ul><li>Workflow automation &amp; troubleshooting</li><li>Email &amp; SMS follow-up, nurture</li><li>CRM pipelines &amp; opportunities</li><li>Contact clean-up, segmentation, migrations</li><li>Funnels, forms, payment-triggered workflows</li><li>JavaScript Custom Code steps</li><li>APIs, webhooks, Private Integrations</li><li>Custom fields &amp; values</li><li>Chatbots &amp; Voice AI agents</li></ul></div>
+            <div class="tier sup rv"><h3>N8N <span>· APPLIED</span></h3><ul><li>Meeting-note capture</li><li>Task extraction for human review</li><li>Follow-up drafts for approval</li><li>Notion API connections</li><li>Error workflows &amp; spend alerts</li></ul></div>
+            <div class="tier sup rv"><h3>NOTION <span>· APPLIED</span></h3><ul><li>Company hubs</li><li>Task, project &amp; meeting databases</li><li>Self-updating status boxes (via n8n)</li><li>How-to pages for the team</li></ul></div>
+            <div class="tier sup rv"><h3>CLAUDE / AI AGENTS <span>· APPLIED</span></h3><ul><li>Claude API steps with structured output</li><li>A Notion AI agent for weekly reviews</li><li>GHL chatbot &amp; Voice AI agents</li><li>Human review before anything is sent</li></ul></div>
+            <div class="tier sup rv"><h3>AI-ASSISTED CODING <span>· APPLIED TO SMALL TOOLS</span></h3><ul><li>FlowSnap (Chrome extension)</li><li>Perator (Android app)</li><li>This site + 3 demos</li><li>Knowledge OS (my agent system)</li></ul></div>
+            <div class="tier exp rv"><h3>PROCESS &amp; HANDOFF <span>· SUPPORTING</span></h3><ul><li>Process mapping &amp; system diagrams</li><li>Staged testing with test contacts</li><li>Runbooks, SOPs &amp; handoff docs</li><li>Walkthrough videos</li></ul></div>
           </div>
         </div>
         <ol class="tl" aria-label="Work history">
@@ -1677,6 +1829,7 @@
         <p class="label rv">Contact</p>
         <h2 class="h2 rv" id="ct-h">Got a process that <b>should run itself?</b></h2>
         <p class="lede rv">Tell me about the process you want automated: what happens today, and what you wish happened instead. I'll reply with how I'd build it.</p>
+        <p class="rv"><a class="pdf-link" href="documents/henry-jake-balbiran-portfolio-summary-2026-10.pdf" target="_blank" rel="noopener">One-page summary (PDF) <svg class="ico"><use href="#i-arrow"/></svg></a></p>
         <div class="acts rv">
           <button type="button" class="btn solid" data-copy="hbalbiran@gmail.com" title="Click to copy"><svg class="ico"><use href="#i-mail"/></svg>hbalbiran@gmail.com</button>
           <a class="btn" href="https://api.whatsapp.com/send?phone=639185379969" target="_blank" rel="noopener"><svg class="ico"><use href="#i-chat"/></svg>WhatsApp +63 918 537 9969</a>
@@ -1685,7 +1838,7 @@
       </div>
     </div>
   </section>
-  <footer><div class="wrap rv">Henry Jake Balbiran · GHL Technical Specialist · v2.1 · Oct 2026</div></footer>
+  <footer><div class="wrap rv">Henry Jake Balbiran · GHL Technical Specialist · v2.2 · Oct 2026</div></footer>
 </main>
 
 <dialog class="pd" id="pd" aria-labelledby="pd-title">
@@ -1950,6 +2103,8 @@
   $('#pd-x').addEventListener('click', e => closeDetail(e.detail !== 0));
   pd.addEventListener('click', e => { if (e.target === pd) closeDetail(true); });
   $$('[data-detail]').forEach(b => b.addEventListener('click', e => openDetail(b.closest('.pc'), b, e.detail === 0)));
+  // V2.2: selected-work buttons open the matching gallery card's overview; focus returns to the button
+  $$('[data-open]').forEach(b => b.addEventListener('click', e => { const c = document.getElementById(b.dataset.open); if (c) openDetail(c, b, e.detail === 0); }));
 
   /* tutorial previews: poster first, video src attached near the viewport (or on explicit play), at most one plays,
      paused offscreen / on tab hide / while any dialog is open. Reduced motion or Save-Data = poster + explicit play.
